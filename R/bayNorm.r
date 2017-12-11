@@ -2,7 +2,7 @@
 
 #' A wrapper function of prior estimation and bayNorm function
 #'
-#' Input raw data and a vector of capture efficiencies of cells. You may
+#' Input raw data and a vector of capture efficiencies of cells. You can
 #' also need to specify the condition of cells.
 #' @param Data: A matrix of single-cell expression where rows are genes and columns are samples (cells). This object should be of class matrix rather than data.frame.
 #' @param  BETA_vec: A vector of capture efficiencies of cells.
