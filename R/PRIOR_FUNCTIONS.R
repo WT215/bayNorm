@@ -76,8 +76,8 @@ EstPrior<-function(Data){
 #' Input raw data and a vector of capture efficiencies of cells.
 #' @param Data: A matrix of single-cell expression where rows are genes and columns are samples (cells). This object should be of class matrix rather than data.frame.
 #' @param  BETA_vec: A vector of capture efficiencies of cells.
-#' @param  Para: If TRUE, 5 cores will be used for parallelization. Defaut is TRUE.
-#' @param  NCores: number of cores to use, default is 5.
+#' @param  parallel: If TRUE, 5 cores will be used for parallelization. Defaut is TRUE.
+#' @param  NCores: number of cores to use, default is 5. This will be used to set up a parallel environment using either MulticoreParam (Linux, Mac) or SnowParam (Windows) with NCores using the package BiocParallel.
 #' @param  FIX_MU: If TRUE, then 1D optimization, otherwise 2D optimization (slow). Defaut is TRUE.
 #' @param  GR: If TRUE, the gradient function will be used in optimization. However since the gradient function itself is very complicated, it does not help too much in speeding up. Default is FALSE.
 #' @param  BB_SIZE:If TRUE, estimate BB size, and then use it for adjusting MME SIZE. Use the adjusted MME size for bayNorm. Defaut is TRUE.
@@ -89,7 +89,7 @@ EstPrior<-function(Data){
 #'
 #' @export
 #'
-Prior_fun<-function(Data,BETA_vec,Para=T,NCores=5,FIX_MU=T,GR=F,BB_SIZE=T){
+Prior_fun<-function(Data,BETA_vec,parallel=T,NCores=5,FIX_MU=T,GR=F,BB_SIZE=T){
   normcount_N<-t(t(Data)/colSums(Data))*mean(colSums(Data)/BETA_vec)
   Priors<-EstPrior(normcount_N)
   M_ave_ori<-Priors$MU
@@ -100,18 +100,18 @@ Prior_fun<-function(Data,BETA_vec,Para=T,NCores=5,FIX_MU=T,GR=F,BB_SIZE=T){
   rownames(MME_prior)<-rownames(Data)
   colnames(MME_prior)<-c("MME_MU","MME_SIZE")
 
-  #BB_size<-BB_Fun_1D(Dat_mat=Data,BETA_vec=BETA_vec,INITIAL_MU_vec=MME_prior$MME_MU,INITIAL_SIZE_vec=MME_prior$MME_SIZE,SIZE_lower=min(MME_prior$MME_SIZE),SIZE_upper=ceiling(max(MME_prior$MME_SIZE)),Para=Para,NCores = NCores)
+  #BB_size<-BB_Fun_1D(Dat_mat=Data,BETA_vec=BETA_vec,INITIAL_MU_vec=MME_prior$MME_MU,INITIAL_SIZE_vec=MME_prior$MME_SIZE,SIZE_lower=min(MME_prior$MME_SIZE),SIZE_upper=ceiling(max(MME_prior$MME_SIZE)),parallel=parallel,NCores = NCores)
 
 if(BB_SIZE){
   if(FIX_MU){
-    BB_size<-BB_Fun(Data,BETA_vec,INITIAL_MU_vec=MME_prior$MME_MU,INITIAL_SIZE_vec=MME_prior$MME_SIZE,MU_lower=min(MME_prior$MME_MU),MU_upper=max(MME_prior$MME_MU),SIZE_lower=min(MME_prior$MME_SIZE),SIZE_upper=ceiling(max(MME_prior$MME_SIZE)),Para=Para,NCores=NCores,FIX_MU=FIX_MU,GR=GR)
+    BB_size<-BB_Fun(Data,BETA_vec,INITIAL_MU_vec=MME_prior$MME_MU,INITIAL_SIZE_vec=MME_prior$MME_SIZE,MU_lower=min(MME_prior$MME_MU),MU_upper=max(MME_prior$MME_MU),SIZE_lower=min(MME_prior$MME_SIZE),SIZE_upper=ceiling(max(MME_prior$MME_SIZE)),parallel=parallel,NCores=NCores,FIX_MU=FIX_MU,GR=GR)
     BB_prior<-cbind(MME_prior$MME_MU,BB_size)
     rownames(BB_prior)<-rownames(Data)
     colnames(BB_prior)<-c("MME_MU","BB_SIZE")
 
     MME_SIZE_adjust<-AdjustSIZE_fun(BB_prior[,2],MME_prior$MME_MU,MME_prior$MME_SIZE)
   }else{
-    BB_size<-BB_Fun(Data,BETA_vec,INITIAL_MU_vec=MME_prior$MME_MU,INITIAL_SIZE_vec=MME_prior$MME_SIZE,MU_lower=min(MME_prior$MME_MU),MU_upper=max(MME_prior$MME_MU),SIZE_lower=min(MME_prior$MME_SIZE),SIZE_upper=ceiling(max(MME_prior$MME_SIZE)),Para=Para,NCores=NCores,FIX_MU=FIX_MU,GR=GR)
+    BB_size<-BB_Fun(Data,BETA_vec,INITIAL_MU_vec=MME_prior$MME_MU,INITIAL_SIZE_vec=MME_prior$MME_SIZE,MU_lower=min(MME_prior$MME_MU),MU_upper=max(MME_prior$MME_MU),SIZE_lower=min(MME_prior$MME_SIZE),SIZE_upper=ceiling(max(MME_prior$MME_SIZE)),parallel=parallel,NCores=NCores,FIX_MU=FIX_MU,GR=GR)
     BB_prior<-BB_size
     rownames(BB_prior)<-rownames(Data)
     colnames(BB_prior)<-c("BB_SIZE","BB_MU")
@@ -136,8 +136,8 @@ if(BB_SIZE){
 #' @param  MU_upper: The upper bound for the mu.(Only need it when you want to do 2D optimization). Defaut is 500.
 #' @param  SIZE_lower: The lower bound for the size. Defaut is 0.01.
 #' @param  SIZE_upper: The upper bound for the size. Defaut is 30.
-#' @param  Para: If TRUE, 5 cores will be used for parallelization. Default is TRUE.
-#' @param  NCores: number of cores to use, default is 5.
+#' @param  parallel: If TRUE, 5 cores will be used for parallelization. Default is TRUE.
+#' @param  NCores: number of cores to use, default is 5. This will be used to set up a parallel environment using either MulticoreParam (Linux, Mac) or SnowParam (Windows) with NCores using the package BiocParallel.
 #' @param  FIX_MU: If TRUE, then 1D optimization, otherwise 2D optimization (slow).
 #' @param  GR: If TRUE, the gradient function will be used in optimization. However since the gradient function itself is very complicated, it does not help too much in speeding up. Default is FALSE.
 #' @return  A vector of estimated size.
@@ -152,14 +152,14 @@ if(BB_SIZE){
 #' @export
 #'
 #'
-BB_Fun<-function(Data,BETA_vec,INITIAL_MU_vec,INITIAL_SIZE_vec,MU_lower=0.01,MU_upper=500,SIZE_lower=0.01,SIZE_upper=30,Para=F,NCores=5,FIX_MU=T,GR=F)
+BB_Fun<-function(Data,BETA_vec,INITIAL_MU_vec,INITIAL_SIZE_vec,MU_lower=0.01,MU_upper=500,SIZE_lower=0.01,SIZE_upper=30,parallel=F,NCores=5,FIX_MU=T,GR=F)
 {
   if(FIX_MU){#1D
 
     lower_input=SIZE_lower
     upper_input=SIZE_upper
 
-    if(Para){
+    if(parallel){
       cluster = makeCluster(NCores, type = "SOCK")
       registerDoSNOW(cluster)
       getDoParWorkers()
@@ -210,7 +210,7 @@ BB_Fun<-function(Data,BETA_vec,INITIAL_MU_vec,INITIAL_SIZE_vec,MU_lower=0.01,MU_
     upper_input=c(SIZE_upper,MU_upper)
 
 
-    if(Para){
+    if(parallel){
       cluster = makeCluster(NCores, type = "SOCK")
       registerDoSNOW(cluster)
       getDoParWorkers()

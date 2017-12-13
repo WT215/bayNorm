@@ -4,7 +4,7 @@
 \alias{Prior_fun}
 \title{A wrapper function of EstPrior and AdjustSIZE_fun}
 \usage{
-Prior_fun(Data, BETA_vec, Para = T, NCores = 5, FIX_MU = T, GR = F,
+Prior_fun(Data, BETA_vec, parallel = T, NCores = 5, FIX_MU = T, GR = F,
   BB_SIZE = T)
 }
 \arguments{
@@ -12,9 +12,9 @@ Prior_fun(Data, BETA_vec, Para = T, NCores = 5, FIX_MU = T, GR = F,
 
 \item{BETA_vec:}{A vector of capture efficiencies of cells.}
 
-\item{Para:}{If TRUE, 5 cores will be used for parallelization. Defaut is TRUE.}
+\item{parallel:}{If TRUE, 5 cores will be used for parallelization. Defaut is TRUE.}
 
-\item{NCores:}{number of cores to use, default is 5.}
+\item{NCores:}{number of cores to use, default is 5. This will be used to set up a parallel environment using either MulticoreParam (Linux, Mac) or SnowParam (Windows) with NCores using the package BiocParallel.}
 
 \item{FIX_MU:}{If TRUE, then 1D optimization, otherwise 2D optimization (slow). Defaut is TRUE.}
 

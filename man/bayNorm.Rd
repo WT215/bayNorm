@@ -4,8 +4,8 @@
 \alias{bayNorm}
 \title{A wrapper function of prior estimation and bayNorm function}
 \usage{
-bayNorm(Data, BETA_vec, S = 20, Para = T, NCores = 5, FIX_MU = T,
-  GR = F, Conditions = NULL, BB_SIZE = T)
+bayNorm(Data, BETA_vec, S = 20, parallel = T, NCores = 5, FIX_MU = T,
+  GR = F, Conditions = NULL, BB_SIZE = T, mode_version = F)
 }
 \arguments{
 \item{Data:}{A matrix of single-cell expression where rows are genes and columns are samples (cells). This object should be of class matrix rather than data.frame.}
@@ -14,22 +14,24 @@ bayNorm(Data, BETA_vec, S = 20, Para = T, NCores = 5, FIX_MU = T,
 
 \item{S:}{The number of samples you would like to genrate. Default is 20.}
 
-\item{Para:}{If TRUE, 5 cores will be used for parallelization.}
+\item{parallel:}{If TRUE, 5 cores will be used for parallelization.}
 
-\item{NCores:}{number of cores to use, default is 5.}
+\item{NCores:}{number of cores to use, default is 5. This will be used to set up a parallel environment using either MulticoreParam (Linux, Mac) or SnowParam (Windows) with NCores using the package BiocParallel.}
 
 \item{FIX_MU:}{If TRUE, then 1D optimization, otherwise 2D optimization (slow).}
 
 \item{GR:}{If TRUE, the gradient function will be used in optimization. However since the gradient function itself is very complicated, it does not help too much in speeding up. Default is FALSE.}
 
-\item{Conditions:}{Default is NULL.}
+\item{Conditions:}{vector of condition labels, this should correspond to the columns of the Data. Default is NULL, which assumes that all cells belong to the same group.}
 
-\item{BB_SIZE:If}{TRUE, estimate BB size, and then use it for adjusting MME SIZE. Use the adjusted MME size for bayNorm. Defaut is TRUE.}
+\item{BB_SIZE:}{If TRUE, estimate BB size, and then use it for adjusting MME SIZE. Use the adjusted MME size for bayNorm. Defaut is TRUE.}
+
+\item{mode_version:}{If TRUE, bayNorm return mode version normalized data which is of 2D matrix instead of 3D array. Defaut is FALSE.}
 }
 \value{
 A list of objects.
 }
 \description{
-Input raw data and a vector of capture efficiencies of cells. You may
+Input raw data and a vector of capture efficiencies of cells. You can
 also need to specify the condition of cells.
 }

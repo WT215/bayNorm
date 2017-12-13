@@ -132,24 +132,24 @@ NumericVector Compute2function_norm(IntegerVector x,double m,double beta,int las
 //' there are leading NA, marking the leadings NA as TRUE and
 //' everything else as FALSE.
 //'
-//' @param Table: raw count table
-//' @param Beta_origin: A vector of capture efficiencies of cells
+//' @param Data: raw count Data
+//' @param BETA_vec: A vector of capture efficiencies of cells
 //' @param size: A vector of size
-//' @param M_ave_ori: A vector of mu
+//' @param mu: A vector of mu
 //' @param S: number of samples that you want to generate
 //' @param thres:thres
 //' @param Mean_depth:Mean_depth
 //' @return bayNorm
 //' @export
 // [[Rcpp::export]]
-NumericVector Main_Bay(NumericMatrix Table, NumericVector Beta_origin, NumericVector size, Nullable<NumericVector> M_ave_ori,int S,int thres,double Mean_depth, LogicalVector debug=false)
+NumericVector Main_Bay(NumericMatrix Data, NumericVector BETA_vec, NumericVector size, Nullable<NumericVector> mu,int S,int thres,double Mean_depth)
 {
 
 
 
-  arma::mat M = Rcpp::as<arma::mat>(Table);
+  arma::mat M = Rcpp::as<arma::mat>(Data);
 
-  arma::vec Beta = Rcpp::as<arma::vec>(Beta_origin);
+  arma::vec Beta = Rcpp::as<arma::vec>(BETA_vec);
   arma::vec M_ave;
   arma::mat M_t;
 
@@ -170,10 +170,10 @@ NumericVector Main_Bay(NumericMatrix Table, NumericVector Beta_origin, NumericVe
   arma::cube Final_mat(nrow, ncol, S);
 
 
-  if (M_ave_ori.isNotNull())
+  if (mu.isNotNull())
   {
 
-    M_ave = Rcpp::as<arma::vec>(M_ave_ori);
+    M_ave = Rcpp::as<arma::vec>(mu);
   }
 
 
@@ -240,8 +240,8 @@ NumericVector Main_Bay(NumericMatrix Table, NumericVector Beta_origin, NumericVe
 
 
   NumericVector Final_mat2=Rcpp::wrap(Final_mat);
-  Rcpp::rownames(Final_mat2) = Rcpp::rownames(Table);
-  Rcpp::colnames(Final_mat2) = Rcpp::colnames(Table);
+  Rcpp::rownames(Final_mat2) = Rcpp::rownames(Data);
+  Rcpp::colnames(Final_mat2) = Rcpp::colnames(Data);
 
 return(Rcpp::wrap(Final_mat2));
 }
@@ -253,24 +253,24 @@ return(Rcpp::wrap(Final_mat2));
 //' there are leading NA, marking the leadings NA as TRUE and
 //' everything else as FALSE.
 //'
-//' @param Table: raw count table
-//' @param Beta_origin: A vector of capture efficiencies of cells
+//' @param Data: raw count Data
+//' @param BETA_vec: A vector of capture efficiencies of cells
 //' @param size: A vector of size
-//' @param M_ave_ori: A vector of mu
+//' @param mu: A vector of mu
 //' @param S: number of samples that you want to generate
 //' @param thres:thres
 //' @param Mean_depth:Mean_depth
 //' @return bayNorm
 //' @export
 // [[Rcpp::export]]
-NumericMatrix Main_mode_Bay(NumericMatrix Table, NumericVector Beta_origin, NumericVector size, Nullable<NumericVector> M_ave_ori,int S,int thres,double Mean_depth)
+NumericMatrix Main_mode_Bay(NumericMatrix Data, NumericVector BETA_vec, NumericVector size, Nullable<NumericVector> mu,int S,int thres,double Mean_depth)
 {
 
 
 
-  arma::mat M = Rcpp::as<arma::mat>(Table);
+  arma::mat M = Rcpp::as<arma::mat>(Data);
 
-  arma::vec Beta = Rcpp::as<arma::vec>(Beta_origin);
+  arma::vec Beta = Rcpp::as<arma::vec>(BETA_vec);
   arma::vec M_ave;
   arma::mat M_t;
 
@@ -290,10 +290,10 @@ NumericMatrix Main_mode_Bay(NumericMatrix Table, NumericVector Beta_origin, Nume
   arma::mat Final_mat(nrow, ncol);
 
 
-  if (M_ave_ori.isNotNull())
+  if (mu.isNotNull())
   {
 
-    M_ave = Rcpp::as<arma::vec>(M_ave_ori);
+    M_ave = Rcpp::as<arma::vec>(mu);
   }
 
 
@@ -359,8 +359,8 @@ NumericMatrix Main_mode_Bay(NumericMatrix Table, NumericVector Beta_origin, Nume
 
 
   NumericVector Final_mat2=Rcpp::wrap(Final_mat);
-  Rcpp::rownames(Final_mat2) = Rcpp::rownames(Table);
-  Rcpp::colnames(Final_mat2) = Rcpp::colnames(Table);
+  Rcpp::rownames(Final_mat2) = Rcpp::rownames(Data);
+  Rcpp::colnames(Final_mat2) = Rcpp::colnames(Data);
 
   return(Rcpp::wrap(Final_mat2));
 }
@@ -508,7 +508,7 @@ NumericVector GradientFun_2D(NumericVector SIZE_MU, NumericVector m_observed,Num
 //' @param SIZE:SIZE
 //' @param MU:MU
 //' @param size: A vector of size
-//' @param M_ave_ori: A vector of mu
+//' @param mu: A vector of mu
 //' @param m_observed:m_observed
 //' @param BETA:BETA
 //' @return Marginal likelihood
@@ -613,7 +613,7 @@ double GradientFun_1D(double SIZE,double MU, NumericVector m_observed,NumericVec
 //' @param SIZE:SIZE
 //' @param MU:MU
 //' @param size: A vector of size
-//' @param M_ave_ori: A vector of mu
+//' @param mu: A vector of mu
 //' @param m_observed:m_observed
 //' @param BETA:BETA
 //' @return Marginal likelihood

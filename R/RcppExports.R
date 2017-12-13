@@ -7,17 +7,17 @@
 #' there are leading NA, marking the leadings NA as TRUE and
 #' everything else as FALSE.
 #'
-#' @param Table: raw count table
-#' @param Beta_origin: A vector of capture efficiencies of cells
+#' @param Data: raw count Data
+#' @param BETA_vec: A vector of capture efficiencies of cells
 #' @param size: A vector of size
-#' @param M_ave_ori: A vector of mu
+#' @param mu: A vector of mu
 #' @param S: number of samples that you want to generate
 #' @param thres:thres
 #' @param Mean_depth:Mean_depth
 #' @return bayNorm
 #' @export
-Main_Bay <- function(Table, Beta_origin, size, M_ave_ori, S, thres, Mean_depth, debug = FALSE) {
-    .Call('_bayNorm_Main_Bay', PACKAGE = 'bayNorm', Table, Beta_origin, size, M_ave_ori, S, thres, Mean_depth, debug)
+Main_Bay <- function(Data, BETA_vec, size, mu, S, thres, Mean_depth) {
+    .Call('_bayNorm_Main_Bay', PACKAGE = 'bayNorm', Data, BETA_vec, size, mu, S, thres, Mean_depth)
 }
 
 #' Mode_Bay
@@ -26,17 +26,17 @@ Main_Bay <- function(Table, Beta_origin, size, M_ave_ori, S, thres, Mean_depth, 
 #' there are leading NA, marking the leadings NA as TRUE and
 #' everything else as FALSE.
 #'
-#' @param Table: raw count table
-#' @param Beta_origin: A vector of capture efficiencies of cells
+#' @param Data: raw count Data
+#' @param BETA_vec: A vector of capture efficiencies of cells
 #' @param size: A vector of size
-#' @param M_ave_ori: A vector of mu
+#' @param mu: A vector of mu
 #' @param S: number of samples that you want to generate
 #' @param thres:thres
 #' @param Mean_depth:Mean_depth
 #' @return bayNorm
 #' @export
-Main_mode_Bay <- function(Table, Beta_origin, size, M_ave_ori, S, thres, Mean_depth) {
-    .Call('_bayNorm_Main_mode_Bay', PACKAGE = 'bayNorm', Table, Beta_origin, size, M_ave_ori, S, thres, Mean_depth)
+Main_mode_Bay <- function(Data, BETA_vec, size, mu, S, thres, Mean_depth) {
+    .Call('_bayNorm_Main_mode_Bay', PACKAGE = 'bayNorm', Data, BETA_vec, size, mu, S, thres, Mean_depth)
 }
 
 #' GradientFun_2D
@@ -59,7 +59,7 @@ GradientFun_2D <- function(SIZE_MU, m_observed, BETA) {
 #' @param SIZE:SIZE
 #' @param MU:MU
 #' @param size: A vector of size
-#' @param M_ave_ori: A vector of mu
+#' @param mu: A vector of mu
 #' @param m_observed:m_observed
 #' @param BETA:BETA
 #' @return Marginal likelihood
@@ -89,7 +89,7 @@ GradientFun_1D <- function(SIZE, MU, m_observed, BETA) {
 #' @param SIZE:SIZE
 #' @param MU:MU
 #' @param size: A vector of size
-#' @param M_ave_ori: A vector of mu
+#' @param mu: A vector of mu
 #' @param m_observed:m_observed
 #' @param BETA:BETA
 #' @return Marginal likelihood

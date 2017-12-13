@@ -9,7 +9,7 @@ MarginalF_1D(SIZE, MU, m_observed, BETA)
 \arguments{
 \item{size:}{A vector of size}
 
-\item{M_ave_ori:}{A vector of mu}
+\item{mu:}{A vector of mu}
 }
 \value{
 Marginal likelihood

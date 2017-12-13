@@ -4,16 +4,16 @@
 \alias{Main_mode_Bay}
 \title{Mode_Bay}
 \usage{
-Main_mode_Bay(Table, Beta_origin, size, M_ave_ori, S, thres, Mean_depth)
+Main_mode_Bay(Data, BETA_vec, size, mu, S, thres, Mean_depth)
 }
 \arguments{
-\item{Table:}{raw count table}
+\item{Data:}{raw count Data}
 
-\item{Beta_origin:}{A vector of capture efficiencies of cells}
+\item{BETA_vec:}{A vector of capture efficiencies of cells}
 
 \item{size:}{A vector of size}
 
-\item{M_ave_ori:}{A vector of mu}
+\item{mu:}{A vector of mu}
 
 \item{S:}{number of samples that you want to generate}
 }

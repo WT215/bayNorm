@@ -5,7 +5,7 @@
 \title{Estimating size for each gene by either 1D or 2D optimization of marginal distribution}
 \usage{
 BB_Fun(Data, BETA_vec, INITIAL_MU_vec, INITIAL_SIZE_vec, MU_lower = 0.01,
-  MU_upper = 500, SIZE_lower = 0.01, SIZE_upper = 30, Para = F,
+  MU_upper = 500, SIZE_lower = 0.01, SIZE_upper = 30, parallel = F,
   NCores = 5, FIX_MU = T, GR = F)
 }
 \arguments{
@@ -27,9 +27,9 @@ matrix rather than data.frame.}
 
 \item{SIZE_upper:}{The upper bound for the size. Defaut is 30.}
 
-\item{Para:}{If TRUE, 5 cores will be used for parallelization. Default is TRUE.}
+\item{parallel:}{If TRUE, 5 cores will be used for parallelization. Default is TRUE.}
 
-\item{NCores:}{number of cores to use, default is 5.}
+\item{NCores:}{number of cores to use, default is 5. This will be used to set up a parallel environment using either MulticoreParam (Linux, Mac) or SnowParam (Windows) with NCores using the package BiocParallel.}
 
 \item{FIX_MU:}{If TRUE, then 1D optimization, otherwise 2D optimization (slow).}
 
