@@ -113,7 +113,7 @@ bayNorm<-function(Data,BETA_vec,S=20,parallel=T,NCores=5,FIX_MU=T,GR=F,Condition
    if(!mode_version){
    Bay_array_list<-list()
    for(i in 1:length(Levels)){
-     Bay_array_list[[i]]<-Main_Bay(Data=DataList_sr[[i]],BETA_vec=BETAList[[i]],size=SIZE_input,mu=MU_input,S=S,thres=max(Data)*2,Mean_depth=1000000,debug=F)
+     Bay_array_list[[i]]<-Main_Bay(Data=DataList_sr[[i]],BETA_vec=BETAList[[i]],size=SIZE_input,mu=MU_input,S=S,thres=max(Data)*2,Mean_depth=1000000)
 
      rownames(Bay_array_list[[i]])<-rownames(DataList[[i]])
      colnames(Bay_array_list[[i]])<-colnames(DataList[[i]])
