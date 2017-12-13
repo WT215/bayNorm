@@ -22,6 +22,5 @@ bayNorm
 }
 \description{
 bayNorm
-there are leading NA, marking the leadings NA as TRUE and
-everything else as FALSE.
+If the observed count is above 500, we then used normal distribution to approximate binomial distribution.
 }

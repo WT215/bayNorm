@@ -129,8 +129,8 @@ NumericVector Compute2function_norm(IntegerVector x,double m,double beta,int las
 //' Main_Bay
 //'
 //' bayNorm
-//' there are leading NA, marking the leadings NA as TRUE and
-//' everything else as FALSE.
+//' If the observed count is above 500, we then used normal distribution to approximate binomial distribution.
+//'
 //'
 //' @param Data: raw count Data
 //' @param BETA_vec: A vector of capture efficiencies of cells
@@ -200,8 +200,6 @@ NumericVector Main_Bay(NumericMatrix Data, NumericVector BETA_vec, NumericVector
 
       else{
 
-
-
         if(M(j,i)<NormalApproThre){
       last=floor((M(j,i)+1)*3/Beta(i));
       x=(seq_len(last+1)-1);
@@ -250,8 +248,8 @@ return(Rcpp::wrap(Final_mat2));
 //' Mode_Bay
 //'
 //' bayNorm
-//' there are leading NA, marking the leadings NA as TRUE and
-//' everything else as FALSE.
+//' If the observed count is above 500, we then used normal distribution to approximate binomial distribution.
+//'
 //'
 //' @param Data: raw count Data
 //' @param BETA_vec: A vector of capture efficiencies of cells

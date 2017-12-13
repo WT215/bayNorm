@@ -4,8 +4,8 @@
 #' Main_Bay
 #'
 #' bayNorm
-#' there are leading NA, marking the leadings NA as TRUE and
-#' everything else as FALSE.
+#' If the observed count is above 500, we then used normal distribution to approximate binomial distribution.
+#'
 #'
 #' @param Data: raw count Data
 #' @param BETA_vec: A vector of capture efficiencies of cells
@@ -23,8 +23,8 @@ Main_Bay <- function(Data, BETA_vec, size, mu, S, thres, Mean_depth) {
 #' Mode_Bay
 #'
 #' bayNorm
-#' there are leading NA, marking the leadings NA as TRUE and
-#' everything else as FALSE.
+#' If the observed count is above 500, we then used normal distribution to approximate binomial distribution.
+#'
 #'
 #' @param Data: raw count Data
 #' @param BETA_vec: A vector of capture efficiencies of cells

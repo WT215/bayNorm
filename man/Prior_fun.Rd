@@ -5,7 +5,7 @@
 \title{A wrapper function of EstPrior and AdjustSIZE_fun}
 \usage{
 Prior_fun(Data, BETA_vec, parallel = T, NCores = 5, FIX_MU = T, GR = F,
-  BB_SIZE = T)
+  BB_SIZE = T, verbose = T)
 }
 \arguments{
 \item{Data:}{A matrix of single-cell expression where rows are genes and columns are samples (cells). This object should be of class matrix rather than data.frame.}
@@ -20,11 +20,22 @@ Prior_fun(Data, BETA_vec, parallel = T, NCores = 5, FIX_MU = T, GR = F,
 
 \item{GR:}{If TRUE, the gradient function will be used in optimization. However since the gradient function itself is very complicated, it does not help too much in speeding up. Default is FALSE.}
 
-\item{BB_SIZE:If}{TRUE, estimate BB size, and then use it for adjusting MME SIZE. Use the adjusted MME size for bayNorm. Defaut is TRUE.}
+\item{BB_SIZE:}{If TRUE, estimate BB size, and then use it for adjusting MME SIZE. Use the adjusted MME size for bayNorm. Defaut is TRUE.}
+
+\item{verbose:}{Print out status messages. Default is TRUE.}
 }
 \value{
 A list of objects.
 }
 \description{
 Input raw data and a vector of capture efficiencies of cells.
+}
+\details{
+By defaut, this function will estimate mu and size for each gene using MME method. If \code{BB_size} is enable, spectral projected gradient method from BB package will be implemented to estimate "BB size" by maximizing marginal likelihood function. MME estimated size will be adjusted according to BB size. BB size itself will not be used in bayNorm this is because that in our simulation we found that MME estimated mu and size have more accurate relationship, but MME estimated size deviates from the true value. BB size is overall more close to the true size but it does not possess a reasonable relationship with either MME estimated mu or BB estimated mu.
+}
+\examples{
+\dontrun{
+Prior_fun(Data,BETA_vec,parallel=T,NCores=5,FIX_MU=T,GR=F,BB_SIZE=T,verbose=T)
+}
+
 }

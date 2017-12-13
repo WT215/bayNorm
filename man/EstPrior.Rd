@@ -4,10 +4,12 @@
 \alias{EstPrior}
 \title{Estimate size and mu for NB distribution for each gene using MME method}
 \usage{
-EstPrior(Data)
+EstPrior(Data, verbose = T)
 }
 \arguments{
 \item{Data:}{A matrix of single-cell expression where rows are genes and columns are samples (cells). This object should be of class matrix rather than data.frame.}
+
+\item{verbose:}{print out status messages. Default is TRUE.}
 }
 \value{
 Estimated size and mu for each gene.

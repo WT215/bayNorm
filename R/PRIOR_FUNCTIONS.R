@@ -55,20 +55,25 @@ BetaFun<-function(Data,MeanBETA){
 #'
 #' Input raw data and return estimated size and mu for each gene.
 #' @param Data: A matrix of single-cell expression where rows are genes and columns are samples (cells). This object should be of class matrix rather than data.frame.
+#' @param verbose: print out status messages. Default is TRUE.
 #' @return  Estimated size and mu for each gene.
 #'
 #' @import  fitdistrplus
 #'
 #' @export
-EstPrior<-function(Data){
+EstPrior<-function(Data,verbose=T){
   CoefDat<-foreach(i=1:nrow(Data),.combine=rbind)%do%{
-    print(i)
     qq<-fitdistrplus::fitdist(Data[i,],'nbinom',method='mme',keepdata=F)
     return(coef(qq))
   }
   rownames(CoefDat)<-rownames(Data)
   M_ave_ori<-CoefDat[,2]
   size_est<-CoefDat[,1]
+
+  if(verbose){
+    message("Priors estimation based on MME method has completed.")
+  }
+
   return(list(MU=M_ave_ori,SIZE=size_est))
 }
 #' A wrapper function of EstPrior and AdjustSIZE_fun
@@ -80,7 +85,16 @@ EstPrior<-function(Data){
 #' @param  NCores: number of cores to use, default is 5. This will be used to set up a parallel environment using either MulticoreParam (Linux, Mac) or SnowParam (Windows) with NCores using the package BiocParallel.
 #' @param  FIX_MU: If TRUE, then 1D optimization, otherwise 2D optimization (slow). Defaut is TRUE.
 #' @param  GR: If TRUE, the gradient function will be used in optimization. However since the gradient function itself is very complicated, it does not help too much in speeding up. Default is FALSE.
-#' @param  BB_SIZE:If TRUE, estimate BB size, and then use it for adjusting MME SIZE. Use the adjusted MME size for bayNorm. Defaut is TRUE.
+#' @param  BB_SIZE: If TRUE, estimate BB size, and then use it for adjusting MME SIZE. Use the adjusted MME size for bayNorm. Defaut is TRUE.
+#' @param verbose: Print out status messages. Default is TRUE.
+#'
+#' @details By defaut, this function will estimate mu and size for each gene using MME method. If \code{BB_size} is enable, spectral projected gradient method from BB package will be implemented to estimate "BB size" by maximizing marginal likelihood function. MME estimated size will be adjusted according to BB size. BB size itself will not be used in bayNorm this is because that in our simulation we found that MME estimated mu and size have more accurate relationship, but MME estimated size deviates from the true value. BB size is overall more close to the true size but it does not possess a reasonable relationship with either MME estimated mu or BB estimated mu.
+#'
+#' @examples
+#' \dontrun{
+#' Prior_fun(Data,BETA_vec,parallel=T,NCores=5,FIX_MU=T,GR=F,BB_SIZE=T,verbose=T)
+#' }
+#'
 #' @return  A list of objects.
 #'
 #' @import parallel
@@ -89,9 +103,10 @@ EstPrior<-function(Data){
 #'
 #' @export
 #'
-Prior_fun<-function(Data,BETA_vec,parallel=T,NCores=5,FIX_MU=T,GR=F,BB_SIZE=T){
+Prior_fun<-function(Data,BETA_vec,parallel=T,NCores=5,FIX_MU=T,GR=F,BB_SIZE=T,verbose=T){
+
   normcount_N<-t(t(Data)/colSums(Data))*mean(colSums(Data)/BETA_vec)
-  Priors<-EstPrior(normcount_N)
+  Priors<-EstPrior(normcount_N,verbose=verbose)
   M_ave_ori<-Priors$MU
   size_est<-Priors$SIZE
   size_est[is.na(size_est)]<-min(size_est[!is.na(size_est)])
@@ -103,6 +118,10 @@ Prior_fun<-function(Data,BETA_vec,parallel=T,NCores=5,FIX_MU=T,GR=F,BB_SIZE=T){
   #BB_size<-BB_Fun_1D(Dat_mat=Data,BETA_vec=BETA_vec,INITIAL_MU_vec=MME_prior$MME_MU,INITIAL_SIZE_vec=MME_prior$MME_SIZE,SIZE_lower=min(MME_prior$MME_SIZE),SIZE_upper=ceiling(max(MME_prior$MME_SIZE)),parallel=parallel,NCores = NCores)
 
 if(BB_SIZE){
+  if(verbose){
+    message("Begin to estimate size for each gene by maximizing the marginal distribution. The optimization method is spectral projected gradient implemented in BB package. The MME estimated size will be adjusted based on this.")
+  }
+
   if(FIX_MU){
     BB_size<-BB_Fun(Data,BETA_vec,INITIAL_MU_vec=MME_prior$MME_MU,INITIAL_SIZE_vec=MME_prior$MME_SIZE,MU_lower=min(MME_prior$MME_MU),MU_upper=max(MME_prior$MME_MU),SIZE_lower=min(MME_prior$MME_SIZE),SIZE_upper=ceiling(max(MME_prior$MME_SIZE)),parallel=parallel,NCores=NCores,FIX_MU=FIX_MU,GR=GR)
     BB_prior<-cbind(MME_prior$MME_MU,BB_size)
@@ -117,6 +136,11 @@ if(BB_SIZE){
     colnames(BB_prior)<-c("BB_SIZE","BB_MU")
     MME_SIZE_adjust<-AdjustSIZE_fun(BB_prior[,1],MME_prior$MME_MU,MME_prior$MME_SIZE)
   }
+
+  if(verbose){
+    message("Prior estimation has completed!")
+  }
+
   return(list(MME_prior=MME_prior,BB_prior=BB_prior,MME_SIZE_adjust=MME_SIZE_adjust))
 }
 

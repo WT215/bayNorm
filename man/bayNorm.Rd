@@ -5,14 +5,15 @@
 \title{A wrapper function of prior estimation and bayNorm function}
 \usage{
 bayNorm(Data, BETA_vec, S = 20, parallel = T, NCores = 5, FIX_MU = T,
-  GR = F, Conditions = NULL, BB_SIZE = T, mode_version = F)
+  GR = F, Conditions = NULL, BB_SIZE = T, mode_version = F, UMI = T,
+  sffl = NULL, verbose = T)
 }
 \arguments{
 \item{Data:}{A matrix of single-cell expression where rows are genes and columns are samples (cells). This object should be of class matrix rather than data.frame.}
 
 \item{BETA_vec:}{A vector of capture efficiencies of cells.}
 
-\item{S:}{The number of samples you would like to genrate. Default is 20.}
+\item{S:}{The number of samples you would like to generate from estimated posterior distribution. Default is 20.}
 
 \item{parallel:}{If TRUE, 5 cores will be used for parallelization.}
 
@@ -27,6 +28,12 @@ bayNorm(Data, BETA_vec, S = 20, parallel = T, NCores = 5, FIX_MU = T,
 \item{BB_SIZE:}{If TRUE, estimate BB size, and then use it for adjusting MME SIZE. Use the adjusted MME size for bayNorm. Defaut is TRUE.}
 
 \item{mode_version:}{If TRUE, bayNorm return mode version normalized data which is of 2D matrix instead of 3D array. Defaut is FALSE.}
+
+\item{UMI:}{If FALSE, bayNorm assumes that the input Data is non-UMI based (full-length), hence user needs to provide scale factors for scaling the full-length dataset so that our Bayesian model still makes sense. Defaut UMI is set to be TRUE.}
+
+\item{sffl:}{(scaling factors for full-length data: divide Data by sffl) Only needed when UMI=F. If UMI=F and Conditions is non-null, then flsf should be a vector of length equal to the number of groups. Defaut is set to be NULL.}
+
+\item{verbose:}{print out status messages. Default is TRUE.}
 }
 \value{
 A list of objects.
