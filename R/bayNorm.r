@@ -91,6 +91,7 @@ bayNorm<-function(Data,BETA_vec,S=20,parallel=T,NCores=5,FIX_MU=T,GR=F,Condition
 
      BETAList <- lapply(seq_along(Levels), function(x){BETA_vec[which(Conditions == Levels[x])]})
    }else{#non-UMI
+
      DataList<- lapply(seq_along(Levels), function(x){Data[,which(Conditions == Levels[x])]})
      DataList_sr <- lapply(seq_along(Levels), function(x){ceiling(Data[,which(Conditions == Levels[x])]/sffl[x])})
      BETAList <- lapply(seq_along(Levels), function(x){BETA_vec[which(Conditions == Levels[x])]})
@@ -99,13 +100,7 @@ bayNorm<-function(Data,BETA_vec,S=20,parallel=T,NCores=5,FIX_MU=T,GR=F,Condition
    PRIORS_LIST<-list()
    for(i in 1:length(Levels)){
      PRIORS_LIST[[i]]<-Prior_fun(Data=DataList_sr[[i]],BETA_vec=BETAList[[i]],parallel=parallel,NCores=NCores,FIX_MU=FIX_MU,GR=GR,BB_SIZE=BB_SIZE,verbose=verbose)
-     if(BB_SIZE){
-       MU_input=PRIORS_LIST[[i]]$MME_prior$MME_MU
-       SIZE_input=PRIORS_LIST[[i]]$MME_SIZE_adjust
-     }else{
-       MU_input=PRIORS_LIST[[i]]$MME_prior$MME_MU
-       SIZE_input=PRIORS_LIST[[i]]$MME_prior$MME_SIZE
-     }
+
    }
    names(PRIORS_LIST)<-paste('Group',Levels)
 
@@ -113,6 +108,16 @@ bayNorm<-function(Data,BETA_vec,S=20,parallel=T,NCores=5,FIX_MU=T,GR=F,Condition
    if(!mode_version){
    Bay_array_list<-list()
    for(i in 1:length(Levels)){
+
+     if(BB_SIZE){
+       MU_input=PRIORS_LIST[[i]]$MME_prior$MME_MU
+       SIZE_input=PRIORS_LIST[[i]]$MME_SIZE_adjust
+     }else{
+       MU_input=PRIORS_LIST[[i]]$MME_prior$MME_MU
+       SIZE_input=PRIORS_LIST[[i]]$MME_prior$MME_SIZE
+     }
+
+
      Bay_array_list[[i]]<-Main_Bay(Data=DataList_sr[[i]],BETA_vec=BETAList[[i]],size=SIZE_input,mu=MU_input,S=S,thres=max(Data)*2,Mean_depth=1000000)
 
      rownames(Bay_array_list[[i]])<-rownames(DataList[[i]])
@@ -124,6 +129,15 @@ bayNorm<-function(Data,BETA_vec,S=20,parallel=T,NCores=5,FIX_MU=T,GR=F,Condition
 
      Bay_mat_list<-list()
      for(i in 1:length(Levels)){
+
+       if(BB_SIZE){
+         MU_input=PRIORS_LIST[[i]]$MME_prior$MME_MU
+         SIZE_input=PRIORS_LIST[[i]]$MME_SIZE_adjust
+       }else{
+         MU_input=PRIORS_LIST[[i]]$MME_prior$MME_MU
+         SIZE_input=PRIORS_LIST[[i]]$MME_prior$MME_SIZE
+       }
+
        Bay_mat_list[[i]]<-Main_mode_Bay(Data=DataList_sr[[i]],BETA_vec=BETAList[[i]],size=SIZE_input,mu=MU_input,S=S,thres=max(Data)*2,Mean_depth=1000000)
 
        rownames(Bay_mat_list[[i]])<-rownames(DataList[[i]])

@@ -16,8 +16,6 @@ AdjustSIZE_fun<-function(BB_SIZE,MME_MU,MME_SIZE){
 }
 
 
-
-
 #' Estimate capture efficiency for cells
 #'
 #' This function aims to select of subset of genes for estimating capture efficiency: BETA for bayNorm.
