@@ -14,8 +14,7 @@
 #' @param  Conditions: vector of condition labels, this should correspond to the columns of the Data. Default is NULL, which assumes that all cells belong to the same group.
 #' @param  BB_SIZE: If TRUE, estimate BB size, and then use it for adjusting MME SIZE. Use the adjusted MME size for bayNorm. Defaut is TRUE.
 #' @param  mode_version: If TRUE, bayNorm return mode version normalized data which is of 2D matrix instead of 3D array. Defaut is FALSE.
-#' @param UMI: If FALSE, bayNorm assumes that the input Data is non-UMI based (full-length), hence user needs to provide scale factors for scaling the full-length dataset so that our Bayesian model still makes sense. Defaut UMI is set to be TRUE.
-#' @param sffl: (scaling factors for full-length data: divide Data by sffl) Only needed when UMI=F. If UMI=F and Conditions is non-null, then flsf should be a vector of length equal to the number of groups. Defaut is set to be NULL.
+#' @param UMI_sffl: (scaling factors for full-length data: divide Data by UMI_sffl) Only needed when the input data is full-length protocol based. If non-null and Conditions is non-null, then flsf should be a vector of length equal to the number of groups. Defaut is set to be NULL.
 #' @param verbose: print out status messages. Default is TRUE.
 #' @return  A list of objects.
 #'
@@ -25,7 +24,7 @@
 #'
 #' @export
 #'
-bayNorm<-function(Data,BETA_vec,S=20,parallel=T,NCores=5,FIX_MU=T,GR=F,Conditions=NULL,BB_SIZE=T,mode_version=F,UMI=T,sffl=NULL,verbose=T){
+bayNorm<-function(Data,BETA_vec,S=20,parallel=T,NCores=5,FIX_MU=T,GR=F,Conditions=NULL,BB_SIZE=T,mode_version=F,UMI_sffl=NULL,verbose=T){
 
 #Some pre-checkings:
   if(class(Data)!='matrix'){stop("Input data should be of class matrix")}
@@ -33,18 +32,17 @@ bayNorm<-function(Data,BETA_vec,S=20,parallel=T,NCores=5,FIX_MU=T,GR=F,Condition
   if(sum(duplicated(colnames(Data)))>0){warning("There are duplicated column names in Data")}
 
 
-  if(UMI==F & is.null(sffl)){stop("Must supply sffl (scaling factors for full-length based data).")}
   if(min(BETA_vec)<=0 | max(BETA_vec)>=1){stop("The range of BETA must be within (0,1).")}
   if(ncol(Data)!=length(BETA_vec)){stop("The number of cells (columns) in Data is not consistent with the number of elements in BETA_vec.")}
 
 
   if(is.null(Conditions)){
 
-    if(UMI){
+    if(is.null(UMI_sffl)){
       #Data_s<-Data
       Data_sr<-Data
     }else{
-      Data_sr<-ceiling(Data/sffl)
+      Data_sr<-round(Data/UMI_sffl)
       }
 
     PRIORS=Prior_fun(Data=Data_s,BETA_vec=BETA_vec,parallel=parallel,NCores=NCores,FIX_MU=FIX_MU,GR=GR,BB_SIZE=BB_SIZE,verbose=verbose)
@@ -84,7 +82,7 @@ bayNorm<-function(Data,BETA_vec,S=20,parallel=T,NCores=5,FIX_MU=T,GR=F,Condition
    Levels <- unique(Conditions)
 
 
-   if(UMI){#UMI
+   if(is.null(UMI_sffl)){#UMI
      DataList<- lapply(seq_along(Levels), function(x){Data[,which(Conditions == Levels[x])]})
      #DataList_s <- lapply(seq_along(Levels), function(x){Data[,which(Conditions == Levels[x])]})
      DataList_sr <- lapply(seq_along(Levels), function(x){Data[,which(Conditions == Levels[x])]})
@@ -93,7 +91,7 @@ bayNorm<-function(Data,BETA_vec,S=20,parallel=T,NCores=5,FIX_MU=T,GR=F,Condition
    }else{#non-UMI
 
      DataList<- lapply(seq_along(Levels), function(x){Data[,which(Conditions == Levels[x])]})
-     DataList_sr <- lapply(seq_along(Levels), function(x){ceiling(Data[,which(Conditions == Levels[x])]/sffl[x])})
+     DataList_sr <- lapply(seq_along(Levels), function(x){round(Data[,which(Conditions == Levels[x])]/UMI_sffl[x])})
      BETAList <- lapply(seq_along(Levels), function(x){BETA_vec[which(Conditions == Levels[x])]})
    }
 
