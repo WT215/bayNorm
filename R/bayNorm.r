@@ -45,7 +45,7 @@ bayNorm<-function(Data,BETA_vec,S=20,parallel=T,NCores=5,FIX_MU=T,GR=F,Condition
       Data_sr<-round(Data/UMI_sffl)
       }
 
-    PRIORS=Prior_fun(Data=Data_s,BETA_vec=BETA_vec,parallel=parallel,NCores=NCores,FIX_MU=FIX_MU,GR=GR,BB_SIZE=BB_SIZE,verbose=verbose)
+    PRIORS=Prior_fun(Data=Data_sr,BETA_vec=BETA_vec,parallel=parallel,NCores=NCores,FIX_MU=FIX_MU,GR=GR,BB_SIZE=BB_SIZE,verbose=verbose)
     if(BB_SIZE){
       MU_input=PRIORS$MME_prior$MME_MU
       SIZE_input=PRIORS$MME_SIZE_adjust
