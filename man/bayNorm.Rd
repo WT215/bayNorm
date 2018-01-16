@@ -6,7 +6,7 @@
 \usage{
 bayNorm(Data, BETA_vec, S = 20, parallel = T, NCores = 5, FIX_MU = T,
   GR = F, Conditions = NULL, BB_SIZE = T, mode_version = F,
-  UMI_sffl = NULL, verbose = T)
+  UMI_sffl = NULL, Prior_type = NULL, verbose = T)
 }
 \arguments{
 \item{Data:}{A matrix of single-cell expression where rows are genes and columns are samples (cells). This object should be of class matrix rather than data.frame.}
@@ -30,6 +30,8 @@ bayNorm(Data, BETA_vec, S = 20, parallel = T, NCores = 5, FIX_MU = T,
 \item{mode_version:}{If TRUE, bayNorm return mode version normalized data which is of 2D matrix instead of 3D array. Defaut is FALSE.}
 
 \item{UMI_sffl:}{(scaling factors for full-length data: divide Data by UMI_sffl) Only needed when the input data is full-length protocol based. If non-null and Conditions is non-null, then flsf should be a vector of length equal to the number of groups. Defaut is set to be NULL.}
+
+\item{Prior_type:}{Default is NULL. If \code{Condition} is NULL, priors are estimated based on all cells. If \code{Condition} is not NULL: if \code{Prior_type} is \code{LL}, priors are estimated within each group respectively. If \code{Prior_type} is \code{GG}, priors are estimated based on cells from all groups. Basically, \code{LL} is suitable for DE detection. \code{GG} is prefered if there is a prior knowledge about the data such that there should not exist biological variation between groups.}
 
 \item{verbose:}{print out status messages. Default is TRUE.}
 }

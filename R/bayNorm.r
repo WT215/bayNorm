@@ -4,19 +4,20 @@
 #'
 #' Input raw data and a vector of capture efficiencies of cells. You can
 #' also need to specify the condition of cells.
-#' @param Data: A matrix of single-cell expression where rows are genes and columns are samples (cells). This object should be of class matrix rather than data.frame.
-#' @param  BETA_vec: A vector of capture efficiencies of cells.
+#' @param Data A matrix of single-cell expression where rows are genes and columns are samples (cells). This object should be of class matrix rather than data.frame.
+#' @param  BETA_vec A vector of capture efficiencies of cells.
 #' @param S: The number of samples you would like to generate from estimated posterior distribution. Default is 20.
-#' @param  parallel: If TRUE, 5 cores will be used for parallelization.
-#' @param  NCores: number of cores to use, default is 5. This will be used to set up a parallel environment using either MulticoreParam (Linux, Mac) or SnowParam (Windows) with NCores using the package BiocParallel.
-#' @param  FIX_MU: If TRUE, then 1D optimization, otherwise 2D optimization (slow).
-#' @param  GR: If TRUE, the gradient function will be used in optimization. However since the gradient function itself is very complicated, it does not help too much in speeding up. Default is FALSE.
-#' @param  Conditions: vector of condition labels, this should correspond to the columns of the Data. Default is NULL, which assumes that all cells belong to the same group.
-#' @param  BB_SIZE: If TRUE, estimate BB size, and then use it for adjusting MME SIZE. Use the adjusted MME size for bayNorm. Defaut is TRUE.
-#' @param  mode_version: If TRUE, bayNorm return mode version normalized data which is of 2D matrix instead of 3D array. Defaut is FALSE.
-#' @param UMI_sffl: (scaling factors for full-length data: divide Data by UMI_sffl) Only needed when the input data is full-length protocol based. If non-null and Conditions is non-null, then flsf should be a vector of length equal to the number of groups. Defaut is set to be NULL.
-#' @param verbose: print out status messages. Default is TRUE.
-#' @return  A list of objects.
+#' @param  parallel If TRUE, 5 cores will be used for parallelization.
+#' @param  NCores number of cores to use, default is 5. This will be used to set up a parallel environment using either MulticoreParam (Linux, Mac) or SnowParam (Windows) with NCores using the package BiocParallel.
+#' @param  FIX_MU If TRUE, then 1D optimization, otherwise 2D optimization (slow).
+#' @param  GR If TRUE, the gradient function will be used in optimization. However since the gradient function itself is very complicated, it does not help too much in speeding up. Default is FALSE.
+#' @param  Conditions vector of condition labels, this should correspond to the columns of the Data. Default is NULL, which assumes that all cells belong to the same group.
+#' @param  BB_SIZE If TRUE, estimate BB size, and then use it for adjusting MME SIZE. Use the adjusted MME size for bayNorm. Defaut is TRUE.
+#' @param  mode_version If TRUE, bayNorm return mode version normalized data which is of 2D matrix instead of 3D array. Defaut is FALSE.
+#' @param UMI_sffl (scaling factors for full-length data: divide Data by UMI_sffl) Only needed when the input data is full-length protocol based. If non-null and Conditions is non-null, then flsf should be a vector of length equal to the number of groups. Defaut is set to be NULL.
+#' @param  Prior_type Default is NULL. If \code{Condition} is NULL, priors are estimated based on all cells. If \code{Condition} is not NULL: if \code{Prior_type} is \code{LL}, priors are estimated within each group respectively. If \code{Prior_type} is \code{GG}, priors are estimated based on cells from all groups. Basically, \code{LL} is suitable for DE detection. \code{GG} is prefered if there is a prior knowledge about the data such that there should not exist biological variation between groups.
+#' @param verbose print out status messages. Default is TRUE.
+#' @return  List containing 3D arrays of normalized expression (if \code{mode_version}=FALSE) or 2D matrix of normalized expression (if \code{mode_version}=TRUE) and estimated parameters.
 #'
 #' @import parallel
 #' @import foreach
@@ -24,7 +25,7 @@
 #'
 #' @export
 #'
-bayNorm<-function(Data,BETA_vec,S=20,parallel=T,NCores=5,FIX_MU=T,GR=F,Conditions=NULL,BB_SIZE=T,mode_version=F,UMI_sffl=NULL,verbose=T){
+bayNorm<-function(Data,BETA_vec,S=20,parallel=T,NCores=5,FIX_MU=T,GR=F,Conditions=NULL,BB_SIZE=T,mode_version=F,UMI_sffl=NULL,Prior_type=NULL,verbose=T){
 
 #Some pre-checkings:
   if(class(Data)!='matrix'){stop("Input data should be of class matrix")}
@@ -78,13 +79,15 @@ bayNorm<-function(Data,BETA_vec,S=20,parallel=T,NCores=5,FIX_MU=T,GR=F,Condition
 
    if (ncol(Data) != length(Conditions)) {stop("Number of columns in
       expression matrix must match length of conditions vector!")}
+   if(is.null(Prior_type)){warning("Prior_type needs to be specified when Conditions are specified, now Prior_type is set to be LL")
+     Prior_type='LL'
+     }
    if(is.null(names(Conditions))) {names(Conditions) <- colnames(Data)}
    Levels <- unique(Conditions)
 
 
    if(is.null(UMI_sffl)){#UMI
      DataList<- lapply(seq_along(Levels), function(x){Data[,which(Conditions == Levels[x])]})
-     #DataList_s <- lapply(seq_along(Levels), function(x){Data[,which(Conditions == Levels[x])]})
      DataList_sr <- lapply(seq_along(Levels), function(x){Data[,which(Conditions == Levels[x])]})
 
      BETAList <- lapply(seq_along(Levels), function(x){BETA_vec[which(Conditions == Levels[x])]})
@@ -95,11 +98,27 @@ bayNorm<-function(Data,BETA_vec,S=20,parallel=T,NCores=5,FIX_MU=T,GR=F,Condition
      BETAList <- lapply(seq_along(Levels), function(x){BETA_vec[which(Conditions == Levels[x])]})
    }
 
-   PRIORS_LIST<-list()
-   for(i in 1:length(Levels)){
-     PRIORS_LIST[[i]]<-Prior_fun(Data=DataList_sr[[i]],BETA_vec=BETAList[[i]],parallel=parallel,NCores=NCores,FIX_MU=FIX_MU,GR=GR,BB_SIZE=BB_SIZE,verbose=verbose)
+
+   if(Prior_type=='LL'){
+     PRIORS_LIST<-list()
+     for(i in 1:length(Levels)){
+       PRIORS_LIST[[i]]<-Prior_fun(Data=DataList_sr[[i]],BETA_vec=BETAList[[i]],parallel=parallel,NCores=NCores,FIX_MU=FIX_MU,GR=GR,BB_SIZE=BB_SIZE,verbose=verbose)
+
+     }
+   }else if (Prior_type=='GG'){
+     PROPRS_TEMP<-Prior_fun(Data=do.call(cbind,DataList_sr),BETA_vec=do.call(c,BETAList),parallel=parallel,NCores=NCores,FIX_MU=FIX_MU,GR=GR,BB_SIZE=BB_SIZE,verbose=verbose)
+
+     PRIORS_LIST<-list()
+     for(i in 1:length(Levels)){
+       PRIORS_LIST[[i]]<-PROPRS_TEMP
+
+     }
 
    }
+
+
+
+
    names(PRIORS_LIST)<-paste('Group',Levels)
 
 

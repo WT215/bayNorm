@@ -1,9 +1,9 @@
 #' Adjust MME size
 #'
-#' @param BB_SIZE: size estimated from BB_Fun or BB_Fun_1D
-#' @param  MME_MU: mu estimated from EstPrior.
-#' @param  MME_SIZE: size estimated from EstPrior.
-#' @return MME_SIZE_adjust: Adjusted MME_SIZE based on BB_size
+#' @param BB_SIZE size estimated from BB_Fun or BB_Fun_1D
+#' @param  MME_MU mu estimated from EstPrior.
+#' @param  MME_SIZE size estimated from EstPrior.
+#' @return MME_SIZE_adjust Adjusted MME_SIZE based on BB_size
 #'
 #'
 #' @export
@@ -20,13 +20,13 @@ AdjustSIZE_fun<-function(BB_SIZE,MME_MU,MME_SIZE){
 #'
 #' This function aims to select of subset of genes for estimating capture efficiency: BETA for bayNorm.
 #'
-#' @param Data: A matrix of single-cell expression where rows are
+#' @param Data A matrix of single-cell expression where rows are
 #' genes and columns are samples (cells). This object should be of
 #' class matrix rather than data.frame.
-#' @param MeanBETA: Mean capture efficiency of the scRNAseq data. This can be estimated via spike-ins.
+#' @param MeanBETA Mean capture efficiency of the scRNAseq data. This can be estimated via spike-ins.
 #'
-#' @return BETA: a vector of capture efficiencies, which is of length number of cells.
-#' @return Selected_genes: a subset of genes that are used for estimating BETA.
+#' @return BETA a vector of capture efficiencies, which is of length number of cells.
+#' @return Selected_genes a subset of genes that are used for estimating BETA.
 #'
 #'
 #' @export
@@ -52,9 +52,12 @@ BetaFun<-function(Data,MeanBETA){
 #' Estimate size and mu for NB distribution for each gene using MME method
 #'
 #' Input raw data and return estimated size and mu for each gene.
-#' @param Data: A matrix of single-cell expression where rows are genes and columns are samples (cells). This object should be of class matrix rather than data.frame.
-#' @param verbose: print out status messages. Default is TRUE.
-#' @return  Estimated size and mu for each gene.
+#' @param Data A matrix of single-cell expression where rows are genes and columns are samples (cells). This object should be of class matrix rather than data.frame.
+#' @param verbose print out status messages. Default is TRUE.
+#'
+#' @details mu and size are two parameters that need to be specified in bayNorm. They are parameters of negative binomial distribution. The variance is \eqn{mu + mu^2/size} in this parametrization.
+#'
+#' @return  List containing estimated mu and size for each gene.
 #'
 #' @import  fitdistrplus
 #'
@@ -74,16 +77,16 @@ EstPrior<-function(Data,verbose=T){
 
   return(list(MU=M_ave_ori,SIZE=size_est))
 }
-#' A wrapper function of EstPrior and AdjustSIZE_fun
+#' A wrapper function of \code{EstPrior} and \code{AdjustSIZE_fun}
 #'
 #' Input raw data and a vector of capture efficiencies of cells.
-#' @param Data: A matrix of single-cell expression where rows are genes and columns are samples (cells). This object should be of class matrix rather than data.frame.
-#' @param  BETA_vec: A vector of capture efficiencies of cells.
-#' @param  parallel: If TRUE, 5 cores will be used for parallelization. Defaut is TRUE.
-#' @param  NCores: number of cores to use, default is 5. This will be used to set up a parallel environment using either MulticoreParam (Linux, Mac) or SnowParam (Windows) with NCores using the package BiocParallel.
-#' @param  FIX_MU: If TRUE, then 1D optimization, otherwise 2D optimization (slow). Defaut is TRUE.
-#' @param  GR: If TRUE, the gradient function will be used in optimization. However since the gradient function itself is very complicated, it does not help too much in speeding up. Default is FALSE.
-#' @param  BB_SIZE: If TRUE, estimate BB size, and then use it for adjusting MME SIZE. Use the adjusted MME size for bayNorm. Defaut is TRUE.
+#' @param Data A matrix of single-cell expression where rows are genes and columns are samples (cells). This object should be of class \code{matrix} rather than \code{data.frame}.
+#' @param  BETA_vec A vector of capture efficiencies of cells.
+#' @param  parallel If TRUE, 5 cores will be used for parallelization. Default is TRUE.
+#' @param  NCores number of cores to use, default is 5. This will be used to set up a parallel environment using either MulticoreParam (Linux, Mac) or SnowParam (Windows) with \code{NCores} using the package \code{BiocParallel}.
+#' @param  FIX_MU If TRUE, then 1D optimization, otherwise 2D optimization (slow). Default is TRUE.
+#' @param  GR If TRUE, the gradient function will be used in optimization. However since the gradient function itself is very complicated, it does not help too much in speeding up. Default is FALSE.
+#' @param  BB_SIZE If TRUE, estimate BB size, and then use it for adjusting MME SIZE. Use the adjusted MME size for bayNorm. Defaut is TRUE.
 #' @param verbose: Print out status messages. Default is TRUE.
 #'
 #' @details By defaut, this function will estimate mu and size for each gene using MME method. If \code{BB_size} is enable, spectral projected gradient method from BB package will be implemented to estimate "BB size" by maximizing marginal likelihood function. MME estimated size will be adjusted according to BB size. BB size itself will not be used in bayNorm this is because that in our simulation we found that MME estimated mu and size have more accurate relationship, but MME estimated size deviates from the true value. BB size is overall more close to the true size but it does not possess a reasonable relationship with either MME estimated mu or BB estimated mu.
@@ -93,7 +96,7 @@ EstPrior<-function(Data,verbose=T){
 #' Prior_fun(Data,BETA_vec,parallel=T,NCores=5,FIX_MU=T,GR=F,BB_SIZE=T,verbose=T)
 #' }
 #'
-#' @return  A list of objects.
+#' @return  List of estimated parameters: mean expression of genes and size of each gene.
 #'
 #' @import parallel
 #' @import foreach
@@ -148,20 +151,20 @@ if(BB_SIZE){
 
 #' Estimating size for each gene by either 1D or 2D optimization of marginal distribution
 #'
-#' @param Data: A matrix of single-cell expression where rows are genes
+#' @param Data A matrix of single-cell expression where rows are genes
 #' and columns are samples (cells). This object should be of class
 #' matrix rather than data.frame.
-#' @param  BETA_vec: A vector of capture efficiencies of cells.
-#' @param  INITIAL_MU_vec: Mean expression of genes, can come from EstPrior.
-#' @param  INITIAL_SIZE_vec: size of genes (size is a parameter in NB distribution), can come from EstPrior.
-#' @param  MU_lower: The lower bound for the mu.(Only need it when you want to do 2D optimization). Defaut is 0.01.
-#' @param  MU_upper: The upper bound for the mu.(Only need it when you want to do 2D optimization). Defaut is 500.
-#' @param  SIZE_lower: The lower bound for the size. Defaut is 0.01.
-#' @param  SIZE_upper: The upper bound for the size. Defaut is 30.
-#' @param  parallel: If TRUE, 5 cores will be used for parallelization. Default is TRUE.
-#' @param  NCores: number of cores to use, default is 5. This will be used to set up a parallel environment using either MulticoreParam (Linux, Mac) or SnowParam (Windows) with NCores using the package BiocParallel.
-#' @param  FIX_MU: If TRUE, then 1D optimization, otherwise 2D optimization (slow).
-#' @param  GR: If TRUE, the gradient function will be used in optimization. However since the gradient function itself is very complicated, it does not help too much in speeding up. Default is FALSE.
+#' @param  BETA_vec A vector of capture efficiencies of cells.
+#' @param  INITIAL_MU_vec Mean expression of genes, can come from EstPrior.
+#' @param  INITIAL_SIZE_vec size of genes (size is a parameter in NB distribution), can come from EstPrior.
+#' @param  MU_lower The lower bound for the mu.(Only need it when you want to do 2D optimization). Defaut is 0.01.
+#' @param  MU_upper The upper bound for the mu.(Only need it when you want to do 2D optimization). Defaut is 500.
+#' @param  SIZE_lower The lower bound for the size. Defaut is 0.01.
+#' @param  SIZE_upper The upper bound for the size. Defaut is 30.
+#' @param  parallel If TRUE, 5 cores will be used for parallelization. Default is TRUE.
+#' @param  NCores number of cores to use, default is 5. This will be used to set up a parallel environment using either MulticoreParam (Linux, Mac) or SnowParam (Windows) with NCores using the package BiocParallel.
+#' @param  FIX_MU If TRUE, then 1D optimization, otherwise 2D optimization (slow).
+#' @param  GR If TRUE, the gradient function will be used in optimization. However since the gradient function itself is very complicated, it does not help too much in speeding up. Default is FALSE.
 #' @return  A vector of estimated size.
 #'
 #' @import parallel
