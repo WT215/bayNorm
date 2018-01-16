@@ -4,8 +4,7 @@ Title: Single-cell RNA sequencing data normalization
 Version: 0.1.0
 Author: WENHAO TANG
 Maintainer: WENHAO TANG <wt215@ic.ac.uk>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Description: bayNorm is used for normalizing single-cell RNA-seq data.
 License: MIT
 Encoding: UTF-8
 LazyData: true
@@ -24,6 +23,6 @@ Suggests: knitr,
     rmarkdown,
     BiocStyle
 VignetteBuilder: knitr
-
-
+URL: https://github.com/WT215/bayNorm
+BugReports: https://github.com/WT215/bayNorm/issues
 

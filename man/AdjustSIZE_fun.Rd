@@ -7,14 +7,14 @@
 AdjustSIZE_fun(BB_SIZE, MME_MU, MME_SIZE)
 }
 \arguments{
-\item{BB_SIZE:}{size estimated from BB_Fun or BB_Fun_1D}
+\item{BB_SIZE}{size estimated from BB_Fun or BB_Fun_1D}
 
-\item{MME_MU:}{mu estimated from EstPrior.}
+\item{MME_MU}{mu estimated from EstPrior.}
 
-\item{MME_SIZE:}{size estimated from EstPrior.}
+\item{MME_SIZE}{size estimated from EstPrior.}
 }
 \value{
-MME_SIZE_adjust: Adjusted MME_SIZE based on BB_size
+MME_SIZE_adjust Adjusted MME_SIZE based on BB_size
 }
 \description{
 Adjust MME size

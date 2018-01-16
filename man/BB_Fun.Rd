@@ -9,31 +9,31 @@ BB_Fun(Data, BETA_vec, INITIAL_MU_vec, INITIAL_SIZE_vec, MU_lower = 0.01,
   NCores = 5, FIX_MU = T, GR = F)
 }
 \arguments{
-\item{Data:}{A matrix of single-cell expression where rows are genes
+\item{Data}{A matrix of single-cell expression where rows are genes
 and columns are samples (cells). This object should be of class
 matrix rather than data.frame.}
 
-\item{BETA_vec:}{A vector of capture efficiencies of cells.}
+\item{BETA_vec}{A vector of capture efficiencies of cells.}
 
-\item{INITIAL_MU_vec:}{Mean expression of genes, can come from EstPrior.}
+\item{INITIAL_MU_vec}{Mean expression of genes, can come from EstPrior.}
 
-\item{INITIAL_SIZE_vec:}{size of genes (size is a parameter in NB distribution), can come from EstPrior.}
+\item{INITIAL_SIZE_vec}{size of genes (size is a parameter in NB distribution), can come from EstPrior.}
 
-\item{MU_lower:}{The lower bound for the mu.(Only need it when you want to do 2D optimization). Defaut is 0.01.}
+\item{MU_lower}{The lower bound for the mu.(Only need it when you want to do 2D optimization). Defaut is 0.01.}
 
-\item{MU_upper:}{The upper bound for the mu.(Only need it when you want to do 2D optimization). Defaut is 500.}
+\item{MU_upper}{The upper bound for the mu.(Only need it when you want to do 2D optimization). Defaut is 500.}
 
-\item{SIZE_lower:}{The lower bound for the size. Defaut is 0.01.}
+\item{SIZE_lower}{The lower bound for the size. Defaut is 0.01.}
 
-\item{SIZE_upper:}{The upper bound for the size. Defaut is 30.}
+\item{SIZE_upper}{The upper bound for the size. Defaut is 30.}
 
-\item{parallel:}{If TRUE, 5 cores will be used for parallelization. Default is TRUE.}
+\item{parallel}{If TRUE, 5 cores will be used for parallelization. Default is TRUE.}
 
-\item{NCores:}{number of cores to use, default is 5. This will be used to set up a parallel environment using either MulticoreParam (Linux, Mac) or SnowParam (Windows) with NCores using the package BiocParallel.}
+\item{NCores}{number of cores to use, default is 5. This will be used to set up a parallel environment using either MulticoreParam (Linux, Mac) or SnowParam (Windows) with NCores using the package BiocParallel.}
 
-\item{FIX_MU:}{If TRUE, then 1D optimization, otherwise 2D optimization (slow).}
+\item{FIX_MU}{If TRUE, then 1D optimization, otherwise 2D optimization (slow).}
 
-\item{GR:}{If TRUE, the gradient function will be used in optimization. However since the gradient function itself is very complicated, it does not help too much in speeding up. Default is FALSE.}
+\item{GR}{If TRUE, the gradient function will be used in optimization. However since the gradient function itself is very complicated, it does not help too much in speeding up. Default is FALSE.}
 }
 \value{
 A vector of estimated size.

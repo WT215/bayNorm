@@ -7,13 +7,16 @@
 EstPrior(Data, verbose = T)
 }
 \arguments{
-\item{Data:}{A matrix of single-cell expression where rows are genes and columns are samples (cells). This object should be of class matrix rather than data.frame.}
+\item{Data}{A matrix of single-cell expression where rows are genes and columns are samples (cells). This object should be of class matrix rather than data.frame.}
 
-\item{verbose:}{print out status messages. Default is TRUE.}
+\item{verbose}{print out status messages. Default is TRUE.}
 }
 \value{
-Estimated size and mu for each gene.
+List containing estimated mu and size for each gene.
 }
 \description{
 Input raw data and return estimated size and mu for each gene.
+}
+\details{
+mu and size are two parameters that need to be specified in bayNorm. They are parameters of negative binomial distribution. The variance is \eqn{mu + mu^2/size} in this parametrization.
 }

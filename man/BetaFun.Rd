@@ -7,16 +7,16 @@
 BetaFun(Data, MeanBETA)
 }
 \arguments{
-\item{Data:}{A matrix of single-cell expression where rows are
+\item{Data}{A matrix of single-cell expression where rows are
 genes and columns are samples (cells). This object should be of
 class matrix rather than data.frame.}
 
-\item{MeanBETA:}{Mean capture efficiency of the scRNAseq data. This can be estimated via spike-ins.}
+\item{MeanBETA}{Mean capture efficiency of the scRNAseq data. This can be estimated via spike-ins.}
 }
 \value{
-BETA: a vector of capture efficiencies, which is of length number of cells.
+BETA a vector of capture efficiencies, which is of length number of cells.
 
-Selected_genes: a subset of genes that are used for estimating BETA.
+Selected_genes a subset of genes that are used for estimating BETA.
 }
 \description{
 This function aims to select of subset of genes for estimating capture efficiency: BETA for bayNorm.
