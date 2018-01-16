@@ -85,10 +85,10 @@ EstPrior<-function(Data,verbose=T){
 #' @param  NCores number of cores to use, default is 5. This will be used to set up a parallel environment using either MulticoreParam (Linux, Mac) or SnowParam (Windows) with \code{NCores} using the package \code{BiocParallel}.
 #' @param  FIX_MU If TRUE, then 1D optimization, otherwise 2D optimization (slow). Default is TRUE.
 #' @param  GR If TRUE, the gradient function will be used in optimization. However since the gradient function itself is very complicated, it does not help too much in speeding up. Default is FALSE.
-#' @param  BB_SIZE If TRUE, estimate BB size, and then use it for adjusting MME SIZE. Use the adjusted MME size for bayNorm. Defaut is TRUE.
+#' @param  BB_SIZE If TRUE, estimate BB size, and then use it for adjusting MME SIZE. Use the adjusted MME size for bayNorm. Default is TRUE.
 #' @param verbose: Print out status messages. Default is TRUE.
 #'
-#' @details By defaut, this function will estimate mu and size for each gene using MME method. If \code{BB_size} is enable, spectral projected gradient method from BB package will be implemented to estimate "BB size" by maximizing marginal likelihood function. MME estimated size will be adjusted according to BB size. BB size itself will not be used in bayNorm this is because that in our simulation we found that MME estimated mu and size have more accurate relationship, but MME estimated size deviates from the true value. BB size is overall more close to the true size but it does not possess a reasonable relationship with either MME estimated mu or BB estimated mu.
+#' @details By Default, this function will estimate mu and size for each gene using MME method. If \code{BB_size} is enable, spectral projected gradient method from BB package will be implemented to estimate "BB size" by maximizing marginal likelihood function. MME estimated size will be adjusted according to BB size. BB size itself will not be used in bayNorm this is because that in our simulation we found that MME estimated mu and size have more accurate relationship, but MME estimated size deviates from the true value. BB size is overall more close to the true size but it does not possess a reasonable relationship with either MME estimated mu or BB estimated mu.
 #'
 #' @examples
 #' \dontrun{
@@ -156,10 +156,10 @@ if(BB_SIZE){
 #' @param  BETA_vec A vector of capture efficiencies of cells.
 #' @param  INITIAL_MU_vec Mean expression of genes, can come from EstPrior.
 #' @param  INITIAL_SIZE_vec size of genes (size is a parameter in NB distribution), can come from EstPrior.
-#' @param  MU_lower The lower bound for the mu.(Only need it when you want to do 2D optimization). Defaut is 0.01.
-#' @param  MU_upper The upper bound for the mu.(Only need it when you want to do 2D optimization). Defaut is 500.
-#' @param  SIZE_lower The lower bound for the size. Defaut is 0.01.
-#' @param  SIZE_upper The upper bound for the size. Defaut is 30.
+#' @param  MU_lower The lower bound for the mu.(Only need it when you want to do 2D optimization). Default is 0.01.
+#' @param  MU_upper The upper bound for the mu.(Only need it when you want to do 2D optimization). Default is 500.
+#' @param  SIZE_lower The lower bound for the size. Default is 0.01.
+#' @param  SIZE_upper The upper bound for the size. Default is 30.
 #' @param  parallel If TRUE, 5 cores will be used for parallelization. Default is TRUE.
 #' @param  NCores number of cores to use, default is 5. This will be used to set up a parallel environment using either MulticoreParam (Linux, Mac) or SnowParam (Windows) with NCores using the package BiocParallel.
 #' @param  FIX_MU If TRUE, then 1D optimization, otherwise 2D optimization (slow).

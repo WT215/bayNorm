@@ -4,14 +4,22 @@
 \alias{bayNorm}
 \title{A wrapper function of prior estimation and bayNorm function}
 \usage{
-bayNorm(Data, BETA_vec, S = 20, parallel = T, NCores = 5, FIX_MU = T,
-  GR = F, Conditions = NULL, BB_SIZE = T, mode_version = F,
-  UMI_sffl = NULL, Prior_type = NULL, verbose = T)
+bayNorm(Data, BETA_vec, Conditions = NULL, UMI_sffl = NULL,
+  Prior_type = NULL, mode_version = F, S = 20, parallel = T,
+  NCores = 5, FIX_MU = T, GR = F, BB_SIZE = T, verbose = T)
 }
 \arguments{
 \item{Data}{A matrix of single-cell expression where rows are genes and columns are samples (cells). This object should be of class matrix rather than data.frame.}
 
 \item{BETA_vec}{A vector of capture efficiencies of cells.}
+
+\item{Conditions}{vector of condition labels, this should correspond to the columns of the Data. Default is NULL, which assumes that all cells belong to the same group.}
+
+\item{UMI_sffl}{(scaling factors for non UMI based data: divide Data by UMI_sffl) Only needed when the input data is non UMI based. If non-null and Conditions is non-null, then UMI_sffl should be a vector of length equal to the number of groups. Default is set to be NULL.}
+
+\item{Prior_type}{Default is NULL. If \code{Conditions} is NULL, priors are estimated based on all cells. If \code{Conditions} is not NULL: if \code{Prior_type} is \code{LL}, priors are estimated within each group respectively. If \code{Prior_type} is \code{GG}, priors are estimated based on cells from all groups. Basically, \code{LL} is suitable for DE detection. \code{GG} is prefered if there is a prior knowledge about the data such that there should not exist biological variation between groups.}
+
+\item{mode_version}{If TRUE, bayNorm return mode version normalized data which is of 2D matrix instead of 3D array. Default is FALSE.}
 
 \item{S}{The number of samples you would like to generate from estimated posterior distribution (The third dimension of 3D array). Default is 20. S needs to be specified if \code{mode_version}=FALSE.}
 
@@ -19,19 +27,11 @@ bayNorm(Data, BETA_vec, S = 20, parallel = T, NCores = 5, FIX_MU = T,
 
 \item{NCores}{number of cores to use, default is 5. This will be used to set up a parallel environment using either MulticoreParam (Linux, Mac) or SnowParam (Windows) with NCores using the package BiocParallel.}
 
-\item{FIX_MU}{If TRUE, then 1D optimization, otherwise 2D optimization (slow).}
+\item{FIX_MU}{Whether fix mu when estimating parameters by maximizing marginal distribution. If TRUE, then 1D optimization, otherwise 2D optimization (slow).}
 
 \item{GR}{If TRUE, the gradient function will be used in optimization. However since the gradient function itself is very complicated, it does not help too much in speeding up. Default is FALSE.}
 
-\item{Conditions}{vector of condition labels, this should correspond to the columns of the Data. Default is NULL, which assumes that all cells belong to the same group.}
-
-\item{BB_SIZE}{If TRUE, estimate BB size, and then use it for adjusting MME SIZE. Use the adjusted MME size for bayNorm. Defaut is TRUE.}
-
-\item{mode_version}{If TRUE, bayNorm return mode version normalized data which is of 2D matrix instead of 3D array. Defaut is FALSE.}
-
-\item{UMI_sffl}{(scaling factors for full-length data: divide Data by UMI_sffl) Only needed when the input data is full-length protocol based. If non-null and Conditions is non-null, then flsf should be a vector of length equal to the number of groups. Defaut is set to be NULL.}
-
-\item{Prior_type}{Default is NULL. If \code{Condition} is NULL, priors are estimated based on all cells. If \code{Condition} is not NULL: if \code{Prior_type} is \code{LL}, priors are estimated within each group respectively. If \code{Prior_type} is \code{GG}, priors are estimated based on cells from all groups. Basically, \code{LL} is suitable for DE detection. \code{GG} is prefered if there is a prior knowledge about the data such that there should not exist biological variation between groups.}
+\item{BB_SIZE}{If TRUE, estimate BB size, and then use it for adjusting MME SIZE. Use the adjusted MME size for bayNorm. Default is TRUE.}
 
 \item{verbose}{print out status messages. Default is TRUE.}
 }
@@ -41,4 +41,7 @@ List containing 3D arrays of normalized expression (if \code{mode_version}=FALSE
 \description{
 Input raw data and a vector of capture efficiencies of cells. You can
 also need to specify the condition of cells.
+}
+\details{
+A wrapper function of prior estimation and bayNorm function.
 }

@@ -19,13 +19,13 @@ matrix rather than data.frame.}
 
 \item{INITIAL_SIZE_vec}{size of genes (size is a parameter in NB distribution), can come from EstPrior.}
 
-\item{MU_lower}{The lower bound for the mu.(Only need it when you want to do 2D optimization). Defaut is 0.01.}
+\item{MU_lower}{The lower bound for the mu.(Only need it when you want to do 2D optimization). Default is 0.01.}
 
-\item{MU_upper}{The upper bound for the mu.(Only need it when you want to do 2D optimization). Defaut is 500.}
+\item{MU_upper}{The upper bound for the mu.(Only need it when you want to do 2D optimization). Default is 500.}
 
-\item{SIZE_lower}{The lower bound for the size. Defaut is 0.01.}
+\item{SIZE_lower}{The lower bound for the size. Default is 0.01.}
 
-\item{SIZE_upper}{The upper bound for the size. Defaut is 30.}
+\item{SIZE_upper}{The upper bound for the size. Default is 30.}
 
 \item{parallel}{If TRUE, 5 cores will be used for parallelization. Default is TRUE.}
 
