@@ -13,7 +13,7 @@ bayNorm(Data, BETA_vec, S = 20, parallel = T, NCores = 5, FIX_MU = T,
 
 \item{BETA_vec}{A vector of capture efficiencies of cells.}
 
-\item{S}{The number of samples you would like to generate from estimated posterior distribution. Default is 20.}
+\item{S}{The number of samples you would like to generate from estimated posterior distribution (The third dimension of 3D array). Default is 20. S needs to be specified if \code{mode_version}=FALSE.}
 
 \item{parallel}{If TRUE, 5 cores will be used for parallelization.}
 
