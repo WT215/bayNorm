@@ -3,7 +3,7 @@
 #' @param BB_SIZE size estimated from BB_Fun or BB_Fun_1D
 #' @param  MME_MU mu estimated from EstPrior.
 #' @param  MME_SIZE size estimated from EstPrior.
-#' @return MME_SIZE_adjust Adjusted MME_SIZE based on BB_size
+#' @return MME_SIZE_adjust A vector of estimated size. Adjusted MME_SIZE based on BB_size
 #'
 #'
 #' @export
@@ -23,10 +23,9 @@ AdjustSIZE_fun<-function(BB_SIZE,MME_MU,MME_SIZE){
 #' @param Data A matrix of single-cell expression where rows are
 #' genes and columns are samples (cells). This object should be of
 #' class matrix rather than data.frame.
-#' @param MeanBETA Mean capture efficiency of the scRNAseq data. This can be estimated via spike-ins.
+#' @param MeanBETA Mean capture efficiency of the scRNAseq data. This can be estimated via spike-ins or other methods.
 #'
-#' @return BETA a vector of capture efficiencies, which is of length number of cells.
-#' @return Selected_genes a subset of genes that are used for estimating BETA.
+#' @return List containing: BETA a vector of capture efficiencies, which is of length number of cells; Selected_genes a subset of genes that are used for estimating BETA.
 #'
 #'
 #' @export
@@ -165,7 +164,7 @@ if(BB_SIZE){
 #' @param  NCores number of cores to use, default is 5. This will be used to set up a parallel environment using either MulticoreParam (Linux, Mac) or SnowParam (Windows) with NCores using the package BiocParallel.
 #' @param  FIX_MU If TRUE, then 1D optimization, otherwise 2D optimization (slow).
 #' @param  GR If TRUE, the gradient function will be used in optimization. However since the gradient function itself is very complicated, it does not help too much in speeding up. Default is FALSE.
-#' @return  A vector of estimated size.
+#' @return  A vector of estimated size based on maximizing marginal distribution.
 #'
 #' @import parallel
 #' @import foreach

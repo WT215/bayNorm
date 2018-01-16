@@ -13,6 +13,8 @@ bayNorm(Data, BETA_vec, S = 20, parallel = T, NCores = 5, FIX_MU = T,
 
 \item{BETA_vec}{A vector of capture efficiencies of cells.}
 
+\item{S}{The number of samples you would like to generate from estimated posterior distribution. Default is 20.}
+
 \item{parallel}{If TRUE, 5 cores will be used for parallelization.}
 
 \item{NCores}{number of cores to use, default is 5. This will be used to set up a parallel environment using either MulticoreParam (Linux, Mac) or SnowParam (Windows) with NCores using the package BiocParallel.}
@@ -32,8 +34,6 @@ bayNorm(Data, BETA_vec, S = 20, parallel = T, NCores = 5, FIX_MU = T,
 \item{Prior_type}{Default is NULL. If \code{Condition} is NULL, priors are estimated based on all cells. If \code{Condition} is not NULL: if \code{Prior_type} is \code{LL}, priors are estimated within each group respectively. If \code{Prior_type} is \code{GG}, priors are estimated based on cells from all groups. Basically, \code{LL} is suitable for DE detection. \code{GG} is prefered if there is a prior knowledge about the data such that there should not exist biological variation between groups.}
 
 \item{verbose}{print out status messages. Default is TRUE.}
-
-\item{S:}{The number of samples you would like to generate from estimated posterior distribution. Default is 20.}
 }
 \value{
 List containing 3D arrays of normalized expression (if \code{mode_version}=FALSE) or 2D matrix of normalized expression (if \code{mode_version}=TRUE) and estimated parameters.

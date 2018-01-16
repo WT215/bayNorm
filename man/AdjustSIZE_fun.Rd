@@ -14,7 +14,7 @@ AdjustSIZE_fun(BB_SIZE, MME_MU, MME_SIZE)
 \item{MME_SIZE}{size estimated from EstPrior.}
 }
 \value{
-MME_SIZE_adjust Adjusted MME_SIZE based on BB_size
+MME_SIZE_adjust A vector of estimated size. Adjusted MME_SIZE based on BB_size
 }
 \description{
 Adjust MME size

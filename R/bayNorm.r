@@ -6,7 +6,7 @@
 #' also need to specify the condition of cells.
 #' @param Data A matrix of single-cell expression where rows are genes and columns are samples (cells). This object should be of class matrix rather than data.frame.
 #' @param  BETA_vec A vector of capture efficiencies of cells.
-#' @param S: The number of samples you would like to generate from estimated posterior distribution. Default is 20.
+#' @param S The number of samples you would like to generate from estimated posterior distribution. Default is 20.
 #' @param  parallel If TRUE, 5 cores will be used for parallelization.
 #' @param  NCores number of cores to use, default is 5. This will be used to set up a parallel environment using either MulticoreParam (Linux, Mac) or SnowParam (Windows) with NCores using the package BiocParallel.
 #' @param  FIX_MU If TRUE, then 1D optimization, otherwise 2D optimization (slow).

@@ -36,7 +36,7 @@ matrix rather than data.frame.}
 \item{GR}{If TRUE, the gradient function will be used in optimization. However since the gradient function itself is very complicated, it does not help too much in speeding up. Default is FALSE.}
 }
 \value{
-A vector of estimated size.
+A vector of estimated size based on maximizing marginal distribution.
 }
 \description{
 Estimating size for each gene by either 1D or 2D optimization of marginal distribution
