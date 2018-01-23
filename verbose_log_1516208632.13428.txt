@@ -1,0 +1,267 @@
+starting worker pid=2568 on localhost:11387 at 17:03:52.299
+starting worker pid=5404 on localhost:11387 at 17:03:52.517
+starting worker pid=5280 on localhost:11387 at 17:03:52.800
+starting worker pid=5324 on localhost:11387 at 17:03:52.972
+starting worker pid=4828 on localhost:11387 at 17:03:53.141
+Loading required package: descend
+Loading required package: descend
+Loading required package: descend
+Loading required package: descend
+Loading required package: descend
+loaded descend and set parent environment
+loaded descend and set parent environment
+loaded descend and set parent environment
+loaded descend and set parent environment
+loaded descend and set parent environment
+[1] "Start computing for one gene! 2018-01-17 17:03:55"
+[1][1] "Start computing for one gene! 2018-01-17 17:03:55"
+
+[1] "Start computing for one gene! 2018-01-17 17:03:55"
+[1] "Start computing for one gene! 2018-01-17 17:03:55"
+[1] "Start computing for one gene! 2018-01-17 17:03:55"
+[1] "Start computing for one gene! 2018-01-17 17:03:55"
+[1] "Start computing for one gene! 2018-01-17 17:03:55"
+[1] "Start computing for one gene! 2018-01-17 17:03:55"
+[1] "Start computing for one gene! 2018-01-17 17:03:55"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+Error in deconvSingle(as.vector(v), scaling.consts = scaling.consts, Z = Z,  : 
+  Too sparse data!
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+Error in deconvSingle(as.vector(v), scaling.consts = scaling.consts, Z = Z,  : 
+  Too sparse data!
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:56"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+Error in deconvSingle(as.vector(v), scaling.consts = scaling.consts, Z = Z,  : 
+  Too sparse data!
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+Error in deconvSingle(as.vector(v), scaling.consts = scaling.consts, Z = Z,  : 
+  Too sparse data!
+此外: Warning message:
+In stats::nlm(f = loglik, p = aStart, gradtol = 1e-05, ...) :
+  NA/Inf被换成最大的正值
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+Error in deconvSingle(as.vector(v), scaling.consts = scaling.consts, Z = Z,  : 
+  Too sparse data!
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+Error in deconvSingle(as.vector(v), scaling.consts = scaling.consts, Z = Z,  : 
+  Too sparse data!
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+Error in deconvSingle(as.vector(v), scaling.consts = scaling.consts, Z = Z,  : 
+  Too sparse data!
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+Error in deconvSingle(as.vector(v), scaling.consts = scaling.consts, Z = Z,  : 
+  Too sparse data!
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+Error in deconvSingle(as.vector(v), scaling.consts = scaling.consts, Z = Z,  : 
+  Too sparse data!
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+Error in deconvSingle(as.vector(v), scaling.consts = scaling.consts, Z = Z,  : 
+  Too sparse data!
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+Error in deconvSingle(as.vector(v), scaling.consts = scaling.consts, Z = Z,  : 
+  Too sparse data!
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:57"
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+Error in deconvSingle(as.vector(v), scaling.consts = scaling.consts, Z = Z,  : 
+  Too sparse data!
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+Error in deconvSingle(as.vector(v), scaling.consts = scaling.consts, Z = Z,  : 
+  Too sparse data!
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+Error in deconvSingle(as.vector(v), scaling.consts = scaling.consts, Z = Z,  : 
+  Too sparse data!
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+Error in deconvSingle(as.vector(v), scaling.consts = scaling.consts, Z = Z,  : 
+  Too sparse data!
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+Error in deconvSingle(as.vector(v), scaling.consts = scaling.consts, Z = Z,  : 
+  Too sparse data!
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+Error in deconvSingle(as.vector(v), scaling.consts = scaling.consts, Z = Z,  : 
+  Too sparse data!
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+[1] "Start computing for one gene! 2018-01-17 17:03:58"
+Error in unserialize(node$con) : 读取链结时发生了错误
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+停止执行
+Error in unserialize(node$con) : 读取链结时发生了错误
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+停止执行
+Error in unserialize(node$con) : 读取链结时发生了错误
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+停止执行
+Error in unserialize(node$con) : 读取链结时发生了错误
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+停止执行
+Error in unserialize(node$con) : 读取链结时发生了错误
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+停止执行
