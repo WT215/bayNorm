@@ -61,12 +61,12 @@ bayNorm<-function(Data,BETA_vec,Conditions=NULL,UMI_sffl=NULL,Prior_type=NULL,mo
     Bay_array<-Main_Bay(Data=Data_sr,BETA_vec=BETA_vec,size=SIZE_input,mu=MU_input,S=S,thres=max(Data_sr)*2,Mean_depth=1000000)
     rownames(Bay_array)<-rownames(Data)
     colnames(Bay_array)<-colnames(Data)
-    return(list(Bay_array=Bay_array,PRIORS=PRIORS))
+    return(list(Bay_array=Bay_array,PRIORS=PRIORS,BETA=BETA_vec))
     }else{ #mode
       Bay_mat<-Main_mode_Bay(Data=Data_sr,BETA_vec=BETA_vec,size=SIZE_input,mu=MU_input,S=S,thres=max(Data_sr)*2,Mean_depth=1000000)
       rownames(Bay_mat)<-rownames(Data)
       colnames(Bay_mat)<-colnames(Data)
-      return(list(Bay_mat=Bay_mat,PRIORS=PRIORS))
+      return(list(Bay_mat=Bay_mat,PRIORS=PRIORS,BETA=BETA_vec))
     }
 
     if(verbose){
@@ -143,7 +143,7 @@ bayNorm<-function(Data,BETA_vec,Conditions=NULL,UMI_sffl=NULL,Prior_type=NULL,mo
      colnames(Bay_array_list[[i]])<-colnames(DataList[[i]])
    }
    names(Bay_array_list)<-paste('Group',Levels)
-   return(list(Bay_array_list=Bay_array_list,PRIORS_LIST=PRIORS_LIST,BETA=BETA))
+   return(list(Bay_array_list=Bay_array_list,PRIORS_LIST=PRIORS_LIST,BETA=BETAList))
    }else{#mode
 
      Bay_mat_list<-list()
@@ -163,7 +163,7 @@ bayNorm<-function(Data,BETA_vec,Conditions=NULL,UMI_sffl=NULL,Prior_type=NULL,mo
        colnames(Bay_mat_list[[i]])<-colnames(DataList[[i]])
      }
      names(Bay_mat_list)<-paste('Group',Levels)
-     return(list(Bay_mat_list=Bay_mat_list,PRIORS_LIST=PRIORS_LIST,BETA=BETA))
+     return(list(Bay_mat_list=Bay_mat_list,PRIORS_LIST=PRIORS_LIST,BETA=BETAList))
 
    } #end of mode for multiple groups
  }# end for multiple groups
@@ -222,12 +222,12 @@ bayNorm_p<-function(Data,BETA_vec,PRIORS=NULL,Conditions=NULL,UMI_sffl=NULL,mode
       Bay_array<-Main_Bay(Data=Data_sr,BETA_vec=BETA_vec,size=SIZE_input,mu=MU_input,S=S,thres=max(Data_sr)*2,Mean_depth=1000000)
       rownames(Bay_array)<-rownames(Data)
       colnames(Bay_array)<-colnames(Data)
-      return(list(Bay_array=Bay_array,PRIORS=PRIORS))
+      return(list(Bay_array=Bay_array,PRIORS=PRIORS,BETA=BETA_vec))
     }else{ #mode
       Bay_mat<-Main_mode_Bay(Data=Data_sr,BETA_vec=BETA_vec,size=SIZE_input,mu=MU_input,S=S,thres=max(Data_sr)*2,Mean_depth=1000000)
       rownames(Bay_mat)<-rownames(Data)
       colnames(Bay_mat)<-colnames(Data)
-      return(list(Bay_mat=Bay_mat,PRIORS=PRIORS))
+      return(list(Bay_mat=Bay_mat,PRIORS=PRIORS,BETA=BETA_vec))
     }
 
     if(verbose){
@@ -294,7 +294,7 @@ bayNorm_p<-function(Data,BETA_vec,PRIORS=NULL,Conditions=NULL,UMI_sffl=NULL,mode
         colnames(Bay_array_list[[i]])<-colnames(DataList[[i]])
       }
       names(Bay_array_list)<-paste('Group',Levels)
-      return(list(Bay_array_list=Bay_array_list,PRIORS_LIST=PRIORS_LIST,BETA=BETA))
+      return(list(Bay_array_list=Bay_array_list,PRIORS_LIST=PRIORS_LIST,BETA=BETAList))
     }else{#mode
 
       Bay_mat_list<-list()
@@ -314,7 +314,7 @@ bayNorm_p<-function(Data,BETA_vec,PRIORS=NULL,Conditions=NULL,UMI_sffl=NULL,mode
         colnames(Bay_mat_list[[i]])<-colnames(DataList[[i]])
       }
       names(Bay_mat_list)<-paste('Group',Levels)
-      return(list(Bay_mat_list=Bay_mat_list,PRIORS_LIST=PRIORS_LIST,BETA=BETA))
+      return(list(Bay_mat_list=Bay_mat_list,PRIORS_LIST=PRIORS_LIST,BETA=BETAList))
 
     } #end of mode for multiple groups
   }# end for multiple groups
