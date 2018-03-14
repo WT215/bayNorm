@@ -4,7 +4,7 @@
 \alias{EstPrior}
 \title{Estimate size and mu for NB distribution for each gene using MME method}
 \usage{
-EstPrior(Data, verbose = T)
+EstPrior(Data, verbose = TRUE)
 }
 \arguments{
 \item{Data}{A matrix of single-cell expression where rows are genes and columns are samples (cells). This object should be of class matrix rather than data.frame.}
@@ -19,4 +19,12 @@ Input raw data and return estimated size and mu for each gene.
 }
 \details{
 mu and size are two parameters that need to be specified in bayNorm. They are parameters of negative binomial distribution. The variance is \eqn{mu + mu^2/size} in this parametrization.
+}
+\examples{
+data("EXAMPLE_DATA_list")
+#Return estimated mu and size for each gene using MME method.
+\dontrun{
+MME_est<-EstPrior(Data=EXAMPLE_DATA_list$inputdata,
+verbose=TRUE)
+}
 }

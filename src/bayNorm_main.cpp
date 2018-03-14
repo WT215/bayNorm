@@ -126,26 +126,27 @@ NumericVector post_wrapper_norm(IntegerVector x,double m,double beta,int last, i
 }
 
 
-//' Main_Bay
+//' @title Main_Bay
 //'
-//' bayNorm
+//' @description bayNorm
 //' If the observed count is above 500, then we use normal distribution to approximate binomial distribution.
 //'
 //'
-//' @param Data: raw count Data
-//' @param BETA_vec: A vector of capture efficiencies of cells
-//' @param size: A vector of size
-//' @param mu: A vector of mu
-//' @param S: number of samples that you want to generate for 3D array
-//' @param thres: for observed count greater than \code{thres}, use uniform prior.
+//' @param Data raw count Data
+//' @param BETA_vec A vector of capture efficiencies of cells
+//' @param size A vector of size
+//' @param mu A vector of mu
+//' @param S number of samples that you want to generate for 3D array
+//' @param thres for observed count greater than \code{thres}, use uniform prior.
 //' @return bayNorm normalized data
 //'
 //'
 //' @examples
+//' data("EXAMPLE_DATA_list")
 //' \dontrun{
-//' data("Main_mode_Bay_check")
-//' Norm_3D_array<-Main_Bay(Data=inputdata,BETA_vec = inputbeta,
-//' size=size,mu=mu,S=20,thres=10000000)
+//' data("EXAMPLE_DATA_list")
+//' Norm_3D_array<-Main_Bay(Data=EXAMPLE_DATA_list$inputdata,BETA_vec = EXAMPLE_DATA_list$inputbeta,
+//' size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,S=20,thres=10000000)
 //' }
 //' @export
 // [[Rcpp::export]]
@@ -255,25 +256,28 @@ return(Rcpp::wrap(Final_mat2));
 }
 
 
-//' Mode_Bay
+//' @title  Mode_Bay
 //'
-//' bayNorm
+//' @description bayNorm
 //' If the observed count is above 500, then we use normal distribution to approximate binomial distribution.
 //'
 //'
-//' @param Data: raw count Data
-//' @param BETA_vec: A vector of capture efficiencies of cells
-//' @param size: A vector of size
-//' @param mu: A vector of mu
-//' @param S: number of samples that you want to generate
-//' @param thres: for observed count greater than \code{thres}, use uniform prior.
+//' @param Data raw count Data
+//' @param BETA_vec A vector of capture efficiencies of cells
+//' @param size A vector of size
+//' @param mu A vector of mu
+//' @param S number of samples that you want to generate
+//' @param thres for observed count greater than \code{thres}, use uniform prior.
 //' @return bayNorm normalized data
 //'
-//' //' @examples
+//' @examples
+//' data("EXAMPLE_DATA_list")
 //' \dontrun{
-//' data("Main_mode_Bay_check")
-//' Norm_2D_matrix<-Main_mode_Bay(Data=inputdata,BETA_vec = inputbeta,
-//' size=size,mu=mu,S=20,thres=10000000)
+//' data("EXAMPLE_DATA_list")
+//' Norm_2D_matrix<-Main_mode_Bay(Data=EXAMPLE_DATA_list$inputdata,
+//' BETA_vec = EXAMPLE_DATA_list$inputbeta,
+//' size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,
+//' S=20,thres=10000000)
 //' }
 //' @export
 // [[Rcpp::export]]
@@ -308,8 +312,7 @@ NumericMatrix Main_mode_Bay(NumericMatrix Data, NumericVector BETA_vec, NumericV
 
     M_ave = Rcpp::as<arma::vec>(mu);
   }
-  //
-  //
+
   // else{
   //   arma::rowvec M_colmean=arma::sum(M, dim=0 );
   //   M_t=M.each_row() / M_colmean;
@@ -499,14 +502,21 @@ NumericVector D_SIZE_MU_2D(NumericVector SIZE_MU, NumericVector m_observed,Numer
 
 
 
-//' GradientFun_2D
+//' @title GradientFun_2D
 //'
-//' GradientFun_2D
+//' @description GradientFun_2D
 //'
-//' @param SIZE_MU:SIZE_MU
-//' @param m_observed: m_observed
-//' @param BETA: BETA
+//' @param SIZE_MU a vector of two elements (size,mu)
+//' @param m_observed one observed count
+//' @param BETA The corresponding capture efficiency
 //' @return GradientFun_2D
+//'
+//' @examples
+//' data("EXAMPLE_DATA_list")
+//' \dontrun{
+//' }
+//'
+//'
 //' @export
 // [[Rcpp::export]]
 NumericVector GradientFun_2D(NumericVector SIZE_MU, NumericVector m_observed,NumericVector BETA){
@@ -518,14 +528,18 @@ NumericVector GradientFun_2D(NumericVector SIZE_MU, NumericVector m_observed,Num
 
 
 
-//' MarginalF_2D
+//' @title MarginalF_2D
 //'
-//' MarginalF_2D
+//' @description MarginalF_2D
 //'
-//' @param SIZE_MU: a vector of two elements (size,mu)
-//' @param m_observed:m_observed
-//' @param BETA: A vector of capture efficiencies
+//' @param SIZE_MU a vector of two elements (size,mu)
+//' @param m_observed  m_observed
+//' @param BETA Corresponding capture efficiency
 //' @return Marginal likelihood
+//' @examples
+//' data("EXAMPLE_DATA_list")
+//' \dontrun{
+//' }
 //' @export
 // [[Rcpp::export]]
 double MarginalF_2D(NumericVector SIZE_MU, NumericVector m_observed, NumericVector BETA) {
@@ -557,9 +571,6 @@ double MarginalF_2D(NumericVector SIZE_MU, NumericVector m_observed, NumericVect
   MarginalVal=sum(log(temp_vec_2));
   return MarginalVal;
 }
-
-
-//1D optimization
 
 
 
@@ -599,17 +610,22 @@ double D_SIZE_MU_1D(double SIZE,double MU, NumericVector m_observed,NumericVecto
 
 
 
-//' GradientFun_1D
+//' @title GradientFun_1D
 //'
-//' GradientFun_1D
+//' @description GradientFun_1D
 //'
 //'
 //'
-//' @param SIZE: SIZE
-//' @param MU: MU
-//' @param m_observed: m_observed
-//' @param BETA: BETA
+//' @param SIZE size
+//' @param MU mu
+//' @param m_observed one observed count
+//' @param BETA The corresponding capture efficiency
 //' @return GradientFun_1D
+//'
+//' @examples
+//' data("EXAMPLE_DATA_list")
+//' \dontrun{
+//' }
 //' @export
 // [[Rcpp::export]]
 double GradientFun_1D(double SIZE,double MU, NumericVector m_observed,NumericVector BETA){
@@ -622,17 +638,19 @@ double GradientFun_1D(double SIZE,double MU, NumericVector m_observed,NumericVec
 
 
 
-//' MarginalF_1D
+//' @title MarginalF_1D
 //'
-//' MarginalF_1D
+//' @description MarginalF_1D
 //'
-//' @param SIZE:SIZE
-//' @param MU:MU
-//' @param size: A vector of size
-//' @param mu: A vector of mu
-//' @param m_observed:m_observed
-//' @param BETA:BETA
+//' @param SIZE size
+//' @param MU mu
+//' @param m_observed one observed count
+//' @param BETA The corresponding capture efficiency
 //' @return Marginal likelihood
+//' @examples
+//' data("EXAMPLE_DATA_list")
+//' \dontrun{
+//' }
 //' @export
 // [[Rcpp::export]]
 double MarginalF_1D(double SIZE,double MU, NumericVector m_observed, NumericVector BETA) {
@@ -666,14 +684,24 @@ double MarginalF_1D(double SIZE,double MU, NumericVector m_observed, NumericVect
 
 
 
-//' Binomial downsampling
+//' @title Binomial downsampling
 //'
-//' For each element in the \code{Data}, randomly generate a number using Binomial distribution with probability equal to the specific capture efficiency.
+//' @description For each element in the \code{Data},
+//' randomly generate a number using Binomial distribution with
+//' probability equal to the specific capture efficiency.
 //'
+//' @param Data raw count Data
+//' @param BETA_vec A vector of capture efficiencies of cells
 //'
-//' @param Data: raw count Data
-//' @param BETA_vec: A vector of capture efficiencies of cells
 //' @return A matrix of binomial downsampling data.
+//'
+//' @examples
+//' data("EXAMPLE_DATA_list")
+//' \dontrun{
+//'
+//' Downsample_data<-DownSampling(Data=EXAMPLE_DATA_list$inputdata
+//' ,BETA_vec = EXAMPLE_DATA_list$inputbeta)
+//'}
 //' @export
 // [[Rcpp::export]]
 NumericMatrix DownSampling(NumericMatrix Data ,NumericVector BETA_vec) {

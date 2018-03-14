@@ -5,19 +5,36 @@
 \title{A wrapper function of prior estimation and bayNorm function}
 \usage{
 bayNorm(Data, BETA_vec, Conditions = NULL, UMI_sffl = NULL,
-  Prior_type = NULL, mode_version = F, S = 20, parallel = T,
-  NCores = 5, FIX_MU = T, GR = F, BB_SIZE = T, verbose = T)
+  Prior_type = NULL, mode_version = FALSE, S = 20, parallel = TRUE,
+  NCores = 5, FIX_MU = TRUE, GR = FALSE, BB_SIZE = TRUE,
+  verbose = TRUE)
 }
 \arguments{
-\item{Data}{A matrix of single-cell expression where rows are genes and columns are samples (cells). This object should be of class matrix rather than data.frame.}
+\item{Data}{A matrix of single-cell expression where rows
+are genes and columns are samples (cells).
+This object should be of class matrix rather than data.frame.}
 
-\item{BETA_vec}{A vector of capture efficiencies of cells.If it is null, library size normalized to 0.06 will be used as the input BETA_vec. BETA_vec less and equal to 0 or greater and equal to 1 will be replaced by the minimum and maximum of the BETA_vec which range between (0,1) respectively.}
+\item{BETA_vec}{A vector of capture efficiencies of cells.
+If it is null, library size normalized to 0.06 will be used
+as the input BETA_vec. BETA_vec less and equal to 0 or
+greater and equal to 1 will be replaced by the minimum
+and maximum of the BETA_vec which range between (0,1) respectively.}
 
 \item{Conditions}{vector of condition labels, this should correspond to the columns of the Data. Default is NULL, which assumes that all cells belong to the same group.}
 
-\item{UMI_sffl}{(scaling factors for non UMI based data: divide Data by UMI_sffl) Only needed when the input data is non UMI based. If non-null and Conditions is non-null, then UMI_sffl should be a vector of length equal to the number of groups. Default is set to be NULL.}
+\item{UMI_sffl}{(scaling factors for non UMI based data:
+divide Data by UMI_sffl) Only needed when the input data
+is non UMI based. If non-null and Conditions is non-null,
+then UMI_sffl should be a vector of length equal to the
+number of groups. Default is set to be NULL.}
 
-\item{Prior_type}{Default is NULL. If \code{Conditions} is NULL, priors are estimated based on all cells. If \code{Conditions} is not NULL: if \code{Prior_type} is \code{LL}, priors are estimated within each group respectively. If \code{Prior_type} is \code{GG}, priors are estimated based on cells from all groups. Basically, \code{LL} is suitable for DE detection. \code{GG} is prefered if there is a prior knowledge about the data such that there should not exist biological variation between groups.}
+\item{Prior_type}{Default is NULL. If \code{Conditions}
+is NULL, priors are estimated based on all cells. If
+\code{Conditions} is not NULL: if \code{Prior_type} is \code{LL}, priors are estimated within each group respectively.
+If \code{Prior_type} is \code{GG}, priors are estimated
+based on cells from all groups. Basically, \code{LL} is suitable for DE detection. \code{GG} is prefered if there is
+a prior knowledge about the data such that there should
+not exist biological variation between groups.}
 
 \item{mode_version}{If TRUE, bayNorm return mode version normalized data which is of 2D matrix instead of 3D array. Default is FALSE.}
 
@@ -39,19 +56,24 @@ bayNorm(Data, BETA_vec, Conditions = NULL, UMI_sffl = NULL,
 List containing 3D arrays of normalized expression (if \code{mode_version}=FALSE) or 2D matrix of normalized expression (if \code{mode_version}=TRUE), estimated parameters and input \code{BETA_vec}.
 }
 \description{
-Input raw data and a vector of capture efficiencies of cells. You can also specify the condition of cells for normalizing multiple groups of cells separately.
+Input raw data and a vector of capture
+efficiencies of cells. You can also specify the condition
+of cells for normalizing multiple groups of cells separately.
 }
 \details{
 A wrapper function of prior estimation and bayNorm function.
 }
 \examples{
+data("EXAMPLE_DATA_list")
 \dontrun{
-data("Main_mode_Bay_check")
 #Return 3D array normalzied data:
-bayNorm_3D<-bayNorm(Data=inputdata,BETA_vec = inputbeta,mode_version=F)
+bayNorm_3D<-bayNorm(Data=EXAMPLE_DATA_list$inputdata,
+BETA_vec = EXAMPLE_DATA_list$inputbeta,mode_version=F)
 
 #Return 2D matrix normalized data:
-bayNorm_2D<-bayNorm(Data=inputdata,BETA_vec = inputbeta,mode_version=T)
-}
+bayNorm_2D<-bayNorm(Data=EXAMPLE_DATA_list$inputdata,
+BETA_vec = EXAMPLE_DATA_list$inputbeta
+,mode_version=T)
 
+}
 }

@@ -5,8 +5,8 @@
 \title{bayNorm with estimated parameters as input}
 \usage{
 bayNorm_sup(Data, BETA_vec, PRIORS = NULL, Conditions = NULL,
-  UMI_sffl = NULL, mode_version = F, S = 20, parallel = T, NCores = 5,
-  BB_SIZE = T, verbose = T)
+  UMI_sffl = NULL, mode_version = FALSE, S = 20, parallel = TRUE,
+  NCores = 5, BB_SIZE = TRUE, verbose = TRUE)
 }
 \arguments{
 \item{Data}{A matrix of single-cell expression where rows are genes and columns are samples (cells). This object should be of class matrix rather than data.frame.}
@@ -39,21 +39,31 @@ This is a supplementary function for \code{bayNorm}. It is useful if you have al
 }
 \details{
 If you have run bayNorm before and obtained a list of estimated prior parameters, then you may not want to run parameter estimation again. You can just use previous estimated parameters for obtaining 3D or 2D normalized data.
-
-#' @examples
-\dontrun{
-data("Main_mode_Bay_check")
-#Return 3D array normalzied data:
-bayNorm_3D<-bayNorm(Data=inputdata,BETA_vec = inputbeta,mode_version=F)
-
-#Now if you want to generate 2D matrix using the same prior estimates as generated before:
-bayNorm_2D<-bayNorm_p(Data=inputdata,BETA_vec = bayNorm_3D$BETA,PRIORS=bayNorm_3D$PRIORS_LIST,mode_version=T)
-
-#If previous bayNorm was applied for normalizing multiple groups of cells (is.null(Origin_Conditions)=T), then:
-inputbeta2<-unlist(bayNorm_3D$BETA)
-bayNorm_2D<-bayNorm_p(Data=inputdata,BETA_vec = inputbeta2,PRIORS=bayNorm_3D$PRIORS_LIST,mode_version=T,Conditions=Origin_Conditions)
-
-You can also generate 3D array using the same prior estimates as generated before.
-
 }
+\examples{
+data("EXAMPLE_DATA_list")
+\dontrun{
+#Return 3D array normalzied data:
+bayNorm_3D<-bayNorm(Data=EXAMPLE_DATA_list$inputdata,
+BETA_vec = EXAMPLE_DATA_list$inputbeta
+,mode_version=F)
+
+#Now if you want to generate 2D matrix using the same prior
+#estimates as generated before:
+bayNorm_2D<-bayNorm_p(Data=EXAMPLE_DATA_list$inputdata
+,BETA_vec= bayNorm_3D$BETA,PRIORS=bayNorm_3D$PRIORS_LIST
+,mode_version=T)
+
+#If previous bayNorm was applied for normalizing multiple
+#groups of cells (is.null(Origin_Conditions)=T), then:
+inputbeta2<-unlist(bayNorm_3D$BETA)
+bayNorm_2D<-bayNorm_p(Data=inputdata,BETA_vec = inputbeta2
+,PRIORS=bayNorm_3D$PRIORS_LIST,mode_version=T,Conditions
+=Origin_Conditions)
+
+#You can also generate 3D array using the same prior estimates
+#as generated before.
+}
+
+
 }

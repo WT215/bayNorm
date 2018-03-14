@@ -4,9 +4,9 @@
 \alias{noisy_gene_detection}
 \title{A wrapper function of synthetic control generation, bayNorm on both real cell data and synthetic controls and noisy gene detection.}
 \usage{
-noisy_gene_detection(Data, BETA_vec, mode_version = F, S = 20,
-  parallel = T, NCores = 5, FIX_MU = T, GR = F, BB_SIZE = T,
-  verbose = T, plot.out = F)
+noisy_gene_detection(Data, BETA_vec, mode_version = FALSE, S = 20,
+  parallel = TRUE, NCores = 5, FIX_MU = TRUE, GR = FALSE,
+  BB_SIZE = TRUE, verbose = TRUE, plot.out = FALSE)
 }
 \arguments{
 \item{Data}{A matrix of single-cell expression where rows are genes and columns are samples (cells). This object should be of class matrix rather than data.frame.}
@@ -27,7 +27,12 @@ noisy_gene_detection(Data, BETA_vec, mode_version = F, S = 20,
 
 \item{BB_SIZE}{If TRUE, estimate BB size, and then use it for adjusting MME SIZE. Use the adjusted MME size for bayNorm. Default is TRUE.}
 
+\item{verbose}{Print out status messages. Default is TRUE.}
+
 \item{plot.out}{If TRUE, show CV^2 vs Mean expression plot. Default is FALSE.}
+}
+\value{
+A list of objects.
 }
 \description{
 A wrapper function of synthetic control generation, bayNorm on both real cell data and synthetic controls and noisy gene detection.
@@ -36,11 +41,11 @@ A wrapper function of synthetic control generation, bayNorm on both real cell da
 A wrapper function of synthetic control generation, bayNorm on both real cell data and synthetic controls and noisy gene detection.
 }
 \examples{
+data("EXAMPLE_DATA_list")
 \dontrun{
-data("noisy_gene_check")
-noisy_out<-noisy_gene_detection(Data=inputdata,BETA_vec
-=inputbeta, mode_version = F, S = 20,parallel = T, NCores = 5,
-FIX_MU = T, GR = F, BB_SIZE = T, verbose = T, plot.out = T)
+noisy_out<-noisy_gene_detection(Data=EXAMPLE_DATA_list$inputdata,BETA_vec
+=EXAMPLE_DATA_list$inputbeta, mode_version = FALSE, S = 20,parallel = TRUE, NCores = 5,
+FIX_MU = TRUE, GR = FALSE, BB_SIZE = TRUE, verbose = TRUE, plot.out = TRUE)
 }
 
 }

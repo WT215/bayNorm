@@ -1,10 +1,18 @@
-#' Adjust MME size
+#' @title Adjust MME size
+#'
+#' @description  Adjust MME estimated size according to size estimated through maximizing marginal distirbution (\code{BB_SIZE}). By using maximizing marginal distribution, a log of estimated size cannot converge quickly. However according to our simulation, the trend of \code{BB_SIZE} is very close to the true size. Hence it is better to use adjusted MME size in bayNorm.
 #'
 #' @param BB_SIZE size estimated from BB_Fun or BB_Fun_1D
 #' @param  MME_MU mu estimated from EstPrior.
 #' @param  MME_SIZE size estimated from EstPrior.
-#' @return MME_SIZE_adjust A vector of estimated size. Adjusted MME_SIZE based on BB_size
+#' @return MME_SIZE_adjust A vector of estimated size.
+#' Adjusted MME_SIZE based on BB_size
 #'
+#' @examples
+#' data("EXAMPLE_DATA_list")
+#' \dontrun{
+#' }
+#' @import stats
 #'
 #' @export
 AdjustSIZE_fun<-function(BB_SIZE,MME_MU,MME_SIZE){
@@ -16,9 +24,9 @@ AdjustSIZE_fun<-function(BB_SIZE,MME_MU,MME_SIZE){
 }
 
 
-#' Estimate capture efficiency for cells
+#' @title Estimate capture efficiency for cells
 #'
-#' This function aims to select of subset of genes for estimating capture efficiency: BETA for bayNorm.
+#' @description  This function aims to select of subset of genes for estimating capture efficiency: BETA for bayNorm.
 #'
 #' @param Data A matrix of single-cell expression where rows are
 #' genes and columns are samples (cells). This object should be of
@@ -26,6 +34,13 @@ AdjustSIZE_fun<-function(BB_SIZE,MME_MU,MME_SIZE){
 #' @param MeanBETA Mean capture efficiency of the scRNAseq data. This can be estimated via spike-ins or other methods.
 #'
 #' @return List containing: BETA a vector of capture efficiencies, which is of length number of cells; Selected_genes a subset of genes that are used for estimating BETA.
+#'
+#' @examples
+#' data("EXAMPLE_DATA_list")
+#' \dontrun{
+#' BETA_out<-BetaFun(Data=EXAMPLE_DATA_list$inputdata,
+#' MeanBETA=0.06)
+#' }
 #'
 #'
 #' @export
@@ -48,9 +63,9 @@ BetaFun<-function(Data,MeanBETA){
   return(list(BETA=BETA,Selected_genes=Selected_genes))
 }
 
-#' Estimate size and mu for NB distribution for each gene using MME method
+#' @title Estimate size and mu for NB distribution for each gene using MME method
 #'
-#' Input raw data and return estimated size and mu for each gene.
+#' @description  Input raw data and return estimated size and mu for each gene.
 #' @param Data A matrix of single-cell expression where rows are genes and columns are samples (cells). This object should be of class matrix rather than data.frame.
 #' @param verbose print out status messages. Default is TRUE.
 #'
@@ -58,12 +73,19 @@ BetaFun<-function(Data,MeanBETA){
 #'
 #' @return  List containing estimated mu and size for each gene.
 #'
+#' @examples
+#' data("EXAMPLE_DATA_list")
+#' #Return estimated mu and size for each gene using MME method.
+#' \dontrun{
+#' MME_est<-EstPrior(Data=EXAMPLE_DATA_list$inputdata,
+#' verbose=TRUE)
+#' }
 #' @import  fitdistrplus
 #'
 #' @export
-EstPrior<-function(Data,verbose=T){
+EstPrior<-function(Data,verbose=TRUE){
   CoefDat<-foreach(i=1:nrow(Data),.combine=rbind)%do%{
-    suppressWarnings(qq<-fitdistrplus::fitdist(Data[i,],'nbinom',method='mme',keepdata=F))
+    suppressWarnings(qq<-fitdistrplus::fitdist(Data[i,],'nbinom',method='mme',keepdata=FALSE))
     return(coef(qq))
   }
   rownames(CoefDat)<-rownames(Data)
@@ -76,9 +98,9 @@ EstPrior<-function(Data,verbose=T){
 
   return(list(MU=M_ave_ori,SIZE=size_est))
 }
-#' A wrapper function of \code{EstPrior} and \code{AdjustSIZE_fun}
+#' @title   A wrapper function of \code{EstPrior} and \code{AdjustSIZE_fun}
 #'
-#' Input raw data and a vector of capture efficiencies of cells.
+#' @description   Input raw data and a vector of capture efficiencies of cells.
 #' @param Data A matrix of single-cell expression where rows are genes and columns are samples (cells). This object should be of class \code{matrix} rather than \code{data.frame}.
 #' @param  BETA_vec A vector of capture efficiencies of cells.
 #' @param  parallel If TRUE, 5 cores will be used for parallelization. Default is TRUE.
@@ -86,16 +108,40 @@ EstPrior<-function(Data,verbose=T){
 #' @param  FIX_MU If TRUE, then 1D optimization, otherwise 2D optimization (slow). Default is TRUE.
 #' @param  GR If TRUE, the gradient function will be used in optimization. However since the gradient function itself is very complicated, it does not help too much in speeding up. Default is FALSE.
 #' @param  BB_SIZE If TRUE, estimate BB size, and then use it for adjusting MME SIZE. Use the adjusted MME size for bayNorm. Default is TRUE.
-#' @param verbose: Print out status messages. Default is TRUE.
+#' @param verbose Print out status messages. Default is TRUE.
 #'
-#' @details By Default, this function will estimate mu and size for each gene using MME method. If \code{BB_size} is enable, spectral projected gradient method from BB package will be implemented to estimate "BB size" by maximizing marginal likelihood function. MME estimated size will be adjusted according to BB size. BB size itself will not be used in bayNorm this is because that in our simulation we found that MME estimated mu and size have more accurate relationship, but MME estimated size deviates from the true value. BB size is overall more close to the true size but it does not possess a reasonable relationship with either MME estimated mu or BB estimated mu.
+#' @details By Default, this function will estimate mu and
+#' size for each gene using MME method. If \code{BB_size}
+#' is enable, spectral projected gradient method from BB
+#' package will be implemented to estimate "BB size" by
+#' maximizing marginal likelihood function. MME estimated
+#' size will be adjusted according to BB size. BB size itself
+#' will not be used in bayNorm this is because that in
+#' our simulation we found that MME estimated mu and size
+#' have more accurate relationship, but MME estimated
+#' size deviates from the true value. BB size is overall
+#' more close to the true size but it does not possess a
+#' reasonable relationship with either MME estimated mu or
+#' BB estimated mu.
 #'
 #' @examples
+#' data("EXAMPLE_DATA_list")
 #' \dontrun{
-#' Prior_fun(Data,BETA_vec,parallel=T,NCores=5,FIX_MU=T,GR=F,BB_SIZE=T,verbose=T)
+#' PRIOR_RESULT<-Prior_fun(Data=EXAMPLE_DATA_list$inputdata,
+#' BETA_vec = EXAMPLE_DATA_list$inputbeta,parallel=T,
+#' NCores=5,FIX_MU=T,GR=F,BB_SIZE=T,verbose=T)
 #' }
 #'
 #' @return  List of estimated parameters: mean expression of genes and size of each gene.
+#'
+#' @examples
+#' data("EXAMPLE_DATA_list")
+#' \dontrun{
+#'PRIOR_RESULT<-Prior_fun(Data=EXAMPLE_DATA_list$inputdata,
+#' BETA_vec = EXAMPLE_DATA_list$inputbeta,parallel=TRUE,
+#' NCores=5,FIX_MU=TRUE,GR=FALSE,BB_SIZE=TRUE,verbose=TRUE)
+#'
+#' }
 #'
 #' @import parallel
 #' @import foreach
@@ -103,7 +149,7 @@ EstPrior<-function(Data,verbose=T){
 #'
 #' @export
 #'
-Prior_fun<-function(Data,BETA_vec,parallel=T,NCores=5,FIX_MU=T,GR=F,BB_SIZE=T,verbose=T){
+Prior_fun<-function(Data,BETA_vec,parallel=TRUE,NCores=5,FIX_MU=TRUE,GR=FALSE,BB_SIZE=TRUE,verbose=TRUE){
 
   normcount_N<-t(t(Data)/colSums(Data))*mean(colSums(Data)/BETA_vec)
   Priors<-EstPrior(normcount_N,verbose=verbose)
@@ -149,7 +195,9 @@ if(BB_SIZE){
 }
 
 
-#' Estimating size for each gene by either 1D or 2D optimization of marginal distribution
+#' @title Estimating size for each gene by either 1D or 2D optimization of marginal distribution
+#'
+#' @description  Estimating size for each gene by maximizing marginal distribution: 1D (optimize with respect to size, assuming that mu estimated based on MME method is already good), 2D (optimize with respect to both mu and size)
 #'
 #' @param Data A matrix of single-cell expression where rows are genes
 #' and columns are samples (cells). This object should be of class
@@ -167,9 +215,26 @@ if(BB_SIZE){
 #' @param  GR If TRUE, the gradient function will be used in optimization. However since the gradient function itself is very complicated, it does not help too much in speeding up. Default is FALSE.
 #' @return  A vector of estimated size based on maximizing marginal distribution.
 #'
+#'
+#' @examples
+#' data("EXAMPLE_DATA_list")
+#' \dontrun{
+#'
+#'BB_RESULT<-BB_Fun(Data=EXAMPLE_DATA_list$inputdata,
+#' BETA_vec = EXAMPLE_DATA_list$inputbeta,INITIAL_MU_vec=
+#' EXAMPLE_DATA_list$mu,
+#' INITIAL_SIZE_vec=EXAMPLE_DATA_list$size,
+#' MU_lower=0.01,MU_upper=500,SIZE_lower=0.01,
+#' SIZE_upper=30,parallel=FALSE,NCores=5,FIX_MU=TRUE,GR=FALSE)
+#' }
+#'
+#'
 #' @import parallel
 #' @import foreach
 #' @import doSNOW
+#' @import utils
+#' @import iterators
+#' @import methods
 #'
 #' @useDynLib bayNorm
 #' @importFrom Rcpp sourceCpp
@@ -177,7 +242,7 @@ if(BB_SIZE){
 #' @export
 #'
 #'
-BB_Fun<-function(Data,BETA_vec,INITIAL_MU_vec,INITIAL_SIZE_vec,MU_lower=0.01,MU_upper=500,SIZE_lower=0.01,SIZE_upper=30,parallel=F,NCores=5,FIX_MU=T,GR=F)
+BB_Fun<-function(Data,BETA_vec,INITIAL_MU_vec,INITIAL_SIZE_vec,MU_lower=0.01,MU_upper=500,SIZE_lower=0.01,SIZE_upper=30,parallel=FALSE,NCores=5,FIX_MU=TRUE,GR=FALSE)
 {
   if(FIX_MU){#1D
 
@@ -201,9 +266,9 @@ BB_Fun<-function(Data,BETA_vec,INITIAL_MU_vec,INITIAL_SIZE_vec,MU_lower=0.01,MU_
         m_observed=Data[Geneind,]
 
         if(!GR){
-          BB_opt<-BB::spg(par=size,fn=MarginalF_1D,MU=mu,m_observed=m_observed,BETA=BETA_vec,control=list(maximize=T,trace=FALSE,maxfeval=500),lower=lower_input,upper=upper_input)
+          BB_opt<-BB::spg(par=size,fn=MarginalF_1D,MU=mu,m_observed=m_observed,BETA=BETA_vec,control=list(maximize=TRUE,trace=FALSE,maxfeval=500),lower=lower_input,upper=upper_input)
         }else{
-          BB_opt<-BB::spg(par=size,fn=MarginalF_1D,gr=GradientFun_1D,MU=mu,m_observed=m_observed,BETA=BETA_vec,control=list(maximize=T,trace=FALSE,maxfeval=500),lower=lower_input,upper=upper_input)
+          BB_opt<-BB::spg(par=size,fn=MarginalF_1D,gr=GradientFun_1D,MU=mu,m_observed=m_observed,BETA=BETA_vec,control=list(maximize=TRUE,trace=FALSE,maxfeval=500),lower=lower_input,upper=upper_input)
         }
 
         optimal_par<-BB_opt$par
@@ -232,9 +297,9 @@ BB_Fun<-function(Data,BETA_vec,INITIAL_MU_vec,INITIAL_SIZE_vec,MU_lower=0.01,MU_
         m_observed=Data[Geneind,]
 
         if(!GR){
-          BB_opt<-BB::spg(par=size,fn=MarginalF_1D,MU=mu,m_observed=m_observed,BETA=BETA_vec,control=list(maximize=T,trace=FALSE,maxfeval=500),lower=SIZE_lower,upper=SIZE_upper)
+          BB_opt<-BB::spg(par=size,fn=MarginalF_1D,MU=mu,m_observed=m_observed,BETA=BETA_vec,control=list(maximize=TRUE,trace=FALSE,maxfeval=500),lower=SIZE_lower,upper=SIZE_upper)
           }else{
-            BB_opt<-BB::spg(par=size,fn=MarginalF_1D,gr=GradientFun_1D,MU=mu,m_observed=m_observed,BETA=BETA_vec,control=list(maximize=T,trace=FALSE,maxfeval=500),lower=SIZE_lower,upper=SIZE_upper)
+            BB_opt<-BB::spg(par=size,fn=MarginalF_1D,gr=GradientFun_1D,MU=mu,m_observed=m_observed,BETA=BETA_vec,control=list(maximize=TRUE,trace=FALSE,maxfeval=500),lower=SIZE_lower,upper=SIZE_upper)
 
           }
         #
@@ -271,10 +336,10 @@ BB_Fun<-function(Data,BETA_vec,INITIAL_MU_vec,INITIAL_SIZE_vec,MU_lower=0.01,MU_
         size<-INITIAL_SIZE_vec[Geneind]
         m_observed=Data[Geneind,]
         if(!GR){
-          BB_opt<-BB::spg(par=c(size,mu),fn=MarginalF_2D,m_observed=m_observed,BETA=BETA_vec,control=list(maximize=T,trace=FALSE,ftol=0.001,maxfeval=500),lower=lower_input,upper=upper_input)
+          BB_opt<-BB::spg(par=c(size,mu),fn=MarginalF_2D,m_observed=m_observed,BETA=BETA_vec,control=list(maximize=TRUE,trace=FALSE,ftol=0.001,maxfeval=500),lower=lower_input,upper=upper_input)
 
         }else{
-          BB_opt<-BB::spg(par=c(size,mu),fn=MarginalF_2D,gr=GradientFun_2D,m_observed=m_observed,BETA=BETA_vec,control=list(maximize=T,trace=FALSE,maxfeval=500),lower=lower_input,upper=upper_input)
+          BB_opt<-BB::spg(par=c(size,mu),fn=MarginalF_2D,gr=GradientFun_2D,m_observed=m_observed,BETA=BETA_vec,control=list(maximize=TRUE,trace=FALSE,maxfeval=500),lower=lower_input,upper=upper_input)
         }
 
         optimal_par<-BB_opt$par
@@ -299,9 +364,9 @@ BB_Fun<-function(Data,BETA_vec,INITIAL_MU_vec,INITIAL_SIZE_vec,MU_lower=0.01,MU_
         size<-INITIAL_SIZE_vec[Geneind]
         m_observed=Data[Geneind,]
         if(!GR){
-          BB_opt<-BB::spg(par=c(size,mu),fn=MarginalF_2D,m_observed=m_observed,BETA=BETA_vec,control=list(maximize=T,trace=FALSE,ftol=0.001,maxfeval=500),lower=c(SIZE_lower,MU_lower),upper=c(SIZE_upper,MU_upper))
+          BB_opt<-BB::spg(par=c(size,mu),fn=MarginalF_2D,m_observed=m_observed,BETA=BETA_vec,control=list(maximize=TRUE,trace=FALSE,ftol=0.001,maxfeval=500),lower=c(SIZE_lower,MU_lower),upper=c(SIZE_upper,MU_upper))
         }else{
-          BB_opt<-BB::spg(par=c(size,mu),fn=MarginalF_2D,gr=GradientFun_2D,m_observed=m_observed,BETA=BETA_vec,control=list(maximize=T,trace=FALSE,maxfeval=500),lower=c(SIZE_lower,MU_lower),upper=c(SIZE_upper,MU_upper))
+          BB_opt<-BB::spg(par=c(size,mu),fn=MarginalF_2D,gr=GradientFun_2D,m_observed=m_observed,BETA=BETA_vec,control=list(maximize=TRUE,trace=FALSE,maxfeval=500),lower=c(SIZE_lower,MU_lower),upper=c(SIZE_upper,MU_upper))
         }
 
         optimal_par<-BB_opt$par

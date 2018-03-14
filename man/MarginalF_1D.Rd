@@ -7,13 +7,22 @@
 MarginalF_1D(SIZE, MU, m_observed, BETA)
 }
 \arguments{
-\item{size:}{A vector of size}
+\item{SIZE}{size}
 
-\item{mu:}{A vector of mu}
+\item{MU}{mu}
+
+\item{m_observed}{one observed count}
+
+\item{BETA}{The corresponding capture efficiency}
 }
 \value{
 Marginal likelihood
 }
 \description{
 MarginalF_1D
+}
+\examples{
+data("EXAMPLE_DATA_list")
+\dontrun{
+}
 }

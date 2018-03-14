@@ -7,13 +7,22 @@
 GradientFun_2D(SIZE_MU, m_observed, BETA)
 }
 \arguments{
-\item{m_observed:}{m_observed}
+\item{SIZE_MU}{a vector of two elements (size,mu)}
 
-\item{BETA:}{BETA}
+\item{m_observed}{one observed count}
+
+\item{BETA}{The corresponding capture efficiency}
 }
 \value{
 GradientFun_2D
 }
 \description{
 GradientFun_2D
+}
+\examples{
+data("EXAMPLE_DATA_list")
+\dontrun{
+}
+
+
 }

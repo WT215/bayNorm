@@ -19,3 +19,12 @@ List containing: BETA a vector of capture efficiencies, which is of length numbe
 \description{
 This function aims to select of subset of genes for estimating capture efficiency: BETA for bayNorm.
 }
+\examples{
+data("EXAMPLE_DATA_list")
+\dontrun{
+BETA_out<-BetaFun(Data=EXAMPLE_DATA_list$inputdata,
+MeanBETA=0.06)
+}
+
+
+}

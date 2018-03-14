@@ -7,29 +7,32 @@
 Main_mode_Bay(Data, BETA_vec, size, mu, S, thres)
 }
 \arguments{
-\item{Data:}{raw count Data}
+\item{Data}{raw count Data}
 
-\item{BETA_vec:}{A vector of capture efficiencies of cells}
+\item{BETA_vec}{A vector of capture efficiencies of cells}
 
-\item{size:}{A vector of size}
+\item{size}{A vector of size}
 
-\item{mu:}{A vector of mu}
+\item{mu}{A vector of mu}
 
-\item{S:}{number of samples that you want to generate}
+\item{S}{number of samples that you want to generate}
 
-\item{thres:}{for observed count greater than \code{thres}, use uniform prior.}
+\item{thres}{for observed count greater than \code{thres}, use uniform prior.}
 }
 \value{
 bayNorm normalized data
-
-//' @examples
-\dontrun{
-data("Main_mode_Bay_check")
-Norm_2D_matrix<-Main_mode_Bay(Data=inputdata,BETA_vec = inputbeta,
-size=size,mu=mu,S=20,thres=10000000)
-}
 }
 \description{
 bayNorm
 If the observed count is above 500, then we use normal distribution to approximate binomial distribution.
+}
+\examples{
+data("EXAMPLE_DATA_list")
+\dontrun{
+data("EXAMPLE_DATA_list")
+Norm_2D_matrix<-Main_mode_Bay(Data=EXAMPLE_DATA_list$inputdata,
+BETA_vec = EXAMPLE_DATA_list$inputbeta,
+size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,
+S=20,thres=10000000)
+}
 }

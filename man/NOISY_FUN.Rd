@@ -4,7 +4,7 @@
 \alias{NOISY_FUN}
 \title{Noisy gene detection}
 \usage{
-NOISY_FUN(bay_array_N, bay_array_C, plot.out = F)
+NOISY_FUN(bay_array_N, bay_array_C, plot.out = FALSE)
 }
 \arguments{
 \item{bay_array_N}{A 2D matrix or 3D array of normalized data(real cells).}
@@ -13,10 +13,21 @@ NOISY_FUN(bay_array_N, bay_array_C, plot.out = F)
 
 \item{plot.out}{If TRUE, show CV^2 vs Mean expression plot. Default is FALSE.}
 }
+\value{
+A vector of adjusted P-values.
+}
 \description{
 Input raw data and a vector of capture efficiencies of cells. You can
 also need to specify the condition of cells.
 }
 \details{
 Noisy gene detection
+}
+\examples{
+bay_array_N<-array(rpois(1000*50*2,17),dim=c(1000,50,2))
+bay_array_C<-array(rpois(1000*50*2,58),dim=c(1000,50,2))
+\dontrun{
+noisy_output<-NOISY_FUN(bay_array_N,bay_array_C)
+}
+
 }

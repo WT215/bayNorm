@@ -20,3 +20,10 @@ Input raw data and a vector of capture efficiencies of cells.
 \details{
 Simulate control data (based on Poisson distribution).
 }
+\examples{
+data("EXAMPLE_DATA_list")
+\dontrun{
+SC_output<-SyntheticControl(Data=EXAMPLE_DATA_list$inputdata,
+BETA_vec = EXAMPLE_DATA_list$inputbeta)
+}
+}

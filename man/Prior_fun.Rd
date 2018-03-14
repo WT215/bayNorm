@@ -4,8 +4,8 @@
 \alias{Prior_fun}
 \title{A wrapper function of \code{EstPrior} and \code{AdjustSIZE_fun}}
 \usage{
-Prior_fun(Data, BETA_vec, parallel = T, NCores = 5, FIX_MU = T, GR = F,
-  BB_SIZE = T, verbose = T)
+Prior_fun(Data, BETA_vec, parallel = TRUE, NCores = 5, FIX_MU = TRUE,
+  GR = FALSE, BB_SIZE = TRUE, verbose = TRUE)
 }
 \arguments{
 \item{Data}{A matrix of single-cell expression where rows are genes and columns are samples (cells). This object should be of class \code{matrix} rather than \code{data.frame}.}
@@ -22,7 +22,7 @@ Prior_fun(Data, BETA_vec, parallel = T, NCores = 5, FIX_MU = T, GR = F,
 
 \item{BB_SIZE}{If TRUE, estimate BB size, and then use it for adjusting MME SIZE. Use the adjusted MME size for bayNorm. Default is TRUE.}
 
-\item{verbose:}{Print out status messages. Default is TRUE.}
+\item{verbose}{Print out status messages. Default is TRUE.}
 }
 \value{
 List of estimated parameters: mean expression of genes and size of each gene.
@@ -31,11 +31,34 @@ List of estimated parameters: mean expression of genes and size of each gene.
 Input raw data and a vector of capture efficiencies of cells.
 }
 \details{
-By Default, this function will estimate mu and size for each gene using MME method. If \code{BB_size} is enable, spectral projected gradient method from BB package will be implemented to estimate "BB size" by maximizing marginal likelihood function. MME estimated size will be adjusted according to BB size. BB size itself will not be used in bayNorm this is because that in our simulation we found that MME estimated mu and size have more accurate relationship, but MME estimated size deviates from the true value. BB size is overall more close to the true size but it does not possess a reasonable relationship with either MME estimated mu or BB estimated mu.
+By Default, this function will estimate mu and
+size for each gene using MME method. If \code{BB_size}
+is enable, spectral projected gradient method from BB
+package will be implemented to estimate "BB size" by
+maximizing marginal likelihood function. MME estimated
+size will be adjusted according to BB size. BB size itself
+will not be used in bayNorm this is because that in
+our simulation we found that MME estimated mu and size
+have more accurate relationship, but MME estimated
+size deviates from the true value. BB size is overall
+more close to the true size but it does not possess a
+reasonable relationship with either MME estimated mu or
+BB estimated mu.
 }
 \examples{
+data("EXAMPLE_DATA_list")
 \dontrun{
-Prior_fun(Data,BETA_vec,parallel=T,NCores=5,FIX_MU=T,GR=F,BB_SIZE=T,verbose=T)
+PRIOR_RESULT<-Prior_fun(Data=EXAMPLE_DATA_list$inputdata,
+BETA_vec = EXAMPLE_DATA_list$inputbeta,parallel=T,
+NCores=5,FIX_MU=T,GR=F,BB_SIZE=T,verbose=T)
+}
+
+data("EXAMPLE_DATA_list")
+\dontrun{
+PRIOR_RESULT<-Prior_fun(Data=EXAMPLE_DATA_list$inputdata,
+BETA_vec = EXAMPLE_DATA_list$inputbeta,parallel=TRUE,
+NCores=5,FIX_MU=TRUE,GR=FALSE,BB_SIZE=TRUE,verbose=TRUE)
+
 }
 
 }

@@ -7,13 +7,23 @@
 DownSampling(Data, BETA_vec)
 }
 \arguments{
-\item{Data:}{raw count Data}
+\item{Data}{raw count Data}
 
-\item{BETA_vec:}{A vector of capture efficiencies of cells}
+\item{BETA_vec}{A vector of capture efficiencies of cells}
 }
 \value{
 A matrix of binomial downsampling data.
 }
 \description{
-For each element in the \code{Data}, randomly generate a number using Binomial distribution with probability equal to the specific capture efficiency.
+For each element in the \code{Data},
+randomly generate a number using Binomial distribution with
+probability equal to the specific capture efficiency.
+}
+\examples{
+data("EXAMPLE_DATA_list")
+\dontrun{
+
+Downsample_data<-DownSampling(Data=EXAMPLE_DATA_list$inputdata
+,BETA_vec = EXAMPLE_DATA_list$inputbeta)
+}
 }

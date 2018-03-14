@@ -5,8 +5,8 @@
 \title{Estimating size for each gene by either 1D or 2D optimization of marginal distribution}
 \usage{
 BB_Fun(Data, BETA_vec, INITIAL_MU_vec, INITIAL_SIZE_vec, MU_lower = 0.01,
-  MU_upper = 500, SIZE_lower = 0.01, SIZE_upper = 30, parallel = F,
-  NCores = 5, FIX_MU = T, GR = F)
+  MU_upper = 500, SIZE_lower = 0.01, SIZE_upper = 30, parallel = FALSE,
+  NCores = 5, FIX_MU = TRUE, GR = FALSE)
 }
 \arguments{
 \item{Data}{A matrix of single-cell expression where rows are genes
@@ -39,5 +39,19 @@ matrix rather than data.frame.}
 A vector of estimated size based on maximizing marginal distribution.
 }
 \description{
-Estimating size for each gene by either 1D or 2D optimization of marginal distribution
+Estimating size for each gene by maximizing marginal distribution: 1D (optimize with respect to size, assuming that mu estimated based on MME method is already good), 2D (optimize with respect to both mu and size)
+}
+\examples{
+data("EXAMPLE_DATA_list")
+\dontrun{
+
+BB_RESULT<-BB_Fun(Data=EXAMPLE_DATA_list$inputdata,
+BETA_vec = EXAMPLE_DATA_list$inputbeta,INITIAL_MU_vec=
+EXAMPLE_DATA_list$mu,
+INITIAL_SIZE_vec=EXAMPLE_DATA_list$size,
+MU_lower=0.01,MU_upper=500,SIZE_lower=0.01,
+SIZE_upper=30,parallel=FALSE,NCores=5,FIX_MU=TRUE,GR=FALSE)
+}
+
+
 }

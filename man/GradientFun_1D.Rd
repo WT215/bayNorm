@@ -7,17 +7,22 @@
 GradientFun_1D(SIZE, MU, m_observed, BETA)
 }
 \arguments{
-\item{SIZE:}{SIZE}
+\item{SIZE}{size}
 
-\item{MU:}{MU}
+\item{MU}{mu}
 
-\item{m_observed:}{m_observed}
+\item{m_observed}{one observed count}
 
-\item{BETA:}{BETA}
+\item{BETA}{The corresponding capture efficiency}
 }
 \value{
 GradientFun_1D
 }
 \description{
 GradientFun_1D
+}
+\examples{
+data("EXAMPLE_DATA_list")
+\dontrun{
+}
 }

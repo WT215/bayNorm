@@ -8,8 +8,12 @@
 #' @return  List containing 2D matrix of synthetic control, \code{BETA_vec} used and \code{lambda} used in \code{rpois}.
 #'
 #' @details Simulate control data (based on Poisson distribution).
-#'
-#'
+#' @examples
+#' data("EXAMPLE_DATA_list")
+#' \dontrun{
+#' SC_output<-SyntheticControl(Data=EXAMPLE_DATA_list$inputdata,
+#' BETA_vec = EXAMPLE_DATA_list$inputbeta)
+#' }
 #' @export
 #'
 SyntheticControl<-function(Data,BETA_vec){
@@ -21,7 +25,7 @@ SyntheticControl<-function(Data,BETA_vec){
   MU<-rowMeans(Data_norm)
   mu_mat<- MU%*%t(rep(1,length(MU)))
 
-  N_c <- matrix(rpois(nGenes * nCells, lambda =mu_mat ),nrow = nGenes, ncol = nCells,byrow=F)
+  N_c <- matrix(rpois(nGenes * nCells, lambda =mu_mat ),nrow = nGenes, ncol = nCells,byrow=FALSE)
 
   N_c<-DownSampling(N_c ,beta_c)
 

@@ -11,17 +11,19 @@
 #' @param  FIX_MU Whether fix mu when estimating parameters by maximizing marginal distribution. If TRUE, then 1D optimization, otherwise 2D optimization (slow).
 #' @param  GR If TRUE, the gradient function will be used in optimization. However since the gradient function itself is very complicated, it does not help too much in speeding up. Default is FALSE.
 #' @param  BB_SIZE If TRUE, estimate BB size, and then use it for adjusting MME SIZE. Use the adjusted MME size for bayNorm. Default is TRUE.
+#' @param verbose Print out status messages. Default is TRUE.
 #' @param  plot.out If TRUE, show CV^2 vs Mean expression plot. Default is FALSE.
-#'
+#' @return A list of objects.
+
 #' @details A wrapper function of synthetic control generation, bayNorm on both real cell data and synthetic controls and noisy gene detection.
 #'
 #' @examples
+#' data("EXAMPLE_DATA_list")
 #' \dontrun{
-#' data("noisy_gene_check")
-#' noisy_out<-noisy_gene_detection(Data=inputdata,BETA_vec
-#' =inputbeta, mode_version = F, S = 20,parallel = T, NCores = 5,
-#' FIX_MU = T, GR = F, BB_SIZE = T, verbose = T, plot.out = T)
-#'}
+#' noisy_out<-noisy_gene_detection(Data=EXAMPLE_DATA_list$inputdata,BETA_vec
+#' =EXAMPLE_DATA_list$inputbeta, mode_version = FALSE, S = 20,parallel = TRUE, NCores = 5,
+#' FIX_MU = TRUE, GR = FALSE, BB_SIZE = TRUE, verbose = TRUE, plot.out = TRUE)
+#' }
 #'
 #' @import parallel
 #' @import foreach
@@ -30,7 +32,7 @@
 #' @export
 #'
 
-noisy_gene_detection<-function(Data,BETA_vec,mode_version=F,S=20,parallel=T,NCores=5,FIX_MU=T,GR=F,BB_SIZE=T,verbose=T,plot.out=F){
+noisy_gene_detection<-function(Data,BETA_vec,mode_version=FALSE,S=20,parallel=TRUE,NCores=5,FIX_MU=TRUE,GR=FALSE,BB_SIZE=TRUE,verbose=TRUE,plot.out=FALSE){
 
 
 
@@ -70,18 +72,28 @@ return(list(adjusted_Pvals=NOISE_out,synthetic_output=synthetic_out,bayNorm_N_ou
 #' @param bay_array_N A 2D matrix or 3D array of normalized data(real cells).
 #' @param  bay_array_C A 2D matrix or 3D array of normalized data(synthetic control).
 #' @param  plot.out If TRUE, show CV^2 vs Mean expression plot. Default is FALSE.
+#' @return A vector of adjusted P-values.
 #' @details Noisy gene detection
+#'
+#' @examples
+#' bay_array_N<-array(rpois(1000*50*2,17),dim=c(1000,50,2))
+#' bay_array_C<-array(rpois(1000*50*2,58),dim=c(1000,50,2))
+#' \dontrun{
+#' noisy_output<-NOISY_FUN(bay_array_N,bay_array_C)
+#' }
 #'
 #' @import foreach
 #' @import MASS
 #' @import locfit
+#' @import grDevices
+#' @import graphics
 #'
 #' @export
 #'
 
 
 
-NOISY_FUN<-function(bay_array_N,bay_array_C,plot.out=F){
+NOISY_FUN<-function(bay_array_N,bay_array_C,plot.out=FALSE){
 
   if(length(dim(bay_array_N))==3 &  length(dim(bay_array_C))==3){
     mean_1 = apply(bay_array_N, 1, mean)
@@ -116,7 +128,7 @@ NOISY_FUN<-function(bay_array_N,bay_array_C,plot.out=F){
   yc = log(noise_1c)[Select_c]
 
   loessfit<-locfit.robust(yc ~ xc)
-  h<-predict(loessfit, newdata=x, se.fit=T)
+  h<-predict(loessfit, newdata=x, se.fit=TRUE)
   zval<-(y-h$fit)/h$residual.scale
 
   #####script###

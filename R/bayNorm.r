@@ -1,13 +1,31 @@
 
 
-#' A wrapper function of prior estimation and bayNorm function
+#' @title  A wrapper function of prior estimation and bayNorm function
 #'
-#' Input raw data and a vector of capture efficiencies of cells. You can also specify the condition of cells for normalizing multiple groups of cells separately.
-#' @param Data A matrix of single-cell expression where rows are genes and columns are samples (cells). This object should be of class matrix rather than data.frame.
-#' @param  BETA_vec A vector of capture efficiencies of cells.If it is null, library size normalized to 0.06 will be used as the input BETA_vec. BETA_vec less and equal to 0 or greater and equal to 1 will be replaced by the minimum and maximum of the BETA_vec which range between (0,1) respectively.
+#' @description   Input raw data and a vector of capture
+#' efficiencies of cells. You can also specify the condition
+#' of cells for normalizing multiple groups of cells separately.
+#' @param Data A matrix of single-cell expression where rows
+#' are genes and columns are samples (cells).
+#' This object should be of class matrix rather than data.frame.
+#' @param  BETA_vec A vector of capture efficiencies of cells.
+#' If it is null, library size normalized to 0.06 will be used
+#' as the input BETA_vec. BETA_vec less and equal to 0 or
+#' greater and equal to 1 will be replaced by the minimum
+#' and maximum of the BETA_vec which range between (0,1) respectively.
 #' @param  Conditions vector of condition labels, this should correspond to the columns of the Data. Default is NULL, which assumes that all cells belong to the same group.
-#' @param UMI_sffl (scaling factors for non UMI based data: divide Data by UMI_sffl) Only needed when the input data is non UMI based. If non-null and Conditions is non-null, then UMI_sffl should be a vector of length equal to the number of groups. Default is set to be NULL.
-#' @param  Prior_type Default is NULL. If \code{Conditions} is NULL, priors are estimated based on all cells. If \code{Conditions} is not NULL: if \code{Prior_type} is \code{LL}, priors are estimated within each group respectively. If \code{Prior_type} is \code{GG}, priors are estimated based on cells from all groups. Basically, \code{LL} is suitable for DE detection. \code{GG} is prefered if there is a prior knowledge about the data such that there should not exist biological variation between groups.
+#' @param UMI_sffl (scaling factors for non UMI based data:
+#' divide Data by UMI_sffl) Only needed when the input data
+#' is non UMI based. If non-null and Conditions is non-null,
+#' then UMI_sffl should be a vector of length equal to the
+#' number of groups. Default is set to be NULL.
+#' @param  Prior_type Default is NULL. If \code{Conditions}
+#' is NULL, priors are estimated based on all cells. If
+#' \code{Conditions} is not NULL: if \code{Prior_type} is \code{LL}, priors are estimated within each group respectively.
+#' If \code{Prior_type} is \code{GG}, priors are estimated
+#' based on cells from all groups. Basically, \code{LL} is suitable for DE detection. \code{GG} is prefered if there is
+#' a prior knowledge about the data such that there should
+#' not exist biological variation between groups.
 #' @param  mode_version If TRUE, bayNorm return mode version normalized data which is of 2D matrix instead of 3D array. Default is FALSE.
 #' @param S The number of samples you would like to generate from estimated posterior distribution (The third dimension of 3D array). Default is 20. S needs to be specified if \code{mode_version}=FALSE.
 #' @param  parallel If TRUE, 5 cores will be used for parallelization.
@@ -21,26 +39,28 @@
 #' @details A wrapper function of prior estimation and bayNorm function.
 #'
 #' @examples
+#' data("EXAMPLE_DATA_list")
 #' \dontrun{
-#' data("Main_mode_Bay_check")
 #' #Return 3D array normalzied data:
-#' bayNorm_3D<-bayNorm(Data=inputdata,BETA_vec = inputbeta,mode_version=F)
+#' bayNorm_3D<-bayNorm(Data=EXAMPLE_DATA_list$inputdata,
+#' BETA_vec = EXAMPLE_DATA_list$inputbeta,mode_version=F)
 #'
 #' #Return 2D matrix normalized data:
-#' bayNorm_2D<-bayNorm(Data=inputdata,BETA_vec = inputbeta,mode_version=T)
-#' }
+#' bayNorm_2D<-bayNorm(Data=EXAMPLE_DATA_list$inputdata,
+#' BETA_vec = EXAMPLE_DATA_list$inputbeta
+#' ,mode_version=T)
 #'
+#' }
 #' @import parallel
 #' @import foreach
 #' @import doSNOW
 #'
 #' @export
 #'
-bayNorm<-function(Data,BETA_vec,Conditions=NULL,UMI_sffl=NULL,Prior_type=NULL,mode_version=F,S=20,parallel=T,NCores=5,FIX_MU=T,GR=F,BB_SIZE=T,verbose=T){
+bayNorm<-function(Data,BETA_vec,Conditions=NULL,UMI_sffl=NULL,Prior_type=NULL,mode_version=FALSE,S=20,parallel=TRUE,NCores=5,FIX_MU=TRUE,GR=FALSE,BB_SIZE=TRUE,verbose=TRUE){
 
   if(is.null(BETA_vec)){
-    BETA_vec<-colSums(Data)/mean(colSums(Data))*0.06
-
+        BETA_vec<-colSums(Data)/mean(colSums(Data))*0.06
   }
 
   if(length(which(BETA_vec>=1))>0){
@@ -200,9 +220,9 @@ bayNorm<-function(Data,BETA_vec,Conditions=NULL,UMI_sffl=NULL,Prior_type=NULL,mo
 }
 
 
-#' bayNorm with estimated parameters as input
+#' @title bayNorm with estimated parameters as input
 #'
-#' This is a supplementary function for \code{bayNorm}. It is useful if you have already run \code{bayNorm} before and try to simulate 3D or 3D matrix using the same prior estimates.
+#' @description This is a supplementary function for \code{bayNorm}. It is useful if you have already run \code{bayNorm} before and try to simulate 3D or 3D matrix using the same prior estimates.
 #' @param Data A matrix of single-cell expression where rows are genes and columns are samples (cells). This object should be of class matrix rather than data.frame.
 #' @param  BETA_vec A vector of capture efficiencies of cells.
 #' @param  PRIORS A list of estimated prior parameters obtained from bayNorm.
@@ -218,22 +238,31 @@ bayNorm<-function(Data,BETA_vec,Conditions=NULL,UMI_sffl=NULL,Prior_type=NULL,mo
 #'
 #' @details If you have run bayNorm before and obtained a list of estimated prior parameters, then you may not want to run parameter estimation again. You can just use previous estimated parameters for obtaining 3D or 2D normalized data.
 #'
-#' #' @examples
+#' @examples
+#' data("EXAMPLE_DATA_list")
 #' \dontrun{
-#' data("Main_mode_Bay_check")
 #' #Return 3D array normalzied data:
-#' bayNorm_3D<-bayNorm(Data=inputdata,BETA_vec = inputbeta,mode_version=F)
+#' bayNorm_3D<-bayNorm(Data=EXAMPLE_DATA_list$inputdata,
+#' BETA_vec = EXAMPLE_DATA_list$inputbeta
+#' ,mode_version=F)
 #'
-#' #Now if you want to generate 2D matrix using the same prior estimates as generated before:
-#' bayNorm_2D<-bayNorm_p(Data=inputdata,BETA_vec = bayNorm_3D$BETA,PRIORS=bayNorm_3D$PRIORS_LIST,mode_version=T)
+#' #Now if you want to generate 2D matrix using the same prior
+#' #estimates as generated before:
+#' bayNorm_2D<-bayNorm_p(Data=EXAMPLE_DATA_list$inputdata
+#' ,BETA_vec= bayNorm_3D$BETA,PRIORS=bayNorm_3D$PRIORS_LIST
+#' ,mode_version=T)
 #'
-#' #If previous bayNorm was applied for normalizing multiple groups of cells (is.null(Origin_Conditions)=T), then:
+#' #If previous bayNorm was applied for normalizing multiple
+#' #groups of cells (is.null(Origin_Conditions)=T), then:
 #' inputbeta2<-unlist(bayNorm_3D$BETA)
-#' bayNorm_2D<-bayNorm_p(Data=inputdata,BETA_vec = inputbeta2,PRIORS=bayNorm_3D$PRIORS_LIST,mode_version=T,Conditions=Origin_Conditions)
+#' bayNorm_2D<-bayNorm_p(Data=inputdata,BETA_vec = inputbeta2
+#' ,PRIORS=bayNorm_3D$PRIORS_LIST,mode_version=T,Conditions
+#' =Origin_Conditions)
 #'
-#' You can also generate 3D array using the same prior estimates as generated before.
-#'
+#' #You can also generate 3D array using the same prior estimates
+#' #as generated before.
 #' }
+#'
 #'
 #' @import parallel
 #' @import foreach
@@ -241,7 +270,7 @@ bayNorm<-function(Data,BETA_vec,Conditions=NULL,UMI_sffl=NULL,Prior_type=NULL,mo
 #'
 #' @export
 #'
-bayNorm_sup<-function(Data,BETA_vec,PRIORS=NULL,Conditions=NULL,UMI_sffl=NULL,mode_version=F,S=20,parallel=T,NCores=5,BB_SIZE=T,verbose=T){
+bayNorm_sup<-function(Data,BETA_vec,PRIORS=NULL,Conditions=NULL,UMI_sffl=NULL,mode_version=FALSE,S=20,parallel=TRUE,NCores=5,BB_SIZE=TRUE,verbose=TRUE){
 
 
   if(is.null(Conditions)){
