@@ -28,6 +28,8 @@
 
 noisy_gene_detection<-function(Data,BETA_vec,mode_version=F,S=20,parallel=T,NCores=5,FIX_MU=T,GR=F,BB_SIZE=T,verbose=T,plot.out=F){
 
+
+
 message("Apply bayNorm on the real cell datasets.")
 bayNorm_N_out<-bayNorm(Data=Data,BETA_vec=BETA_vec,Conditions=NULL,UMI_sffl=NULL,Prior_type = NULL,S=S,parallel = parallel,NCores=NCores,FIX_MU = FIX_MU,GR=GR,BB_SIZE=BB_SIZE,verbose=verbose)
 
