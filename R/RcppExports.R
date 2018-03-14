@@ -69,12 +69,9 @@ GradientFun_2D <- function(SIZE_MU, m_observed, BETA) {
 #'
 #' MarginalF_2D
 #'
-#' @param SIZE:SIZE
-#' @param MU:MU
-#' @param size: A vector of size
-#' @param mu: A vector of mu
+#' @param SIZE_MU: a vector of two elements (size,mu)
 #' @param m_observed:m_observed
-#' @param BETA:BETA
+#' @param BETA: A vector of capture efficiencies
 #' @return Marginal likelihood
 #' @export
 MarginalF_2D <- function(SIZE_MU, m_observed, BETA) {
@@ -85,8 +82,10 @@ MarginalF_2D <- function(SIZE_MU, m_observed, BETA) {
 #'
 #' GradientFun_1D
 #'
-#' @param SIZE:SIZE
-#' @param MU:MU
+#'
+#'
+#' @param SIZE: SIZE
+#' @param MU: MU
 #' @param m_observed: m_observed
 #' @param BETA: BETA
 #' @return GradientFun_1D

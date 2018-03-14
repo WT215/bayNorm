@@ -7,9 +7,9 @@
 MarginalF_2D(SIZE_MU, m_observed, BETA)
 }
 \arguments{
-\item{size:}{A vector of size}
+\item{SIZE_MU:}{a vector of two elements (size,mu)}
 
-\item{mu:}{A vector of mu}
+\item{BETA:}{A vector of capture efficiencies}
 }
 \value{
 Marginal likelihood

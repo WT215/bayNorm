@@ -10,6 +10,8 @@ NOISY_FUN(bay_array_N, bay_array_C, plot.out = F)
 \item{bay_array_N}{A 2D matrix or 3D array of normalized data(real cells).}
 
 \item{bay_array_C}{A 2D matrix or 3D array of normalized data(synthetic control).}
+
+\item{plot.out}{If TRUE, show CV^2 vs Mean expression plot. Default is FALSE.}
 }
 \description{
 Input raw data and a vector of capture efficiencies of cells. You can

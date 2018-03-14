@@ -4,9 +4,6 @@
 #'
 #' @param Data A matrix of single-cell expression where rows are genes and columns are samples (cells). This object should be of class matrix rather than data.frame.
 #' @param  BETA_vec A vector of capture efficiencies of cells.
-#' @param  Conditions No need to specify.
-#' @param UMI_sffl No need to specify. Currently this function is for UMI based data.
-#' @param  Prior_type No need to specify. Default is NULL. If \code{Conditions} is NULL, priors are estimated based on all cells.
 #' @param  mode_version If TRUE, bayNorm return mode version normalized data which is of 2D matrix instead of 3D array. Default is FALSE.
 #' @param S The number of samples you would like to generate from estimated posterior distribution (The third dimension of 3D array). Default is 20. S needs to be specified if \code{mode_version}=FALSE.
 #' @param  parallel If TRUE, 5 cores will be used for parallelization.
@@ -14,8 +11,7 @@
 #' @param  FIX_MU Whether fix mu when estimating parameters by maximizing marginal distribution. If TRUE, then 1D optimization, otherwise 2D optimization (slow).
 #' @param  GR If TRUE, the gradient function will be used in optimization. However since the gradient function itself is very complicated, it does not help too much in speeding up. Default is FALSE.
 #' @param  BB_SIZE If TRUE, estimate BB size, and then use it for adjusting MME SIZE. Use the adjusted MME size for bayNorm. Default is TRUE.
-#' @param verbose print out status messages. Default is TRUE.
-#' @return  List of objects. The first element in the list is the adjusted P-values (noisy genes detection).
+#' @param  plot.out If TRUE, show CV^2 vs Mean expression plot. Default is FALSE.
 #'
 #' @details A wrapper function of synthetic control generation, bayNorm on both real cell data and synthetic controls and noisy gene detection.
 #'
@@ -73,6 +69,7 @@ return(list(adjusted_Pvals=NOISE_out,synthetic_output=synthetic_out,bayNorm_N_ou
 #' also need to specify the condition of cells.
 #' @param bay_array_N A 2D matrix or 3D array of normalized data(real cells).
 #' @param  bay_array_C A 2D matrix or 3D array of normalized data(synthetic control).
+#' @param  plot.out If TRUE, show CV^2 vs Mean expression plot. Default is FALSE.
 #' @details Noisy gene detection
 #'
 #' @import foreach

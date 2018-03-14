@@ -27,16 +27,7 @@ noisy_gene_detection(Data, BETA_vec, mode_version = F, S = 20,
 
 \item{BB_SIZE}{If TRUE, estimate BB size, and then use it for adjusting MME SIZE. Use the adjusted MME size for bayNorm. Default is TRUE.}
 
-\item{verbose}{print out status messages. Default is TRUE.}
-
-\item{Conditions}{No need to specify.}
-
-\item{UMI_sffl}{No need to specify. Currently this function is for UMI based data.}
-
-\item{Prior_type}{No need to specify. Default is NULL. If \code{Conditions} is NULL, priors are estimated based on all cells.}
-}
-\value{
-List of objects. The first element in the list is the adjusted P-values (noisy genes detection).
+\item{plot.out}{If TRUE, show CV^2 vs Mean expression plot. Default is FALSE.}
 }
 \description{
 A wrapper function of synthetic control generation, bayNorm on both real cell data and synthetic controls and noisy gene detection.

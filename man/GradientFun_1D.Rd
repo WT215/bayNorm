@@ -7,6 +7,10 @@
 GradientFun_1D(SIZE, MU, m_observed, BETA)
 }
 \arguments{
+\item{SIZE:}{SIZE}
+
+\item{MU:}{MU}
+
 \item{m_observed:}{m_observed}
 
 \item{BETA:}{BETA}
