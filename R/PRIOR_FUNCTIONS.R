@@ -63,7 +63,7 @@ BetaFun<-function(Data,MeanBETA){
 #' @export
 EstPrior<-function(Data,verbose=T){
   CoefDat<-foreach(i=1:nrow(Data),.combine=rbind)%do%{
-    qq<-fitdistrplus::fitdist(Data[i,],'nbinom',method='mme',keepdata=F)
+    suppressWarnings(qq<-fitdistrplus::fitdist(Data[i,],'nbinom',method='mme',keepdata=F))
     return(coef(qq))
   }
   rownames(CoefDat)<-rownames(Data)
