@@ -44,3 +44,14 @@ Input raw data and a vector of capture efficiencies of cells. You can also speci
 \details{
 A wrapper function of prior estimation and bayNorm function.
 }
+\examples{
+\dontrun{
+data("Main_mode_Bay_check")
+#Return 3D array normalzied data:
+bayNorm_3D<-bayNorm(Data=inputdata,BETA_vec = inputbeta,mode_version=F)
+
+#Return 2D matrix normalized data:
+bayNorm_2D<-bayNorm(Data=inputdata,BETA_vec = inputbeta,mode_version=T)
+}
+
+}

@@ -26,3 +26,10 @@ bayNorm normalized data
 bayNorm
 If the observed count is above 500, then we use normal distribution to approximate binomial distribution.
 }
+\examples{
+\dontrun{
+data("Main_mode_Bay_check")
+Norm_3D_array<-Main_Bay(Data=inputdata,BETA_vec = inputbeta,
+size=size,mu=mu,S=20,thres=10000000)
+}
+}

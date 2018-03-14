@@ -44,3 +44,12 @@ A wrapper function of synthetic control generation, bayNorm on both real cell da
 \details{
 A wrapper function of synthetic control generation, bayNorm on both real cell data and synthetic controls and noisy gene detection.
 }
+\examples{
+\dontrun{
+data("noisy_gene_check")
+noisy_out<-noisy_gene_detection(Data=inputdata,BETA_vec
+=inputbeta, mode_version = F, S = 20,parallel = T, NCores = 5,
+FIX_MU = T, GR = F, BB_SIZE = T, verbose = T, plot.out = T)
+}
+
+}

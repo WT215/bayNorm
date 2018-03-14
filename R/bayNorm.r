@@ -20,6 +20,16 @@
 #'
 #' @details A wrapper function of prior estimation and bayNorm function.
 #'
+#' @examples
+#' \dontrun{
+#' data("Main_mode_Bay_check")
+#' #Return 3D array normalzied data:
+#' bayNorm_3D<-bayNorm(Data=inputdata,BETA_vec = inputbeta,mode_version=F)
+#'
+#' #Return 2D matrix normalized data:
+#' bayNorm_2D<-bayNorm(Data=inputdata,BETA_vec = inputbeta,mode_version=T)
+#' }
+#'
 #' @import parallel
 #' @import foreach
 #' @import doSNOW
@@ -192,7 +202,7 @@ bayNorm<-function(Data,BETA_vec,Conditions=NULL,UMI_sffl=NULL,Prior_type=NULL,mo
 
 #' bayNorm with estimated parameters as input
 #'
-#' Input raw data and a vector of capture efficiencies of cells.
+#' This is a supplementary function for \code{bayNorm}. It is useful if you have already run \code{bayNorm} before and try to simulate 3D or 3D matrix using the same prior estimates.
 #' @param Data A matrix of single-cell expression where rows are genes and columns are samples (cells). This object should be of class matrix rather than data.frame.
 #' @param  BETA_vec A vector of capture efficiencies of cells.
 #' @param  PRIORS A list of estimated prior parameters obtained from bayNorm.
@@ -208,13 +218,30 @@ bayNorm<-function(Data,BETA_vec,Conditions=NULL,UMI_sffl=NULL,Prior_type=NULL,mo
 #'
 #' @details If you have run bayNorm before and obtained a list of estimated prior parameters, then you may not want to run parameter estimation again. You can just use previous estimated parameters for obtaining 3D or 2D normalized data.
 #'
+#' #' @examples
+#' \dontrun{
+#' data("Main_mode_Bay_check")
+#' #Return 3D array normalzied data:
+#' bayNorm_3D<-bayNorm(Data=inputdata,BETA_vec = inputbeta,mode_version=F)
+#'
+#' #Now if you want to generate 2D matrix using the same prior estimates as generated before:
+#' bayNorm_2D<-bayNorm_p(Data=inputdata,BETA_vec = bayNorm_3D$BETA,PRIORS=bayNorm_3D$PRIORS_LIST,mode_version=T)
+#'
+#' #If previous bayNorm was applied for normalizing multiple groups of cells (is.null(Origin_Conditions)=T), then:
+#' inputbeta2<-unlist(bayNorm_3D$BETA)
+#' bayNorm_2D<-bayNorm_p(Data=inputdata,BETA_vec = inputbeta2,PRIORS=bayNorm_3D$PRIORS_LIST,mode_version=T,Conditions=Origin_Conditions)
+#'
+#' You can also generate 3D array using the same prior estimates as generated before.
+#'
+#' }
+#'
 #' @import parallel
 #' @import foreach
 #' @import doSNOW
 #'
 #' @export
 #'
-bayNorm_p<-function(Data,BETA_vec,PRIORS=NULL,Conditions=NULL,UMI_sffl=NULL,mode_version=F,S=20,parallel=T,NCores=5,BB_SIZE=T,verbose=T){
+bayNorm_sup<-function(Data,BETA_vec,PRIORS=NULL,Conditions=NULL,UMI_sffl=NULL,mode_version=F,S=20,parallel=T,NCores=5,BB_SIZE=T,verbose=T){
 
 
   if(is.null(Conditions)){

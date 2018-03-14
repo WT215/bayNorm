@@ -12,7 +12,7 @@ SyntheticControl(Data, BETA_vec)
 \item{BETA_vec}{A vector of capture efficiencies of cells.}
 }
 \value{
-List containing 2D matrix of synthetic control, \code{BETA_vec} used and \lambda used in \rpois.
+List containing 2D matrix of synthetic control, \code{BETA_vec} used and \code{lambda} used in \code{rpois}.
 }
 \description{
 Input raw data and a vector of capture efficiencies of cells.

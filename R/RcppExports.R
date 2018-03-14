@@ -14,6 +14,14 @@
 #' @param S: number of samples that you want to generate for 3D array
 #' @param thres: for observed count greater than \code{thres}, use uniform prior.
 #' @return bayNorm normalized data
+#'
+#'
+#' @examples
+#' \dontrun{
+#' data("Main_mode_Bay_check")
+#' Norm_3D_array<-Main_Bay(Data=inputdata,BETA_vec = inputbeta,
+#' size=size,mu=mu,S=20,thres=10000000)
+#' }
 #' @export
 Main_Bay <- function(Data, BETA_vec, size, mu, S, thres) {
     .Call('_bayNorm_Main_Bay', PACKAGE = 'bayNorm', Data, BETA_vec, size, mu, S, thres)
@@ -32,6 +40,13 @@ Main_Bay <- function(Data, BETA_vec, size, mu, S, thres) {
 #' @param S: number of samples that you want to generate
 #' @param thres: for observed count greater than \code{thres}, use uniform prior.
 #' @return bayNorm normalized data
+#'
+#' //' @examples
+#' \dontrun{
+#' data("Main_mode_Bay_check")
+#' Norm_2D_matrix<-Main_mode_Bay(Data=inputdata,BETA_vec = inputbeta,
+#' size=size,mu=mu,S=20,thres=10000000)
+#' }
 #' @export
 Main_mode_Bay <- function(Data, BETA_vec, size, mu, S, thres) {
     .Call('_bayNorm_Main_mode_Bay', PACKAGE = 'bayNorm', Data, BETA_vec, size, mu, S, thres)

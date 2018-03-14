@@ -139,6 +139,14 @@ NumericVector post_wrapper_norm(IntegerVector x,double m,double beta,int last, i
 //' @param S: number of samples that you want to generate for 3D array
 //' @param thres: for observed count greater than \code{thres}, use uniform prior.
 //' @return bayNorm normalized data
+//'
+//'
+//' @examples
+//' \dontrun{
+//' data("Main_mode_Bay_check")
+//' Norm_3D_array<-Main_Bay(Data=inputdata,BETA_vec = inputbeta,
+//' size=size,mu=mu,S=20,thres=10000000)
+//' }
 //' @export
 // [[Rcpp::export]]
 NumericVector Main_Bay(NumericMatrix Data, NumericVector BETA_vec, NumericVector size, Nullable<NumericVector> mu,int S,int thres)
@@ -260,6 +268,13 @@ return(Rcpp::wrap(Final_mat2));
 //' @param S: number of samples that you want to generate
 //' @param thres: for observed count greater than \code{thres}, use uniform prior.
 //' @return bayNorm normalized data
+//'
+//' //' @examples
+//' \dontrun{
+//' data("Main_mode_Bay_check")
+//' Norm_2D_matrix<-Main_mode_Bay(Data=inputdata,BETA_vec = inputbeta,
+//' size=size,mu=mu,S=20,thres=10000000)
+//' }
 //' @export
 // [[Rcpp::export]]
 NumericMatrix Main_mode_Bay(NumericMatrix Data, NumericVector BETA_vec, NumericVector size, Nullable<NumericVector> mu,int S,int thres)

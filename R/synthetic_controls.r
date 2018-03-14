@@ -5,7 +5,7 @@
 #' Input raw data and a vector of capture efficiencies of cells.
 #' @param Data A matrix of single-cell expression where rows are genes and columns are samples (cells). This object should be of class matrix rather than data.frame.
 #' @param  BETA_vec A vector of capture efficiencies of cells.
-#' @return  List containing 2D matrix of synthetic control, \code{BETA_vec} used and \lambda used in \rpois.
+#' @return  List containing 2D matrix of synthetic control, \code{BETA_vec} used and \code{lambda} used in \code{rpois}.
 #'
 #' @details Simulate control data (based on Poisson distribution).
 #'

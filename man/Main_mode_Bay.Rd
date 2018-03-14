@@ -21,6 +21,13 @@ Main_mode_Bay(Data, BETA_vec, size, mu, S, thres)
 }
 \value{
 bayNorm normalized data
+
+//' @examples
+\dontrun{
+data("Main_mode_Bay_check")
+Norm_2D_matrix<-Main_mode_Bay(Data=inputdata,BETA_vec = inputbeta,
+size=size,mu=mu,S=20,thres=10000000)
+}
 }
 \description{
 bayNorm
