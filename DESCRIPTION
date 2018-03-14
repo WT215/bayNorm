@@ -17,8 +17,10 @@ Imports:
           iterators,
           doSNOW,
           parallel,
+          MASS,
+          locfit,
           fitdistrplus
-LinkingTo: Rcpp, RcppArmadillo
+LinkingTo: Rcpp, RcppArmadillo,RcppProgress
 Suggests: knitr,
     rmarkdown,
     BiocStyle

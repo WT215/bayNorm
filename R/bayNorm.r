@@ -2,10 +2,9 @@
 
 #' A wrapper function of prior estimation and bayNorm function
 #'
-#' Input raw data and a vector of capture efficiencies of cells. You can
-#' also need to specify the condition of cells.
+#' Input raw data and a vector of capture efficiencies of cells. You can also specify the condition of cells for normalizing multiple groups of cells separately.
 #' @param Data A matrix of single-cell expression where rows are genes and columns are samples (cells). This object should be of class matrix rather than data.frame.
-#' @param  BETA_vec A vector of capture efficiencies of cells.
+#' @param  BETA_vec A vector of capture efficiencies of cells.If it is null, library size normalized to 0.06 will be used as the input BETA_vec. BETA_vec less and equal to 0 or greater and equal to 1 will be replaced by the minimum and maximum of the BETA_vec which range between (0,1) respectively.
 #' @param  Conditions vector of condition labels, this should correspond to the columns of the Data. Default is NULL, which assumes that all cells belong to the same group.
 #' @param UMI_sffl (scaling factors for non UMI based data: divide Data by UMI_sffl) Only needed when the input data is non UMI based. If non-null and Conditions is non-null, then UMI_sffl should be a vector of length equal to the number of groups. Default is set to be NULL.
 #' @param  Prior_type Default is NULL. If \code{Conditions} is NULL, priors are estimated based on all cells. If \code{Conditions} is not NULL: if \code{Prior_type} is \code{LL}, priors are estimated within each group respectively. If \code{Prior_type} is \code{GG}, priors are estimated based on cells from all groups. Basically, \code{LL} is suitable for DE detection. \code{GG} is prefered if there is a prior knowledge about the data such that there should not exist biological variation between groups.
@@ -28,6 +27,22 @@
 #' @export
 #'
 bayNorm<-function(Data,BETA_vec,Conditions=NULL,UMI_sffl=NULL,Prior_type=NULL,mode_version=F,S=20,parallel=T,NCores=5,FIX_MU=T,GR=F,BB_SIZE=T,verbose=T){
+
+  if(is.null(BETA_vec)){
+    BETA_vec<-colSums(Data)/mean(colSums(Data))*0.06
+
+  }
+
+  if(length(which(BETA_vec>=1))>0){
+    BETA_vec[BETA_vec>=1]=max(BETA_vec[BETA_vec<1])
+  }
+  if(length(which(BETA_vec<=0))>0){
+    BETA_vec[BETA_vec<=0]=min(BETA_vec[BETA_vec>0])
+  }
+
+
+
+
 
 #Some pre-checkings:
   if(class(Data)!='matrix'){stop("Input data should be of class matrix")}
@@ -58,12 +73,12 @@ bayNorm<-function(Data,BETA_vec,Conditions=NULL,UMI_sffl=NULL,Prior_type=NULL,mo
     }
 
     if(!mode_version){
-    Bay_array<-Main_Bay(Data=Data_sr,BETA_vec=BETA_vec,size=SIZE_input,mu=MU_input,S=S,thres=max(Data_sr)*2,Mean_depth=1000000)
+    Bay_array<-Main_Bay(Data=Data_sr,BETA_vec=BETA_vec,size=SIZE_input,mu=MU_input,S=S,thres=max(Data_sr)*2)
     rownames(Bay_array)<-rownames(Data)
     colnames(Bay_array)<-colnames(Data)
     return(list(Bay_array=Bay_array,PRIORS=PRIORS,BETA=BETA_vec))
     }else{ #mode
-      Bay_mat<-Main_mode_Bay(Data=Data_sr,BETA_vec=BETA_vec,size=SIZE_input,mu=MU_input,S=S,thres=max(Data_sr)*2,Mean_depth=1000000)
+      Bay_mat<-Main_mode_Bay(Data=Data_sr,BETA_vec=BETA_vec,size=SIZE_input,mu=MU_input,S=S,thres=max(Data_sr)*2)
       rownames(Bay_mat)<-rownames(Data)
       colnames(Bay_mat)<-colnames(Data)
       return(list(Bay_mat=Bay_mat,PRIORS=PRIORS,BETA=BETA_vec))
@@ -137,7 +152,7 @@ bayNorm<-function(Data,BETA_vec,Conditions=NULL,UMI_sffl=NULL,Prior_type=NULL,mo
      }
 
 
-     Bay_array_list[[i]]<-Main_Bay(Data=DataList_sr[[i]],BETA_vec=BETAList[[i]],size=SIZE_input,mu=MU_input,S=S,thres=max(Data)*2,Mean_depth=1000000)
+     Bay_array_list[[i]]<-Main_Bay(Data=DataList_sr[[i]],BETA_vec=BETAList[[i]],size=SIZE_input,mu=MU_input,S=S,thres=max(Data)*2)
 
      rownames(Bay_array_list[[i]])<-rownames(DataList[[i]])
      colnames(Bay_array_list[[i]])<-colnames(DataList[[i]])
@@ -157,7 +172,7 @@ bayNorm<-function(Data,BETA_vec,Conditions=NULL,UMI_sffl=NULL,Prior_type=NULL,mo
          SIZE_input=PRIORS_LIST[[i]]$MME_prior$MME_SIZE
        }
 
-       Bay_mat_list[[i]]<-Main_mode_Bay(Data=DataList_sr[[i]],BETA_vec=BETAList[[i]],size=SIZE_input,mu=MU_input,S=S,thres=max(Data)*2,Mean_depth=1000000)
+       Bay_mat_list[[i]]<-Main_mode_Bay(Data=DataList_sr[[i]],BETA_vec=BETAList[[i]],size=SIZE_input,mu=MU_input,S=S,thres=max(Data)*2)
 
        rownames(Bay_mat_list[[i]])<-rownames(DataList[[i]])
        colnames(Bay_mat_list[[i]])<-colnames(DataList[[i]])
@@ -201,6 +216,7 @@ bayNorm<-function(Data,BETA_vec,Conditions=NULL,UMI_sffl=NULL,Prior_type=NULL,mo
 #'
 bayNorm_p<-function(Data,BETA_vec,PRIORS=NULL,Conditions=NULL,UMI_sffl=NULL,mode_version=F,S=20,parallel=T,NCores=5,BB_SIZE=T,verbose=T){
 
+
   if(is.null(Conditions)){
     if(is.null(UMI_sffl)){
       #Data_s<-Data
@@ -219,12 +235,12 @@ bayNorm_p<-function(Data,BETA_vec,PRIORS=NULL,Conditions=NULL,UMI_sffl=NULL,mode
     }
 
     if(!mode_version){
-      Bay_array<-Main_Bay(Data=Data_sr,BETA_vec=BETA_vec,size=SIZE_input,mu=MU_input,S=S,thres=max(Data_sr)*2,Mean_depth=1000000)
+      Bay_array<-Main_Bay(Data=Data_sr,BETA_vec=BETA_vec,size=SIZE_input,mu=MU_input,S=S,thres=max(Data_sr)*2)
       rownames(Bay_array)<-rownames(Data)
       colnames(Bay_array)<-colnames(Data)
       return(list(Bay_array=Bay_array,PRIORS=PRIORS,BETA=BETA_vec))
     }else{ #mode
-      Bay_mat<-Main_mode_Bay(Data=Data_sr,BETA_vec=BETA_vec,size=SIZE_input,mu=MU_input,S=S,thres=max(Data_sr)*2,Mean_depth=1000000)
+      Bay_mat<-Main_mode_Bay(Data=Data_sr,BETA_vec=BETA_vec,size=SIZE_input,mu=MU_input,S=S,thres=max(Data_sr)*2)
       rownames(Bay_mat)<-rownames(Data)
       colnames(Bay_mat)<-colnames(Data)
       return(list(Bay_mat=Bay_mat,PRIORS=PRIORS,BETA=BETA_vec))
@@ -288,7 +304,7 @@ bayNorm_p<-function(Data,BETA_vec,PRIORS=NULL,Conditions=NULL,UMI_sffl=NULL,mode
           MU_input=PRIORS_LIST[[i]]$MME_prior$MME_MU
           SIZE_input=PRIORS_LIST[[i]]$MME_prior$MME_SIZE
         }
-        Bay_array_list[[i]]<-Main_Bay(Data=DataList_sr[[i]],BETA_vec=BETAList[[i]],size=SIZE_input,mu=MU_input,S=S,thres=max(Data)*2,Mean_depth=1000000)
+        Bay_array_list[[i]]<-Main_Bay(Data=DataList_sr[[i]],BETA_vec=BETAList[[i]],size=SIZE_input,mu=MU_input,S=S,thres=max(Data)*2)
 
         rownames(Bay_array_list[[i]])<-rownames(DataList[[i]])
         colnames(Bay_array_list[[i]])<-colnames(DataList[[i]])
@@ -308,7 +324,7 @@ bayNorm_p<-function(Data,BETA_vec,PRIORS=NULL,Conditions=NULL,UMI_sffl=NULL,mode
           SIZE_input=PRIORS_LIST[[i]]$MME_prior$MME_SIZE
         }
 
-        Bay_mat_list[[i]]<-Main_mode_Bay(Data=DataList_sr[[i]],BETA_vec=BETAList[[i]],size=SIZE_input,mu=MU_input,S=S,thres=max(Data)*2,Mean_depth=1000000)
+        Bay_mat_list[[i]]<-Main_mode_Bay(Data=DataList_sr[[i]],BETA_vec=BETAList[[i]],size=SIZE_input,mu=MU_input,S=S,thres=max(Data)*2)
 
         rownames(Bay_mat_list[[i]])<-rownames(DataList[[i]])
         colnames(Bay_mat_list[[i]])<-colnames(DataList[[i]])

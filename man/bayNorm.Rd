@@ -11,7 +11,7 @@ bayNorm(Data, BETA_vec, Conditions = NULL, UMI_sffl = NULL,
 \arguments{
 \item{Data}{A matrix of single-cell expression where rows are genes and columns are samples (cells). This object should be of class matrix rather than data.frame.}
 
-\item{BETA_vec}{A vector of capture efficiencies of cells.}
+\item{BETA_vec}{A vector of capture efficiencies of cells.If it is null, library size normalized to 0.06 will be used as the input BETA_vec. BETA_vec less and equal to 0 or greater and equal to 1 will be replaced by the minimum and maximum of the BETA_vec which range between (0,1) respectively.}
 
 \item{Conditions}{vector of condition labels, this should correspond to the columns of the Data. Default is NULL, which assumes that all cells belong to the same group.}
 
@@ -39,8 +39,7 @@ bayNorm(Data, BETA_vec, Conditions = NULL, UMI_sffl = NULL,
 List containing 3D arrays of normalized expression (if \code{mode_version}=FALSE) or 2D matrix of normalized expression (if \code{mode_version}=TRUE), estimated parameters and input \code{BETA_vec}.
 }
 \description{
-Input raw data and a vector of capture efficiencies of cells. You can
-also need to specify the condition of cells.
+Input raw data and a vector of capture efficiencies of cells. You can also specify the condition of cells for normalizing multiple groups of cells separately.
 }
 \details{
 A wrapper function of prior estimation and bayNorm function.

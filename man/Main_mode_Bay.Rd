@@ -4,7 +4,7 @@
 \alias{Main_mode_Bay}
 \title{Mode_Bay}
 \usage{
-Main_mode_Bay(Data, BETA_vec, size, mu, S, thres, Mean_depth)
+Main_mode_Bay(Data, BETA_vec, size, mu, S, thres)
 }
 \arguments{
 \item{Data:}{raw count Data}
@@ -16,11 +16,13 @@ Main_mode_Bay(Data, BETA_vec, size, mu, S, thres, Mean_depth)
 \item{mu:}{A vector of mu}
 
 \item{S:}{number of samples that you want to generate}
+
+\item{thres:}{for observed count greater than \code{thres}, use uniform prior.}
 }
 \value{
-bayNorm
+bayNorm normalized data
 }
 \description{
 bayNorm
-If the observed count is above 500, we then used normal distribution to approximate binomial distribution.
+If the observed count is above 500, then we use normal distribution to approximate binomial distribution.
 }

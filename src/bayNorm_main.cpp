@@ -2,9 +2,13 @@
 #include <RcppArmadilloExtensions/sample.h>
 #include <Rmath.h>
 #include <Rcpp.h>
+#include <progress.hpp>
+#include <progress_bar.hpp>
 // [[Rcpp::depends(RcppArmadillo)]]
+// [[Rcpp::depends(RcppProgress)]]
 
-using namespace Rcpp ;
+
+using namespace Rcpp;
 using namespace arma;
 using namespace std;
 
@@ -42,7 +46,7 @@ double chooseC(double n, double k) {
 
 
 
-double compute_prob2(double n, double m, double beta) {
+double post_binom_unif(double n, double m, double beta) {
   double prob;
   arma::vec k = arma::linspace<vec>(0, m-1, m);
   arma::vec k_vec;
@@ -66,7 +70,7 @@ double compute_prob2(double n, double m, double beta) {
 
 
 
-double compute_prob_prior2(double n, double m,  double beta, double size, double m_ave) {
+double post_binom_nb(double n, double m,  double beta, double size, double m_ave) {
   double prob;
   arma::vec k = arma::linspace<vec>(0, m-1, m);
   arma::vec k_vec;
@@ -93,29 +97,25 @@ double compute_prob_prior2(double n, double m,  double beta, double size, double
 
 
 
-
-NumericVector Compute2function(IntegerVector x,double m,double beta,double size, double m_ave, int last,int Indicate) {
-
-
+NumericVector post_wrapper(IntegerVector x,double m,double beta,double size, double m_ave, int last,int Indicate) {
   NumericVector y(last+1);
 
   if(Indicate==1)
   {
     for(int temp=0;temp<(last+1);temp++){
-      y(temp)=compute_prob_prior2(x(temp), m, beta, size, m_ave);
+      y(temp)=post_binom_nb(x(temp), m, beta, size, m_ave);
+    }
+  } else if(Indicate==0){
+    for(int temp2=0;temp2<(last+1);temp2++){
+      y(temp2)=post_binom_unif(x(temp2), m, beta);
     }
   }
 
-  else{
-    for(int temp2=0;temp2<(last+1);temp2++){
-      y(temp2)=compute_prob2(x(temp2), m, beta);
-    }
-  }
   return(y);
 }
 
 
-NumericVector Compute2function_norm(IntegerVector x,double m,double beta,int last, int init) {
+NumericVector post_wrapper_norm(IntegerVector x,double m,double beta,int last, int init) {
 
   NumericVector y(last-init+1);
 
@@ -129,20 +129,19 @@ NumericVector Compute2function_norm(IntegerVector x,double m,double beta,int las
 //' Main_Bay
 //'
 //' bayNorm
-//' If the observed count is above 500, we then used normal distribution to approximate binomial distribution.
+//' If the observed count is above 500, then we use normal distribution to approximate binomial distribution.
 //'
 //'
 //' @param Data: raw count Data
 //' @param BETA_vec: A vector of capture efficiencies of cells
 //' @param size: A vector of size
 //' @param mu: A vector of mu
-//' @param S: number of samples that you want to generate
-//' @param thres:thres
-//' @param Mean_depth:Mean_depth
-//' @return bayNorm
+//' @param S: number of samples that you want to generate for 3D array
+//' @param thres: for observed count greater than \code{thres}, use uniform prior.
+//' @return bayNorm normalized data
 //' @export
 // [[Rcpp::export]]
-NumericVector Main_Bay(NumericMatrix Data, NumericVector BETA_vec, NumericVector size, Nullable<NumericVector> mu,int S,int thres,double Mean_depth)
+NumericVector Main_Bay(NumericMatrix Data, NumericVector BETA_vec, NumericVector size, Nullable<NumericVector> mu,int S,int thres)
 {
 
 
@@ -158,7 +157,7 @@ NumericVector Main_Bay(NumericMatrix Data, NumericVector BETA_vec, NumericVector
   int i;
   int j;
   int q;
-  int dim;
+
 
   int last;
   int init;
@@ -175,21 +174,24 @@ NumericVector Main_Bay(NumericMatrix Data, NumericVector BETA_vec, NumericVector
 
     M_ave = Rcpp::as<arma::vec>(mu);
   }
+  //
+  //
+  // else{
+  //
+  //   arma::rowvec M_colmean=arma::sum(M, dim=0 );
+  //
+  //   M_t=M.each_row() / M_colmean;
+  //   M_ave = arma::mean(M_t, dim=1 )*Mean_depth;
+  // }
 
-
-  else{
-
-    arma::rowvec M_colmean=arma::sum(M, dim=0 );
-
-    M_t=M.each_row() / M_colmean;
-    M_ave = arma::mean(M_t, dim=1 )*Mean_depth;
-  }
-
+  Progress p(ncol*nrow, true);
 
   for( i=0;i<ncol;i++){
-    Rcout << "The cell is \n" << i+1 << std::endl;
+   // Rcout << "The cell is \n" << i+1 << std::endl;
 
     for( j=0;j<nrow;j++){
+
+      p.increment();
 
       //if(debug)
       //{Rcout << "The gene is \n" << j+1 << std::endl;}
@@ -206,17 +208,17 @@ NumericVector Main_Bay(NumericMatrix Data, NumericVector BETA_vec, NumericVector
 
         if(M(j,i)<thres){
 
-          y=Compute2function(x,M(j,i),Beta(i),size(j), M_ave(j), last,1);
+          y=post_wrapper(x,M(j,i),Beta(i),size(j), M_ave(j), last,1);
         }
 
         else{
-          y=Compute2function(x,M(j,i),Beta(i),size(j), M_ave(j), last,0);
+          y=post_wrapper(x,M(j,i),Beta(i),size(j), M_ave(j), last,0);
         }
         }else{
           init=M(j,i)/3/Beta(i);
           last=M(j,i)*3/Beta(i);
           x=rcpp_seq(init,last,1);
-           y=Compute2function_norm(x,M(j,i),Beta(i),last,init);
+           y=post_wrapper_norm(x,M(j,i),Beta(i),last,init);
 
         }
 
@@ -248,7 +250,7 @@ return(Rcpp::wrap(Final_mat2));
 //' Mode_Bay
 //'
 //' bayNorm
-//' If the observed count is above 500, we then used normal distribution to approximate binomial distribution.
+//' If the observed count is above 500, then we use normal distribution to approximate binomial distribution.
 //'
 //'
 //' @param Data: raw count Data
@@ -256,12 +258,11 @@ return(Rcpp::wrap(Final_mat2));
 //' @param size: A vector of size
 //' @param mu: A vector of mu
 //' @param S: number of samples that you want to generate
-//' @param thres:thres
-//' @param Mean_depth:Mean_depth
-//' @return bayNorm
+//' @param thres: for observed count greater than \code{thres}, use uniform prior.
+//' @return bayNorm normalized data
 //' @export
 // [[Rcpp::export]]
-NumericMatrix Main_mode_Bay(NumericMatrix Data, NumericVector BETA_vec, NumericVector size, Nullable<NumericVector> mu,int S,int thres,double Mean_depth)
+NumericMatrix Main_mode_Bay(NumericMatrix Data, NumericVector BETA_vec, NumericVector size, Nullable<NumericVector> mu,int S,int thres)
 {
 
 
@@ -277,7 +278,6 @@ NumericMatrix Main_mode_Bay(NumericMatrix Data, NumericVector BETA_vec, NumericV
   int i;
   int j;
   int q;
-  int dim;
   int NormalApproThre=500;
 
   int last;
@@ -293,19 +293,23 @@ NumericMatrix Main_mode_Bay(NumericMatrix Data, NumericVector BETA_vec, NumericV
 
     M_ave = Rcpp::as<arma::vec>(mu);
   }
+  //
+  //
+  // else{
+  //   arma::rowvec M_colmean=arma::sum(M, dim=0 );
+  //   M_t=M.each_row() / M_colmean;
+  //   M_ave = arma::mean(M_t, dim=1 )*Mean_depth;
+  // }
 
-
-  else{
-    arma::rowvec M_colmean=arma::sum(M, dim=0 );
-    M_t=M.each_row() / M_colmean;
-    M_ave = arma::mean(M_t, dim=1 )*Mean_depth;
-  }
+  Progress p(ncol*nrow, true);
 
 
   for( i=0;i<ncol;i++){
-    Rcout << "The cell is \n" << i+1 << std::endl;
+    //Rcout << "The cell is \n" << i+1 << std::endl;
 
     for( j=0;j<nrow;j++){
+
+      p.increment();
 
       if(M(j,i)==NA_INTEGER) {
         for( q=0;q<S;q++){Final_mat(j,i)=NA_INTEGER;}
@@ -320,17 +324,17 @@ NumericMatrix Main_mode_Bay(NumericMatrix Data, NumericVector BETA_vec, NumericV
 
           if(M(j,i)<thres){
 
-            y=Compute2function(x,M(j,i),Beta(i),size(j), M_ave(j), last,1);
+            y=post_wrapper(x,M(j,i),Beta(i),size(j), M_ave(j), last,1);
           }
 
           else{
-            y=Compute2function(x,M(j,i),Beta(i),size(j), M_ave(j), last,0);
+            y=post_wrapper(x,M(j,i),Beta(i),size(j), M_ave(j), last,0);
           }
         }else{
           init=M(j,i)/3/Beta(i);
           last=M(j,i)*3/Beta(i);
           x=rcpp_seq(init,last,1);
-          y=Compute2function_norm(x,M(j,i),Beta(i),last,init);
+          y=post_wrapper_norm(x,M(j,i),Beta(i),last,init);
 
         }
 
@@ -646,4 +650,38 @@ double MarginalF_1D(double SIZE,double MU, NumericVector m_observed, NumericVect
   return MarginalVal;
 }
 
+
+
+//' Binomial downsampling
+//'
+//' For each element in the \code{Data}, randomly generate a number using Binomial distribution with probability equal to the specific capture efficiency.
+//'
+//'
+//' @param Data: raw count Data
+//' @param BETA_vec: A vector of capture efficiencies of cells
+//' @return A matrix of binomial downsampling data.
+//' @export
+// [[Rcpp::export]]
+NumericMatrix DownSampling(NumericMatrix Data ,NumericVector BETA_vec) {
+
+  int Nrows;
+  int Ncols;
+  int i;
+  int j;
+  Nrows=Data.nrow();
+  Ncols=Data.ncol();
+
+  NumericMatrix Counts_downsampling(Nrows,Ncols);
+
+  for(i=0;i<Nrows;i++){
+    for( j=0;j<Ncols;j++){
+
+      Counts_downsampling(i,j)= as<double>(rbinom(1,Data(i,j), BETA_vec(j)));
+    }
+
+  }
+
+  return(Counts_downsampling);
+
+}
 

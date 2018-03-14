@@ -7,8 +7,8 @@
 using namespace Rcpp;
 
 // Main_Bay
-NumericVector Main_Bay(NumericMatrix Data, NumericVector BETA_vec, NumericVector size, Nullable<NumericVector> mu, int S, int thres, double Mean_depth);
-RcppExport SEXP _bayNorm_Main_Bay(SEXP DataSEXP, SEXP BETA_vecSEXP, SEXP sizeSEXP, SEXP muSEXP, SEXP SSEXP, SEXP thresSEXP, SEXP Mean_depthSEXP) {
+NumericVector Main_Bay(NumericMatrix Data, NumericVector BETA_vec, NumericVector size, Nullable<NumericVector> mu, int S, int thres);
+RcppExport SEXP _bayNorm_Main_Bay(SEXP DataSEXP, SEXP BETA_vecSEXP, SEXP sizeSEXP, SEXP muSEXP, SEXP SSEXP, SEXP thresSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -18,14 +18,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Nullable<NumericVector> >::type mu(muSEXP);
     Rcpp::traits::input_parameter< int >::type S(SSEXP);
     Rcpp::traits::input_parameter< int >::type thres(thresSEXP);
-    Rcpp::traits::input_parameter< double >::type Mean_depth(Mean_depthSEXP);
-    rcpp_result_gen = Rcpp::wrap(Main_Bay(Data, BETA_vec, size, mu, S, thres, Mean_depth));
+    rcpp_result_gen = Rcpp::wrap(Main_Bay(Data, BETA_vec, size, mu, S, thres));
     return rcpp_result_gen;
 END_RCPP
 }
 // Main_mode_Bay
-NumericMatrix Main_mode_Bay(NumericMatrix Data, NumericVector BETA_vec, NumericVector size, Nullable<NumericVector> mu, int S, int thres, double Mean_depth);
-RcppExport SEXP _bayNorm_Main_mode_Bay(SEXP DataSEXP, SEXP BETA_vecSEXP, SEXP sizeSEXP, SEXP muSEXP, SEXP SSEXP, SEXP thresSEXP, SEXP Mean_depthSEXP) {
+NumericMatrix Main_mode_Bay(NumericMatrix Data, NumericVector BETA_vec, NumericVector size, Nullable<NumericVector> mu, int S, int thres);
+RcppExport SEXP _bayNorm_Main_mode_Bay(SEXP DataSEXP, SEXP BETA_vecSEXP, SEXP sizeSEXP, SEXP muSEXP, SEXP SSEXP, SEXP thresSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -35,8 +34,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Nullable<NumericVector> >::type mu(muSEXP);
     Rcpp::traits::input_parameter< int >::type S(SSEXP);
     Rcpp::traits::input_parameter< int >::type thres(thresSEXP);
-    Rcpp::traits::input_parameter< double >::type Mean_depth(Mean_depthSEXP);
-    rcpp_result_gen = Rcpp::wrap(Main_mode_Bay(Data, BETA_vec, size, mu, S, thres, Mean_depth));
+    rcpp_result_gen = Rcpp::wrap(Main_mode_Bay(Data, BETA_vec, size, mu, S, thres));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -94,14 +92,27 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// DownSampling
+NumericMatrix DownSampling(NumericMatrix Data, NumericVector BETA_vec);
+RcppExport SEXP _bayNorm_DownSampling(SEXP DataSEXP, SEXP BETA_vecSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type Data(DataSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type BETA_vec(BETA_vecSEXP);
+    rcpp_result_gen = Rcpp::wrap(DownSampling(Data, BETA_vec));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_bayNorm_Main_Bay", (DL_FUNC) &_bayNorm_Main_Bay, 7},
-    {"_bayNorm_Main_mode_Bay", (DL_FUNC) &_bayNorm_Main_mode_Bay, 7},
+    {"_bayNorm_Main_Bay", (DL_FUNC) &_bayNorm_Main_Bay, 6},
+    {"_bayNorm_Main_mode_Bay", (DL_FUNC) &_bayNorm_Main_mode_Bay, 6},
     {"_bayNorm_GradientFun_2D", (DL_FUNC) &_bayNorm_GradientFun_2D, 3},
     {"_bayNorm_MarginalF_2D", (DL_FUNC) &_bayNorm_MarginalF_2D, 3},
     {"_bayNorm_GradientFun_1D", (DL_FUNC) &_bayNorm_GradientFun_1D, 4},
     {"_bayNorm_MarginalF_1D", (DL_FUNC) &_bayNorm_MarginalF_1D, 4},
+    {"_bayNorm_DownSampling", (DL_FUNC) &_bayNorm_DownSampling, 2},
     {NULL, NULL, 0}
 };
 

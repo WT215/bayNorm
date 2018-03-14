@@ -4,26 +4,25 @@
 #' Main_Bay
 #'
 #' bayNorm
-#' If the observed count is above 500, we then used normal distribution to approximate binomial distribution.
+#' If the observed count is above 500, then we use normal distribution to approximate binomial distribution.
 #'
 #'
 #' @param Data: raw count Data
 #' @param BETA_vec: A vector of capture efficiencies of cells
 #' @param size: A vector of size
 #' @param mu: A vector of mu
-#' @param S: number of samples that you want to generate
-#' @param thres:thres
-#' @param Mean_depth:Mean_depth
-#' @return bayNorm
+#' @param S: number of samples that you want to generate for 3D array
+#' @param thres: for observed count greater than \code{thres}, use uniform prior.
+#' @return bayNorm normalized data
 #' @export
-Main_Bay <- function(Data, BETA_vec, size, mu, S, thres, Mean_depth) {
-    .Call('_bayNorm_Main_Bay', PACKAGE = 'bayNorm', Data, BETA_vec, size, mu, S, thres, Mean_depth)
+Main_Bay <- function(Data, BETA_vec, size, mu, S, thres) {
+    .Call('_bayNorm_Main_Bay', PACKAGE = 'bayNorm', Data, BETA_vec, size, mu, S, thres)
 }
 
 #' Mode_Bay
 #'
 #' bayNorm
-#' If the observed count is above 500, we then used normal distribution to approximate binomial distribution.
+#' If the observed count is above 500, then we use normal distribution to approximate binomial distribution.
 #'
 #'
 #' @param Data: raw count Data
@@ -31,12 +30,11 @@ Main_Bay <- function(Data, BETA_vec, size, mu, S, thres, Mean_depth) {
 #' @param size: A vector of size
 #' @param mu: A vector of mu
 #' @param S: number of samples that you want to generate
-#' @param thres:thres
-#' @param Mean_depth:Mean_depth
-#' @return bayNorm
+#' @param thres: for observed count greater than \code{thres}, use uniform prior.
+#' @return bayNorm normalized data
 #' @export
-Main_mode_Bay <- function(Data, BETA_vec, size, mu, S, thres, Mean_depth) {
-    .Call('_bayNorm_Main_mode_Bay', PACKAGE = 'bayNorm', Data, BETA_vec, size, mu, S, thres, Mean_depth)
+Main_mode_Bay <- function(Data, BETA_vec, size, mu, S, thres) {
+    .Call('_bayNorm_Main_mode_Bay', PACKAGE = 'bayNorm', Data, BETA_vec, size, mu, S, thres)
 }
 
 #' GradientFun_2D
@@ -96,5 +94,18 @@ GradientFun_1D <- function(SIZE, MU, m_observed, BETA) {
 #' @export
 MarginalF_1D <- function(SIZE, MU, m_observed, BETA) {
     .Call('_bayNorm_MarginalF_1D', PACKAGE = 'bayNorm', SIZE, MU, m_observed, BETA)
+}
+
+#' Binomial downsampling
+#'
+#' For each element in the \code{Data}, randomly generate a number using Binomial distribution with probability equal to the specific capture efficiency.
+#'
+#'
+#' @param Data: raw count Data
+#' @param BETA_vec: A vector of capture efficiencies of cells
+#' @return A matrix of binomial downsampling data.
+#' @export
+DownSampling <- function(Data, BETA_vec) {
+    .Call('_bayNorm_DownSampling', PACKAGE = 'bayNorm', Data, BETA_vec)
 }
 
