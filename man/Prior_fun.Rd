@@ -9,9 +9,8 @@ Prior_fun(Data, BETA_vec, parallel = TRUE, NCores = 5, FIX_MU = TRUE,
 }
 \arguments{
 \item{Data}{A matrix of single-cell expression where rows
-are genes and columns are samples (cells). This object
-should be of class \code{matrix} rather
-than \code{data.frame}.}
+are genes and columns are samples (cells). \code{Data}
+can be of class \code{SummarizedExperiment} or just matrix.}
 
 \item{BETA_vec}{A vector of capture efficiencies of cells.}
 
@@ -24,7 +23,8 @@ using either MulticoreParam (Linux, Mac) or
 SnowParam (Windows) with \code{NCores} using the
 package \code{BiocParallel}.}
 
-\item{FIX_MU}{If TRUE, then 1D optimization, otherwise 2D optimization (slow). Default is TRUE.}
+\item{FIX_MU}{If TRUE, then 1D optimization, otherwise
+2D optimization (slow). Default is TRUE.}
 
 \item{GR}{If TRUE, the gradient function will be used
 in optimization. However since the gradient function
@@ -36,7 +36,8 @@ in speeding up. Default is FALSE.}
 \item{verbose}{Print out status messages. Default is TRUE.}
 }
 \value{
-List of estimated parameters: mean expression of genes and size of each gene.
+List of estimated parameters: mean expression of genes
+and size of each gene.
 }
 \description{
 Input raw data and a vector of capture efficiencies of cells.

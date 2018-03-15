@@ -2,43 +2,65 @@
 % Please edit documentation in R/noisygene_detection.r
 \name{noisy_gene_detection}
 \alias{noisy_gene_detection}
-\title{A wrapper function of synthetic control generation, bayNorm on both real cell data and synthetic controls and noisy gene detection.}
+\title{A wrapper function of synthetic control generation, bayNorm
+on both real cell data and synthetic controls and noisy
+gene detection.}
 \usage{
 noisy_gene_detection(Data, BETA_vec, mode_version = FALSE, S = 20,
   parallel = TRUE, NCores = 5, FIX_MU = TRUE, GR = FALSE,
   BB_SIZE = TRUE, verbose = TRUE, plot.out = FALSE)
 }
 \arguments{
-\item{Data}{A matrix of single-cell expression where rows are genes and columns are samples (cells). This object should be of class matrix rather than data.frame.}
+\item{Data}{A matrix of single-cell expression where rows
+are genes and columns are samples (cells). \code{Data}
+can be of class \code{SummarizedExperiment} or just matrix.}
 
 \item{BETA_vec}{A vector of capture efficiencies of cells.}
 
-\item{mode_version}{If TRUE, bayNorm return mode version normalized data which is of 2D matrix instead of 3D array. Default is FALSE.}
+\item{mode_version}{If TRUE, bayNorm return mode version n
+ormalized data which is of 2D matrix instead of 3D array.
+Default is FALSE.}
 
-\item{S}{The number of samples you would like to generate from estimated posterior distribution (The third dimension of 3D array). Default is 20. S needs to be specified if \code{mode_version}=FALSE.}
+\item{S}{The number of samples you would like to generate from
+estimated posterior distribution (The third dimension of 3D array).
+Default is 20. S needs to be specified if \code{mode_version}=FALSE.}
 
 \item{parallel}{If TRUE, 5 cores will be used for parallelization.}
 
-\item{NCores}{number of cores to use, default is 5. This will be used to set up a parallel environment using either MulticoreParam (Linux, Mac) or SnowParam (Windows) with NCores using the package BiocParallel.}
+\item{NCores}{number of cores to use, default is 5. This will be
+used to set up a parallel environment using either MulticoreParam
+(Linux, Mac) or SnowParam (Windows) with NCores using the package
+BiocParallel.}
 
-\item{FIX_MU}{Whether fix mu when estimating parameters by maximizing marginal distribution. If TRUE, then 1D optimization, otherwise 2D optimization (slow).}
+\item{FIX_MU}{Whether fix mu when estimating parameters by
+maximizing marginal distribution. If TRUE, then 1D optimization,
+otherwise 2D optimization (slow).}
 
-\item{GR}{If TRUE, the gradient function will be used in optimization. However since the gradient function itself is very complicated, it does not help too much in speeding up. Default is FALSE.}
+\item{GR}{If TRUE, the gradient function will be used in optimizati
+on. However since the gradient function itself is very complicated,
+it does not help too much in speeding up. Default is FALSE.}
 
-\item{BB_SIZE}{If TRUE, estimate BB size, and then use it for adjusting MME SIZE. Use the adjusted MME size for bayNorm. Default is TRUE.}
+\item{BB_SIZE}{If TRUE, estimate BB size, and then use it for
+adjusting MME SIZE. Use the adjusted MME size for bayNorm. Default
+is TRUE.}
 
 \item{verbose}{Print out status messages. Default is TRUE.}
 
-\item{plot.out}{If TRUE, show CV^2 vs Mean expression plot. Default is FALSE.}
+\item{plot.out}{If TRUE, show CV^2 vs Mean expression plot.
+Default is FALSE.}
 }
 \value{
 A list of objects.
 }
 \description{
-A wrapper function of synthetic control generation, bayNorm on both real cell data and synthetic controls and noisy gene detection.
+A wrapper function of synthetic control generation, bayNorm
+on both real cell data and synthetic controls and noisy
+gene detection.
 }
 \details{
-A wrapper function of synthetic control generation, bayNorm on both real cell data and synthetic controls and noisy gene detection.
+A wrapper function of synthetic control generation,
+bayNorm on both real cell data and synthetic controls and
+noisy gene detection.
 }
 \examples{
 data("EXAMPLE_DATA_list")

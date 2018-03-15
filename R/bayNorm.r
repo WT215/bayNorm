@@ -1,14 +1,13 @@
-
-
 #' @title  A wrapper function of prior estimation and bayNorm function
 #'
 #' @description   Input raw data and a vector of capture
 #' efficiencies of cells. You can also specify the condition
 #' of cells for normalizing multiple groups of cells separately.
 #' @param Data A matrix of single-cell expression where rows
-#' are genes and columns are samples (cells).
-#' This object should be of class matrix rather than data.frame.
-#' @param  BETA_vec A vector of capture efficiencies of cells.
+#' are genes and columns are samples (cells). \code{Data}
+#' can be of class \code{SummarizedExperiment} or just matrix.
+#' @param  BETA_vec A vector of capture efficiencies
+#' (probabilities) of cells.
 #' If it is null, library size normalized to 0.06 will be used
 #' as the input BETA_vec. BETA_vec less and equal to 0 or
 #' greater and equal to 1 will be replaced by the minimum
@@ -83,10 +82,36 @@
 #' @import parallel
 #' @import foreach
 #' @import doSNOW
+#' @importFrom SummarizedExperiment SummarizedExperiment
+#' assayNames assays colData
 #'
 #' @export
 #'
 bayNorm<-function(Data,BETA_vec,Conditions=NULL,UMI_sffl=NULL,Prior_type=NULL,mode_version=FALSE,S=20,parallel=TRUE,NCores=5,FIX_MU=TRUE,GR=FALSE,BB_SIZE=TRUE,verbose=TRUE){
+
+
+    #Adapted from SCnorm
+    if(methods::is(Data, "SummarizedExperiment")){
+
+      if (is.null(  SummarizedExperiment::assayNames(Data)) || SummarizedExperiment::assayNames(Data)[1] != "Counts") {
+        message("Renaming the first element in assays(Data) to 'Counts'")
+        SummarizedExperiment::assayNames(Data)[1] <- "Counts"
+
+        if (is.null(colnames(SummarizedExperiment::assays(Data)[["Counts"]]))) {stop("Must supply sample/cell names!")}
+
+      }
+      Data<-SummarizedExperiment::assays(Data)[["Counts"]]
+    }
+
+   if (!(methods::is(Data, "SummarizedExperiment"))) {
+     Data <- data.matrix(Data)
+   }
+
+
+
+
+
+
 
     if(is.null(BETA_vec)){
       BETA_vec<-colSums(Data)/mean(colSums(Data))*0.06
@@ -97,10 +122,6 @@ bayNorm<-function(Data,BETA_vec,Conditions=NULL,UMI_sffl=NULL,Prior_type=NULL,mo
     if(length(which(BETA_vec<=0))>0){
       BETA_vec[BETA_vec<=0]=min(BETA_vec[BETA_vec>0])
       }
-
-
-
-
 
 #Some pre-checkings:
     if(class(Data)!='matrix'){stop("Input data should be of class matrix")}
@@ -148,10 +169,6 @@ bayNorm<-function(Data,BETA_vec,Conditions=NULL,UMI_sffl=NULL,Prior_type=NULL,mo
 
 
   } else{# multiple groups
-
-
-
-
     if (ncol(Data) != length(Conditions)) {stop("Number of columns in
       expression matrix must match length of conditions vector!")}
     if(is.null(Prior_type)){warning("Prior_type needs to be specified when Conditions are specified, now Prior_type is set to be LL")
@@ -253,10 +270,11 @@ bayNorm<-function(Data,BETA_vec,Conditions=NULL,UMI_sffl=NULL,Prior_type=NULL,mo
 #' @description This is a supplementary function for
 #' \code{bayNorm}. It is useful if you have already run \code{bayNorm} before and try to simulate 3D or 3D matrix
 #' using the same prior estimates.
-#' @param Data A matrix of single-cell expression where rows are
-#' genes and columns are samples (cells). This object should be
-#' of class matrix rather than data.frame.
-#' @param  BETA_vec A vector of capture efficiencies of cells.
+#' @param Data A matrix of single-cell expression where rows
+#' are genes and columns are samples (cells). \code{Data}
+#' can be of class \code{SummarizedExperiment} or just matrix.
+#' @param  BETA_vec A vector of capture efficiencies
+#' (probabilities) of cells.
 #' @param  PRIORS A list of estimated prior parameters obtained from bayNorm.
 #' @param  Conditions vector of condition labels,
 #' this should correspond to the columns of the Data.
@@ -326,21 +344,40 @@ bayNorm<-function(Data,BETA_vec,Conditions=NULL,UMI_sffl=NULL,Prior_type=NULL,mo
 #' @import parallel
 #' @import foreach
 #' @import doSNOW
+#' @importFrom SummarizedExperiment SummarizedExperiment
+#' assayNames assays colData
 #'
 #' @export
 #'
 bayNorm_sup<-function(Data,BETA_vec,PRIORS=NULL,Conditions=NULL,UMI_sffl=NULL,mode_version=FALSE,S=20,parallel=TRUE,NCores=5,BB_SIZE=TRUE,verbose=TRUE){
 
 
-  if(is.null(Conditions)){
-    if(is.null(UMI_sffl)){
+  if(methods::is(Data, "SummarizedExperiment")){
+
+    if (is.null(  SummarizedExperiment::assayNames(Data)) || SummarizedExperiment::assayNames(Data)[1] != "Counts") {
+      message("Renaming the first element in assays(Data) to 'Counts'")
+      SummarizedExperiment::assayNames(Data)[1] <- "Counts"
+
+      if (is.null(colnames(SummarizedExperiment::assays(Data)[["Counts"]]))) {stop("Must supply sample/cell names!")}
+
+    }
+    Data<-SummarizedExperiment::assays(Data)[["Counts"]]
+  }
+
+  if (!(methods::is(Data, "SummarizedExperiment"))) {
+    Data <- data.matrix(Data)
+  }
+
+
+
+
+    if(is.null(Conditions)){
+      if(is.null(UMI_sffl)){
       #Data_s<-Data
       Data_sr<-Data
     }else{
       Data_sr<-round(Data/UMI_sffl)
     }
-
-    #PRIORS=Prior_fun(Data=Data_sr,BETA_vec=BETA_vec,parallel=parallel,NCores=NCores,FIX_MU=FIX_MU,GR=GR,BB_SIZE=BB_SIZE,verbose=verbose)
     if(BB_SIZE){
       MU_input=PRIORS$MME_prior$MME_MU
       SIZE_input=PRIORS$MME_SIZE_adjust
@@ -363,16 +400,11 @@ bayNorm_sup<-function(Data,BETA_vec,PRIORS=NULL,Conditions=NULL,UMI_sffl=NULL,mo
 
     if(verbose){
       message("bayNorm has completed!")
-    }
+      }
 
 
   } else{# multiple groups
-
-    if (ncol(Data) != length(Conditions)) {stop("Number of columns in
-                                                expression matrix must match length of conditions vector!")}
-    # if(is.null(Prior_type)){warning("Prior_type needs to be specified when Conditions are specified, now Prior_type is set to be LL")
-    #   Prior_type='LL'
-    # }
+    if (ncol(Data) != length(Conditions)) {stop("Number of columns in expression matrix must match length of conditions vector!")}
     if(is.null(names(Conditions))) {names(Conditions) <- colnames(Data)}
     Levels <- unique(Conditions)
 
@@ -388,24 +420,7 @@ bayNorm_sup<-function(Data,BETA_vec,PRIORS=NULL,Conditions=NULL,UMI_sffl=NULL,mo
       BETAList <- lapply(seq_along(Levels), function(x){BETA_vec[which(Conditions == Levels[x])]})
     }
 
-
-    # if(Prior_type=='LL'){
-    #   PRIORS_LIST<-list()
-    #   for(i in 1:length(Levels)){
-    #     PRIORS_LIST[[i]]<-Prior_fun(Data=DataList_sr[[i]],BETA_vec=BETAList[[i]],parallel=parallel,NCores=NCores,FIX_MU=FIX_MU,GR=GR,BB_SIZE=BB_SIZE,verbose=verbose)
-    #
-    #   }
-    # }else if (Prior_type=='GG'){
-    #   PROPRS_TEMP<-Prior_fun(Data=do.call(cbind,DataList_sr),BETA_vec=do.call(c,BETAList),parallel=parallel,NCores=NCores,FIX_MU=FIX_MU,GR=GR,BB_SIZE=BB_SIZE,verbose=verbose)
-    #
-    #   PRIORS_LIST<-list()
-    #   for(i in 1:length(Levels)){
-    #     PRIORS_LIST[[i]]<-PROPRS_TEMP
-    #
-    #   }
-    #
-    # }
-    #names(PRIORS_LIST)<-paste('Group',Levels)
+##use existing PRIORS
     PRIORS_LIST<-PRIORS
 
     if(!mode_version){

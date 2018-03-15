@@ -9,11 +9,12 @@ bayNorm_sup(Data, BETA_vec, PRIORS = NULL, Conditions = NULL,
   NCores = 5, BB_SIZE = TRUE, verbose = TRUE)
 }
 \arguments{
-\item{Data}{A matrix of single-cell expression where rows are
-genes and columns are samples (cells). This object should be
-of class matrix rather than data.frame.}
+\item{Data}{A matrix of single-cell expression where rows
+are genes and columns are samples (cells). \code{Data}
+can be of class \code{SummarizedExperiment} or just matrix.}
 
-\item{BETA_vec}{A vector of capture efficiencies of cells.}
+\item{BETA_vec}{A vector of capture efficiencies
+(probabilities) of cells.}
 
 \item{PRIORS}{A list of estimated prior parameters obtained from bayNorm.}
 

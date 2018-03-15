@@ -7,12 +7,16 @@
 SyntheticControl(Data, BETA_vec)
 }
 \arguments{
-\item{Data}{A matrix of single-cell expression where rows are genes and columns are samples (cells). This object should be of class matrix rather than data.frame.}
+\item{Data}{A matrix of single-cell expression where rows
+are genes and columns are samples (cells). \code{Data}
+can be of class \code{SummarizedExperiment} or just matrix.}
 
-\item{BETA_vec}{A vector of capture efficiencies of cells.}
+\item{BETA_vec}{A vector of capture efficiencies
+(probabilities) of cells.}
 }
 \value{
-List containing 2D matrix of synthetic control, \code{BETA_vec} used and \code{lambda} used in \code{rpois}.
+List containing 2D matrix of synthetic control,
+\code{BETA_vec} used and \code{lambda} used in \code{rpois}.
 }
 \description{
 Input raw data and a vector of capture efficiencies of cells.
@@ -26,4 +30,5 @@ data("EXAMPLE_DATA_list")
 SC_output<-SyntheticControl(Data=EXAMPLE_DATA_list$inputdata,
 BETA_vec = EXAMPLE_DATA_list$inputbeta)
 }
+
 }

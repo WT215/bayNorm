@@ -11,10 +11,11 @@ bayNorm(Data, BETA_vec, Conditions = NULL, UMI_sffl = NULL,
 }
 \arguments{
 \item{Data}{A matrix of single-cell expression where rows
-are genes and columns are samples (cells).
-This object should be of class matrix rather than data.frame.}
+are genes and columns are samples (cells). \code{Data}
+can be of class \code{SummarizedExperiment} or just matrix.}
 
-\item{BETA_vec}{A vector of capture efficiencies of cells.
+\item{BETA_vec}{A vector of capture efficiencies
+(probabilities) of cells.
 If it is null, library size normalized to 0.06 will be used
 as the input BETA_vec. BETA_vec less and equal to 0 or
 greater and equal to 1 will be replaced by the minimum

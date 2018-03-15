@@ -1,14 +1,10 @@
-#' Example datasets for bayNorm
-#' A list of example data.
-#' A UMI based scRNAseq data (1011 genes and 96 cells). The corresponding capture efficiencies and prior estimates mu and size are also provided.
-#'
+#'@title Example datasets for bayNorm
+#'@description A list contains small example data.
+#' inputdata: A UMI based scRNAseq data (1011 genes and 96 cells).
+#' The corresponding capture efficiencies (inputbeta), prior
+#' estimates mu (mu) and size (size) are also provided.
 #' @docType data
-#'
-#'
-#'
-#' @format data list
-#'
-#' @keywords datasets
+#' @format list
 #'
 #' @examples
 #' data(EXAMPLE_DATA_list)

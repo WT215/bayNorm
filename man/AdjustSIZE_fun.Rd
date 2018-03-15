@@ -7,7 +7,7 @@
 AdjustSIZE_fun(BB_SIZE, MME_MU, MME_SIZE)
 }
 \arguments{
-\item{BB_SIZE}{size estimated from BB_Fun or BB_Fun_1D}
+\item{BB_SIZE}{size estimated from \code{BB_Fun}.}
 
 \item{MME_MU}{mu estimated from EstPrior.}
 
@@ -18,7 +18,13 @@ MME_SIZE_adjust A vector of estimated size.
 Adjusted MME_SIZE based on BB_size
 }
 \description{
-Adjust MME estimated size according to size estimated through maximizing marginal distirbution (\code{BB_SIZE}). By using maximizing marginal distribution, a log of estimated size cannot converge quickly. However according to our simulation, the trend of \code{BB_SIZE} is very close to the true size. Hence it is better to use adjusted MME size in bayNorm.
+Adjust MME estimated size according to size
+estimated through maximizing marginal distirbution
+(\code{BB_SIZE}). By using maximizing marginal distribution,
+a log of estimated size cannot converge quickly.
+However according to our simulation, the trend of \code{BB_SIZE}
+is very close to the true size. Hence it is better to use
+adjusted MME size in bayNorm.
 }
 \examples{
 data("EXAMPLE_DATA_list")

@@ -1,21 +1,41 @@
 
 
-#' A wrapper function of synthetic control generation, bayNorm on both real cell data and synthetic controls and noisy gene detection.
+#' A wrapper function of synthetic control generation, bayNorm
+#' on both real cell data and synthetic controls and noisy
+#' gene detection.
 #'
-#' @param Data A matrix of single-cell expression where rows are genes and columns are samples (cells). This object should be of class matrix rather than data.frame.
+#' @param Data A matrix of single-cell expression where rows
+#' are genes and columns are samples (cells). \code{Data}
+#' can be of class \code{SummarizedExperiment} or just matrix.
 #' @param  BETA_vec A vector of capture efficiencies of cells.
-#' @param  mode_version If TRUE, bayNorm return mode version normalized data which is of 2D matrix instead of 3D array. Default is FALSE.
-#' @param S The number of samples you would like to generate from estimated posterior distribution (The third dimension of 3D array). Default is 20. S needs to be specified if \code{mode_version}=FALSE.
+#' @param  mode_version If TRUE, bayNorm return mode version n
+#' ormalized data which is of 2D matrix instead of 3D array.
+#' Default is FALSE.
+#' @param S The number of samples you would like to generate from
+#' estimated posterior distribution (The third dimension of 3D array).
+#' Default is 20. S needs to be specified if \code{mode_version}=FALSE.
 #' @param  parallel If TRUE, 5 cores will be used for parallelization.
-#' @param  NCores number of cores to use, default is 5. This will be used to set up a parallel environment using either MulticoreParam (Linux, Mac) or SnowParam (Windows) with NCores using the package BiocParallel.
-#' @param  FIX_MU Whether fix mu when estimating parameters by maximizing marginal distribution. If TRUE, then 1D optimization, otherwise 2D optimization (slow).
-#' @param  GR If TRUE, the gradient function will be used in optimization. However since the gradient function itself is very complicated, it does not help too much in speeding up. Default is FALSE.
-#' @param  BB_SIZE If TRUE, estimate BB size, and then use it for adjusting MME SIZE. Use the adjusted MME size for bayNorm. Default is TRUE.
+#' @param  NCores number of cores to use, default is 5. This will be
+#' used to set up a parallel environment using either MulticoreParam
+#' (Linux, Mac) or SnowParam (Windows) with NCores using the package
+#' BiocParallel.
+#' @param  FIX_MU Whether fix mu when estimating parameters by
+#' maximizing marginal distribution. If TRUE, then 1D optimization,
+#' otherwise 2D optimization (slow).
+#' @param  GR If TRUE, the gradient function will be used in optimizati
+#' on. However since the gradient function itself is very complicated,
+#' it does not help too much in speeding up. Default is FALSE.
+#' @param  BB_SIZE If TRUE, estimate BB size, and then use it for
+#' adjusting MME SIZE. Use the adjusted MME size for bayNorm. Default
+#' is TRUE.
 #' @param verbose Print out status messages. Default is TRUE.
-#' @param  plot.out If TRUE, show CV^2 vs Mean expression plot. Default is FALSE.
+#' @param  plot.out If TRUE, show CV^2 vs Mean expression plot.
+#' Default is FALSE.
 #' @return A list of objects.
 
-#' @details A wrapper function of synthetic control generation, bayNorm on both real cell data and synthetic controls and noisy gene detection.
+#' @details A wrapper function of synthetic control generation,
+#' bayNorm on both real cell data and synthetic controls and
+#' noisy gene detection.
 #'
 #' @examples
 #' data("EXAMPLE_DATA_list")
@@ -28,12 +48,28 @@
 #' @import parallel
 #' @import foreach
 #' @import doSNOW
-#'
+#' @importFrom SummarizedExperiment SummarizedExperiment
+#' assayNames assays colData
 #' @export
 #'
 
 noisy_gene_detection<-function(Data,BETA_vec,mode_version=FALSE,S=20,parallel=TRUE,NCores=5,FIX_MU=TRUE,GR=FALSE,BB_SIZE=TRUE,verbose=TRUE,plot.out=FALSE){
 
+  if(methods::is(Data, "SummarizedExperiment")){
+
+    if (is.null(  SummarizedExperiment::assayNames(Data)) || SummarizedExperiment::assayNames(Data)[1] != "Counts") {
+      message("Renaming the first element in assays(Data) to 'Counts'")
+      SummarizedExperiment::assayNames(Data)[1] <- "Counts"
+
+      if (is.null(colnames(SummarizedExperiment::assays(Data)[["Counts"]]))) {stop("Must supply sample/cell names!")}
+
+    }
+    Data<-SummarizedExperiment::assays(Data)[["Counts"]]
+  }
+
+  if (!(methods::is(Data, "SummarizedExperiment"))) {
+    Data <- data.matrix(Data)
+  }
 
 
 message("Apply bayNorm on the real cell datasets.")
@@ -67,11 +103,14 @@ return(list(adjusted_Pvals=NOISE_out,synthetic_output=synthetic_out,bayNorm_N_ou
 
 #' Noisy gene detection
 #'
-#' Input raw data and a vector of capture efficiencies of cells. You can
-#' also need to specify the condition of cells.
-#' @param bay_array_N A 2D matrix or 3D array of normalized data(real cells).
-#' @param  bay_array_C A 2D matrix or 3D array of normalized data(synthetic control).
-#' @param  plot.out If TRUE, show CV^2 vs Mean expression plot. Default is FALSE.
+#' Input raw data and a vector of capture efficiencies of cells.
+#' You can also specify the condition of cells.
+#' @param bay_array_N A 2D matrix or 3D array of normalized
+#' data(real cells).
+#' @param  bay_array_C A 2D matrix or 3D array of normalized
+#' data(synthetic control).
+#' @param  plot.out If TRUE, show CV^2 vs Mean expression plot.
+#' Default is FALSE.
 #' @return A vector of adjusted P-values.
 #' @details Noisy gene detection
 #'
@@ -87,7 +126,6 @@ return(list(adjusted_Pvals=NOISE_out,synthetic_output=synthetic_out,bayNorm_N_ou
 #' @import locfit
 #' @import grDevices
 #' @import graphics
-#'
 #' @export
 #'
 

@@ -513,6 +513,7 @@ NumericVector D_SIZE_MU_2D(NumericVector SIZE_MU, NumericVector m_observed,Numer
 //'
 //' @examples
 //' data("EXAMPLE_DATA_list")
+//' #Should not run by the users.
 //' \dontrun{
 //' }
 //'
@@ -538,6 +539,7 @@ NumericVector GradientFun_2D(NumericVector SIZE_MU, NumericVector m_observed,Num
 //' @return Marginal likelihood
 //' @examples
 //' data("EXAMPLE_DATA_list")
+//' #Should not run by the users.
 //' \dontrun{
 //' }
 //' @export
@@ -624,6 +626,7 @@ double D_SIZE_MU_1D(double SIZE,double MU, NumericVector m_observed,NumericVecto
 //'
 //' @examples
 //' data("EXAMPLE_DATA_list")
+//' #Should not run by the users.
 //' \dontrun{
 //' }
 //' @export
@@ -649,6 +652,7 @@ double GradientFun_1D(double SIZE,double MU, NumericVector m_observed,NumericVec
 //' @return Marginal likelihood
 //' @examples
 //' data("EXAMPLE_DATA_list")
+//' #Should not run by the users.
 //' \dontrun{
 //' }
 //' @export

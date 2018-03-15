@@ -21,6 +21,7 @@ GradientFun_2D
 }
 \examples{
 data("EXAMPLE_DATA_list")
+#Should not run by the users.
 \dontrun{
 }
 

@@ -67,6 +67,7 @@ Main_mode_Bay <- function(Data, BETA_vec, size, mu, S, thres) {
 #'
 #' @examples
 #' data("EXAMPLE_DATA_list")
+#' #Should not run by the users.
 #' \dontrun{
 #' }
 #'
@@ -86,6 +87,7 @@ GradientFun_2D <- function(SIZE_MU, m_observed, BETA) {
 #' @return Marginal likelihood
 #' @examples
 #' data("EXAMPLE_DATA_list")
+#' #Should not run by the users.
 #' \dontrun{
 #' }
 #' @export
@@ -107,6 +109,7 @@ MarginalF_2D <- function(SIZE_MU, m_observed, BETA) {
 #'
 #' @examples
 #' data("EXAMPLE_DATA_list")
+#' #Should not run by the users.
 #' \dontrun{
 #' }
 #' @export
@@ -125,6 +128,7 @@ GradientFun_1D <- function(SIZE, MU, m_observed, BETA) {
 #' @return Marginal likelihood
 #' @examples
 #' data("EXAMPLE_DATA_list")
+#' #Should not run by the users.
 #' \dontrun{
 #' }
 #' @export

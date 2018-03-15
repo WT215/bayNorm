@@ -7,18 +7,21 @@
 NOISY_FUN(bay_array_N, bay_array_C, plot.out = FALSE)
 }
 \arguments{
-\item{bay_array_N}{A 2D matrix or 3D array of normalized data(real cells).}
+\item{bay_array_N}{A 2D matrix or 3D array of normalized
+data(real cells).}
 
-\item{bay_array_C}{A 2D matrix or 3D array of normalized data(synthetic control).}
+\item{bay_array_C}{A 2D matrix or 3D array of normalized
+data(synthetic control).}
 
-\item{plot.out}{If TRUE, show CV^2 vs Mean expression plot. Default is FALSE.}
+\item{plot.out}{If TRUE, show CV^2 vs Mean expression plot.
+Default is FALSE.}
 }
 \value{
 A vector of adjusted P-values.
 }
 \description{
-Input raw data and a vector of capture efficiencies of cells. You can
-also need to specify the condition of cells.
+Input raw data and a vector of capture efficiencies of cells.
+You can also specify the condition of cells.
 }
 \details{
 Noisy gene detection

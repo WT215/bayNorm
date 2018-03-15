@@ -3,17 +3,16 @@
 \docType{data}
 \name{EXAMPLE_DATA_list}
 \alias{EXAMPLE_DATA_list}
-\title{Example datasets for bayNorm
-A list of example data.
-A UMI based scRNAseq data (1011 genes and 96 cells). The corresponding capture efficiencies and prior estimates mu and size are also provided.}
-\format{data list}
+\title{Example datasets for bayNorm}
+\format{list}
 \usage{
 EXAMPLE_DATA_list
 }
 \description{
-Example datasets for bayNorm
-A list of example data.
-A UMI based scRNAseq data (1011 genes and 96 cells). The corresponding capture efficiencies and prior estimates mu and size are also provided.
+A list contains small example data.
+inputdata: A UMI based scRNAseq data (1011 genes and 96 cells).
+The corresponding capture efficiencies (inputbeta), prior
+estimates mu (mu) and size (size) are also provided.
 }
 \examples{
 data(EXAMPLE_DATA_list)

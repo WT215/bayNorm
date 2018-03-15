@@ -2,8 +2,10 @@ Package: bayNorm
 Type: Package
 Title: Single-cell RNA sequencing data normalization
 Version: 0.99.0
-Author: WENHAO TANG
-Maintainer: WENHAO TANG <wt215@ic.ac.uk>
+Authors@R: c(person("Wenhao", "Tang", role=c("aut", "cre"),
+        email="wt215@ic.ac.uk"), 
+        person("Vahid", "Shahrezaei", role=c("aut"))) 
+Maintainer: Wenhao Tang <wt215@ic.ac.uk>
 Description: bayNorm is used for normalizing single-cell RNA-seq data.
 License: GPL (>= 2)
 Encoding: UTF-8
@@ -24,6 +26,7 @@ Imports:
 	        methods,
 	        graphics,
 	        grDevices,
+	        SummarizedExperiment,
 	        utils
 LinkingTo: Rcpp, RcppArmadillo,RcppProgress
 Suggests: 

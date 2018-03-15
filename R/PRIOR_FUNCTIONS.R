@@ -1,8 +1,14 @@
 #' @title Adjust MME size
 #'
-#' @description  Adjust MME estimated size according to size estimated through maximizing marginal distirbution (\code{BB_SIZE}). By using maximizing marginal distribution, a log of estimated size cannot converge quickly. However according to our simulation, the trend of \code{BB_SIZE} is very close to the true size. Hence it is better to use adjusted MME size in bayNorm.
+#' @description  Adjust MME estimated size according to size
+#' estimated through maximizing marginal distirbution
+#' (\code{BB_SIZE}). By using maximizing marginal distribution,
+#' a log of estimated size cannot converge quickly.
+#' However according to our simulation, the trend of \code{BB_SIZE}
+#' is very close to the true size. Hence it is better to use
+#' adjusted MME size in bayNorm.
 #'
-#' @param BB_SIZE size estimated from BB_Fun or BB_Fun_1D
+#' @param BB_SIZE size estimated from \code{BB_Fun}.
 #' @param  MME_MU mu estimated from EstPrior.
 #' @param  MME_SIZE size estimated from EstPrior.
 #' @return MME_SIZE_adjust A vector of estimated size.
@@ -26,14 +32,18 @@ AdjustSIZE_fun<-function(BB_SIZE,MME_MU,MME_SIZE){
 
 #' @title Estimate capture efficiency for cells
 #'
-#' @description  This function aims to select of subset of genes for estimating capture efficiency: BETA for bayNorm.
+#' @description  This function aims to select of subset of genes
+#' for estimating capture efficiency: BETA_vec for bayNorm.
 #'
-#' @param Data A matrix of single-cell expression where rows are
-#' genes and columns are samples (cells). This object should be of
-#' class matrix rather than data.frame.
-#' @param MeanBETA Mean capture efficiency of the scRNAseq data. This can be estimated via spike-ins or other methods.
+#' @param Data A matrix of single-cell expression where rows
+#' are genes and columns are samples (cells). \code{Data}
+#' can be of class \code{SummarizedExperiment} or just matrix.
+#' @param MeanBETA Mean capture efficiency of the scRNAseq data.
+#'  This can be estimated via spike-ins or other methods.
 #'
-#' @return List containing: BETA a vector of capture efficiencies, which is of length number of cells; Selected_genes a subset of genes that are used for estimating BETA.
+#' @return List containing: BETA a vector of capture efficiencies,
+#'  which is of length number of cells; Selected_genes a subset of
+#'   genes that are used for estimating BETA.
 #'
 #' @examples
 #' data("EXAMPLE_DATA_list")
@@ -42,9 +52,28 @@ AdjustSIZE_fun<-function(BB_SIZE,MME_MU,MME_SIZE){
 #' MeanBETA=0.06)
 #' }
 #'
-#'
+#' @importFrom SummarizedExperiment SummarizedExperiment
+#' assayNames assays colData
 #' @export
 BetaFun<-function(Data,MeanBETA){
+
+  if(methods::is(Data, "SummarizedExperiment")){
+
+    if (is.null(  SummarizedExperiment::assayNames(Data)) || SummarizedExperiment::assayNames(Data)[1] != "Counts") {
+      message("Renaming the first element in assays(Data) to 'Counts'")
+      SummarizedExperiment::assayNames(Data)[1] <- "Counts"
+
+      if (is.null(colnames(SummarizedExperiment::assays(Data)[["Counts"]]))) {stop("Must supply sample/cell names!")}
+
+    }
+    Data<-SummarizedExperiment::assays(Data)[["Counts"]]
+  }
+
+  if (!(methods::is(Data, "SummarizedExperiment"))) {
+    Data <- data.matrix(Data)
+  }
+
+
   Normcount<-t(t(Data)/colSums(Data))*mean(colSums(Data))
   means <- rowMeans(Normcount)
   lmeans <- log(means)
@@ -63,13 +92,19 @@ BetaFun<-function(Data,MeanBETA){
   return(list(BETA=BETA,Selected_genes=Selected_genes))
 }
 
-#' @title Estimate size and mu for NB distribution for each gene using MME method
+#' @title Estimate size and mu for NB distribution for each gene
+#' using MME method
 #'
-#' @description  Input raw data and return estimated size and mu for each gene.
-#' @param Data A matrix of single-cell expression where rows are genes and columns are samples (cells). This object should be of class matrix rather than data.frame.
+#' @description  Input raw data and return estimated size and mu
+#' for each gene.
+#' @param Data A matrix of single-cell expression where rows
+#' are genes and columns are samples (cells). \code{Data}
+#' can be of class \code{SummarizedExperiment} or just matrix.
 #' @param verbose print out status messages. Default is TRUE.
 #'
-#' @details mu and size are two parameters that need to be specified in bayNorm. They are parameters of negative binomial distribution. The variance is \eqn{mu + mu^2/size} in this parametrization.
+#' @details mu and size are two parameters that need to be specified
+#' in bayNorm. They are parameters of negative binomial distribution.
+#'  The variance is \eqn{mu + mu^2/size} in this parametrization.
 #'
 #' @return  List containing estimated mu and size for each gene.
 #'
@@ -81,9 +116,29 @@ BetaFun<-function(Data,MeanBETA){
 #' verbose=TRUE)
 #' }
 #' @import  fitdistrplus
-#'
+#' @importFrom SummarizedExperiment SummarizedExperiment
+#' assayNames assays colData
 #' @export
 EstPrior<-function(Data,verbose=TRUE){
+
+  if(methods::is(Data, "SummarizedExperiment")){
+
+    if (is.null(  SummarizedExperiment::assayNames(Data)) || SummarizedExperiment::assayNames(Data)[1] != "Counts") {
+      message("Renaming the first element in assays(Data) to 'Counts'")
+      SummarizedExperiment::assayNames(Data)[1] <- "Counts"
+
+      if (is.null(colnames(SummarizedExperiment::assays(Data)[["Counts"]]))) {stop("Must supply sample/cell names!")}
+
+    }
+    Data<-SummarizedExperiment::assays(Data)[["Counts"]]
+  }
+
+  if (!(methods::is(Data, "SummarizedExperiment"))) {
+    Data <- data.matrix(Data)
+  }
+
+
+
 
   i<-NULL
 
@@ -105,9 +160,8 @@ EstPrior<-function(Data,verbose=TRUE){
 #'
 #' @description   Input raw data and a vector of capture efficiencies of cells.
 #' @param Data A matrix of single-cell expression where rows
-#' are genes and columns are samples (cells). This object
-#' should be of class \code{matrix} rather
-#' than \code{data.frame}.
+#' are genes and columns are samples (cells). \code{Data}
+#' can be of class \code{SummarizedExperiment} or just matrix.
 #' @param  BETA_vec A vector of capture efficiencies of cells.
 #' @param  parallel If TRUE, 5 cores will be used for
 #' parallelization. Default is TRUE.
@@ -116,7 +170,8 @@ EstPrior<-function(Data,verbose=TRUE){
 #' using either MulticoreParam (Linux, Mac) or
 #' SnowParam (Windows) with \code{NCores} using the
 #' package \code{BiocParallel}.
-#' @param  FIX_MU If TRUE, then 1D optimization, otherwise 2D optimization (slow). Default is TRUE.
+#' @param  FIX_MU If TRUE, then 1D optimization, otherwise
+#' 2D optimization (slow). Default is TRUE.
 #' @param  GR If TRUE, the gradient function will be used
 #' in optimization. However since the gradient function
 #' itself is very complicated, it does not help too much
@@ -146,7 +201,8 @@ EstPrior<-function(Data,verbose=TRUE){
 #' NCores=5,FIX_MU=T,GR=F,BB_SIZE=T,verbose=T)
 #' }
 #'
-#' @return  List of estimated parameters: mean expression of genes and size of each gene.
+#' @return  List of estimated parameters: mean expression of genes
+#' and size of each gene.
 #'
 #' @examples
 #' data("EXAMPLE_DATA_list")
@@ -160,10 +216,27 @@ EstPrior<-function(Data,verbose=TRUE){
 #' @import parallel
 #' @import foreach
 #' @import doSNOW
-#'
+#' @importFrom SummarizedExperiment SummarizedExperiment
+#' assayNames assays colData
 #' @export
 #'
 Prior_fun<-function(Data,BETA_vec,parallel=TRUE,NCores=5,FIX_MU=TRUE,GR=FALSE,BB_SIZE=TRUE,verbose=TRUE){
+
+  if(methods::is(Data, "SummarizedExperiment")){
+
+    if (is.null(  SummarizedExperiment::assayNames(Data)) || SummarizedExperiment::assayNames(Data)[1] != "Counts") {
+      message("Renaming the first element in assays(Data) to 'Counts'")
+      SummarizedExperiment::assayNames(Data)[1] <- "Counts"
+
+      if (is.null(colnames(SummarizedExperiment::assays(Data)[["Counts"]]))) {stop("Must supply sample/cell names!")}
+
+    }
+    Data<-SummarizedExperiment::assays(Data)[["Counts"]]
+  }
+
+  if (!(methods::is(Data, "SummarizedExperiment"))) {
+    Data <- data.matrix(Data)
+  }
 
   normcount_N<-t(t(Data)/colSums(Data))*mean(colSums(Data)/BETA_vec)
   Priors<-EstPrior(normcount_N,verbose=verbose)
@@ -175,7 +248,6 @@ Prior_fun<-function(Data,BETA_vec,parallel=TRUE,NCores=5,FIX_MU=TRUE,GR=FALSE,BB
   rownames(MME_prior)<-rownames(Data)
   colnames(MME_prior)<-c("MME_MU","MME_SIZE")
 
-  #BB_size<-BB_Fun_1D(Dat_mat=Data,BETA_vec=BETA_vec,INITIAL_MU_vec=MME_prior$MME_MU,INITIAL_SIZE_vec=MME_prior$MME_SIZE,SIZE_lower=min(MME_prior$MME_SIZE),SIZE_upper=ceiling(max(MME_prior$MME_SIZE)),parallel=parallel,NCores = NCores)
 
 if(BB_SIZE){
   if(verbose){
@@ -211,23 +283,40 @@ if(BB_SIZE){
 
 #' @title Estimating size for each gene by either 1D or 2D optimization of marginal distribution
 #'
-#' @description  Estimating size for each gene by maximizing marginal distribution: 1D (optimize with respect to size, assuming that mu estimated based on MME method is already good), 2D (optimize with respect to both mu and size)
+#' @description  Estimating size for each gene by maximizing
+#' marginal distribution: 1D (optimize with respect to size,
+#' assuming that mu estimated based on MME method is already good),
+#' 2D (optimize with respect to both mu and size)
 #'
-#' @param Data A matrix of single-cell expression where rows are genes
-#' and columns are samples (cells). This object should be of class
-#' matrix rather than data.frame.
-#' @param  BETA_vec A vector of capture efficiencies of cells.
-#' @param  INITIAL_MU_vec Mean expression of genes, can come from EstPrior.
-#' @param  INITIAL_SIZE_vec size of genes (size is a parameter in NB distribution), can come from EstPrior.
-#' @param  MU_lower The lower bound for the mu.(Only need it when you want to do 2D optimization). Default is 0.01.
-#' @param  MU_upper The upper bound for the mu.(Only need it when you want to do 2D optimization). Default is 500.
+#' @param Data A matrix of single-cell expression where rows
+#' are genes and columns are samples (cells). \code{Data}
+#' can be of class \code{SummarizedExperiment} or just matrix.
+#' @param  BETA_vec A vector of capture efficiencies
+#' (probabilities) of cells.
+#' @param  INITIAL_MU_vec Mean expression of genes,
+#' can be estimated from \code{EstPrior}.
+#' @param  INITIAL_SIZE_vec size of genes (size is a parameter in
+#' NB distribution), can come from EstPrior.
+#' @param  MU_lower The lower bound for the mu.(Only need it when
+#' you want to do 2D optimization). Default is 0.01.
+#' @param  MU_upper The upper bound for the mu.(Only need it when
+#' you want to do 2D optimization). Default is 500.
 #' @param  SIZE_lower The lower bound for the size. Default is 0.01.
 #' @param  SIZE_upper The upper bound for the size. Default is 30.
-#' @param  parallel If TRUE, 5 cores will be used for parallelization. Default is TRUE.
-#' @param  NCores number of cores to use, default is 5. This will be used to set up a parallel environment using either MulticoreParam (Linux, Mac) or SnowParam (Windows) with NCores using the package BiocParallel.
-#' @param  FIX_MU If TRUE, then 1D optimization, otherwise 2D optimization (slow).
-#' @param  GR If TRUE, the gradient function will be used in optimization. However since the gradient function itself is very complicated, it does not help too much in speeding up. Default is FALSE.
-#' @return  A vector of estimated size based on maximizing marginal distribution.
+#' @param  parallel If TRUE, 5 cores will be used for parallelization.
+#' Default is TRUE.
+#' @param  NCores number of cores to use, default is 5. This will
+#' be used to set up a parallel environment using either
+#' MulticoreParam (Linux, Mac) or SnowParam (Windows) with NCores
+#' using the package BiocParallel.
+#' @param  FIX_MU If TRUE, then 1D optimization, otherwise 2D
+#' optimization (slow).
+#' @param  GR If TRUE, the gradient function will be used in
+#' optimization. However since the gradient function itself is
+#' very complicated, it does not help too much in speeding up.
+#' Default is FALSE.
+#' @return  A vector of estimated size based on maximizing
+#' marginal distribution.
 #'
 #'
 #' @examples
@@ -249,7 +338,8 @@ if(BB_SIZE){
 #' @import utils
 #' @import iterators
 #' @import methods
-#'
+#' @importFrom SummarizedExperiment SummarizedExperiment
+#' assayNames assays colData
 #' @useDynLib bayNorm
 #' @importFrom Rcpp sourceCpp
 #'
@@ -258,6 +348,23 @@ if(BB_SIZE){
 #'
 BB_Fun<-function(Data,BETA_vec,INITIAL_MU_vec,INITIAL_SIZE_vec,MU_lower=0.01,MU_upper=500,SIZE_lower=0.01,SIZE_upper=30,parallel=FALSE,NCores=5,FIX_MU=TRUE,GR=FALSE)
 {
+
+  if(methods::is(Data, "SummarizedExperiment")){
+
+    if (is.null(  SummarizedExperiment::assayNames(Data)) || SummarizedExperiment::assayNames(Data)[1] != "Counts") {
+      message("Renaming the first element in assays(Data) to 'Counts'")
+      SummarizedExperiment::assayNames(Data)[1] <- "Counts"
+
+      if (is.null(colnames(SummarizedExperiment::assays(Data)[["Counts"]]))) {stop("Must supply sample/cell names!")}
+
+    }
+    Data<-SummarizedExperiment::assays(Data)[["Counts"]]
+  }
+
+  if (!(methods::is(Data, "SummarizedExperiment"))) {
+    Data <- data.matrix(Data)
+  }
+
 
   Geneind<-NULL
 
