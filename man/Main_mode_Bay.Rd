@@ -17,14 +17,17 @@ Main_mode_Bay(Data, BETA_vec, size, mu, S, thres)
 
 \item{S}{number of samples that you want to generate}
 
-\item{thres}{for observed count greater than \code{thres}, use uniform prior.}
+\item{thres}{for observed count greater
+than \code{thres}, use uniform prior.}
 }
 \value{
 bayNorm normalized data
 }
 \description{
 bayNorm
-If the observed count is above 500, then we use normal distribution to approximate binomial distribution.
+If the observed count is above 500,
+then we use normal distribution to
+approximate binomial distribution.
 }
 \examples{
 data("EXAMPLE_DATA_list")

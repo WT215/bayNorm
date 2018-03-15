@@ -1,0 +1,227 @@
+source("E:/RNAseqProject/QQsim_v2_SingleCellExperiment.R")
+Rcpp::sourceCpp('E:/RNAseqProject/PROJECT_RNAseq/Rcpp_maybeuseful/DownSampling.cpp')
+
+load("E:/RNAseqProject/PROJECT_scRNAseq/FIGURE_DROPOUT/DROPOUT_MAIN/Klein933_DIY.RData")
+Sim_List_Input$SCE<-NULL
+Sim_List_Input$Est_params@counts.norm.TC<-matrix()
+
+
+
+
+
+#######Begin simulation#######
+
+
+Est_params<-Sim_List_Input$Est_params
+Est_params@nGroups<-2
+Est_params@groupCells=c(100,100)
+Est_params@nGenes<-10000
+Est_params@MeanBeta<-c(0.05,0.1)
+Est_params@de.prob<-c(0.2,0)
+Est_params@de.downProb<-c(0.5,0)
+Est_params@de.facLoc<-c(1,1)
+Est_params@de.facScale<-c(0.5,0.5)
+
+Est_params@out.prob
+Est_params@mean.shape
+
+Est_params@Beta<-numeric()
+length(Est_params@Beta)
+
+
+library(splatter)
+#Est_params<-newQQParams(nGenes = 10000, nCells = 100,nGroups = 2,groupCells = c(100,100), mean.rate =1/60, mean.shape = 0.35,lib.loc = 10,lib.scale = 0.5,out.prob =0, out.neg.prob=0,out.facLoc = 0.1,out.facScale = 0.05,de.prob = c(0.2,0),de.downProb = c(0.5,0), de.facLoc =c(1,1),de.facScale =c(0.5,0.5),bcv.common = 0.2,bcv.df = 20,SimControl='F',MeanBeta=c(0.1,0.1))
+
+SCE<-QQinitiate(Est_params)
+SCE<-QQSimGeneMeans(SCE,Est_params)
+#Group
+SCE<-QQSimGroupDE(SCE,Est_params)
+SCE<-QQSimGroupCellMeans(SCE, Est_params,Effect=F)
+
+SCE<-QQSimBETA(SCE, Est_params)
+SCE<-QQSimBCVMeans(SCE,Est_params)
+SCE<-QQSimBinomial(SCE,Est_params)
+
+
+dim(counts(SCE))
+CONDITION<-SCE@colData@listData$GroupInd
+
+
+
+DROP<-which(rowSums(counts(SCE))==0)
+
+TRUE_LABEL<-rowData(SCE)$DEFacGroup1
+TRUE_LABEL<-ifelse(TRUE_LABEL!=1,1,0)
+TRUE_LABEL<-TRUE_LABEL[-DROP]
+table(TRUE_LABEL)
+#########True Parameters#####
+TrueBeta1<-colData(SCE)$Beta[CONDITION==1]*Est_params@MeanBeta[1]
+TrueBeta2<-colData(SCE)$Beta[CONDITION==2]*Est_params@MeanBeta[2]
+summary(TrueBeta1)
+summary(TrueBeta2)
+
+
+
+
+TrueSIZES1<-1/(rowMeans(SCE@assays@.xData$data$BCV[,CONDITION==1])[-DROP])^2
+TrueSIZES2<-1/(rowMeans(SCE@assays@.xData$data$BCV[,CONDITION==2])[-DROP])^2
+
+TrueMU<-rowData(SCE)$BaseGeneMean[-DROP]
+
+
+
+#begin bayNorm######
+RAW_DAT<-counts(SCE)[-DROP,]
+library(scran)
+BETA_SCRAN_1<-computeSumFactors(RAW_DAT[,CONDITION==1])
+BETA_SCRAN_1<-BETA_SCRAN_1/mean(BETA_SCRAN_1)*Est_params@MeanBeta[1]
+BETA_SCRAN_2<-computeSumFactors(RAW_DAT[,CONDITION==2])
+BETA_SCRAN_2<-BETA_SCRAN_2/mean(BETA_SCRAN_2)*Est_params@MeanBeta[2]
+
+plot(BETA_SCRAN_2,TrueBeta2,pch=16)
+abline(0,1)
+
+
+library(bayNorm)
+system.time(bayNorm_out<-bayNorm(Data<-RAW_DAT,BETA_vec<-c(BETA_SCRAN_1,BETA_SCRAN_2),Conditions=CONDITION,Prior_type = 'LL',S=10))
+save.image("E:/RNAseqProject/SIMULATION/SIM_005_01/SIM_005_01.RData")
+load("E:/RNAseqProject/SIMULATION/SIM_005_01/SIM_005_01.RData")
+
+######################other norms######
+
+load("E:/RNAseqProject/SIMULATION/SIM_005_01/SIM_005_01.RData")
+source("E:/RNAseqProject/TSTAT_140817.r")
+source("E:/RNAseqProject/MANY_DE_FUN.R")
+source("E:/RNAseqProject/MANY_NORM_FUN.R")
+
+scran_out<-scran_norm(x=RAW_DAT)$counts
+# system.time(scnorm_out<-scnorm_fun(x=RAW_DAT,Conditions=CONDITION))
+# scnorm_out<-scnorm_out@metadata$NormalizedData
+library(SAVER)
+saver_temp<-saver(x=RAW_DAT,size.factor = unlist(bayNorm_out$BETA))
+saver_out<-saver_temp$estimate
+save(saver_temp,saver_out,file="E:/RNAseqProject/SIMULATION/SIM_005_01/saver_BETA.RData")
+
+
+rpm_out<-rpm(RAW_DAT)$counts
+tmm_out<-tmm(RAW_DAT)$counts
+deseq_out<-deseq(RAW_DAT)$counts
+
+save.image("E:/RNAseqProject/SIMULATION/SIM_005_01/SIM_005_01.RData")
+
+
+
+
+####DE analysis#######
+#MAST
+
+gr<-table(CONDITION)
+M_bayNorm<-SCnorm_runMAST(Data=cbind(bayNorm_out$Bay_array_list$`Group 1`[,,1],bayNorm_out$Bay_array_list$`Group 2`[,,1]),NumCells = gr)
+#M_scnorm<-SCnorm_runMAST(Data=scnorm_out,NumCells = gr)
+M_saver<-SCnorm_runMAST(Data=saver_out,NumCells = gr)
+M_scran<-SCnorm_runMAST(Data=scran_out,NumCells = gr)
+M_rpm<-SCnorm_runMAST(Data=rpm_out,NumCells = gr)
+M_tmm<-SCnorm_runMAST(Data=tmm_out,NumCells = gr)
+M_deseq<-SCnorm_runMAST(Data=deseq_out,NumCells = gr)
+
+#Tstat
+T_bay<-tStatAnalysis_2groups_2(cells=bayNorm_out$Bay_array_list$`Group 1`,ctrls=bayNorm_out$Bay_array_list$`Group 2`)
+#T_scnorm<-tStatAnalysis_2groups_2(cells=scnorm_out[,CONDITION==1],ctrls=scnorm_out[,CONDITION==2])
+T_saver<-tStatAnalysis_2groups_2(cells=saver_out[,CONDITION==1],ctrls=saver_out[,CONDITION==2])
+T_scran<-tStatAnalysis_2groups_2(cells=scran_out[,CONDITION==1],ctrls=scran_out[,CONDITION==2])
+T_tmm<-tStatAnalysis_2groups_2(cells=tmm_out[,CONDITION==1],ctrls=tmm_out[,CONDITION==2])
+T_rpm<-tStatAnalysis_2groups_2(cells=rpm_out[,CONDITION==1],ctrls=rpm_out[,CONDITION==2])
+T_deseq<-tStatAnalysis_2groups_2(cells=deseq_out[,CONDITION==1],ctrls=deseq_out[,CONDITION==2])
+
+save(bayNorm_out,saver_out,scran_out,rpm_out,tmm_out,deseq_out,CONDITION,M_bayNorm,M_saver,M_scran,M_rpm,M_tmm,M_deseq,T_bay,T_saver,T_scran,T_tmm,T_rpm,T_deseq,file="E:/RNAseqProject/SIMULATION/SIM_005_01/M_T_RESULTS.RData")
+
+
+load("E:/RNAseqProject/SIMULATION/SIM_005_01/M_T_RESULTS.RData")
+load("E:/RNAseqProject/SIMULATION/SIM_005_01/SIM_005_01.RData")
+
+
+
+MAST_RE_LIST<-list(bayNorm=M_bayNorm$adjpval,SAVER=M_saver$adjpval,scran=M_scran$adjpval,M_rpm$adjpval,M_tmm$adjpval,M_deseq$adjpval)
+TSTAT_RE_LIST<-list(bayNorm=T_bay[[1]]$PVAL_fdr,SAVER=T_saver[[1]]$PVAL_fdr,scran=T_scran[[1]]$PVAL_fdr,T_rpm[[1]]$PVAL_fdr,T_tmm[[1]]$PVAL_fdr,T_deseq[[1]]$PVAL_fdr)
+
+library(foreach)
+
+Sele<-'MAST'
+Sele<-'TSTAT'
+
+method_vec<-c('bayNorm','SAVER','scran','RPM','TMM','DESeq')
+col_vec<-c(1,3,4,5,6,7)
+
+if(Sele=='MAST'){
+  Input_re_list<-MAST_RE_LIST
+  mainn='Different normalization methods, MAST for DE detection'
+} else if(Sele=='TSTAT'){
+  Input_re_list<-TSTAT_RE_LIST
+  mainn='Different normalization methods, wilcox.test for DE detection'
+}
+
+TRUE_LABEL_reverse<-TRUE_LABEL
+TRUE_LABEL_reverse[TRUE_LABEL_reverse==1]=3
+TRUE_LABEL_reverse[TRUE_LABEL_reverse==0]=1
+TRUE_LABEL_reverse[TRUE_LABEL_reverse==3]=0
+
+auc_vec<-NULL
+TRUE_LABEL_input<-TRUE_LABEL
+table(TRUE_LABEL_input)
+
+library(ROCR)
+list_pref<-foreach(i=1:length(Input_re_list))%do%{
+  pred_MAST <- prediction((Input_re_list[[i]]), TRUE_LABEL_reverse)
+  perf_MAST <- performance( pred_MAST, "tpr", "fpr" )
+
+  auc_temp<-performance( pred_MAST, measure='auc' )
+  auc_temp<-auc_temp@y.values[[1]]
+  auc_vec<-c(auc_vec,auc_temp)
+  return(perf_MAST)
+}
+
+ROC_fun(list_pref=list_pref,vec_auc=auc_vec,method_vec=method_vec,col_vec=col_vec,MAIN=mainn)
+abline(0,1)
+
+######ROC_fun#############
+ROC_fun<-function(list_pref,vec_auc,method_vec,col_vec,MAIN=''){
+  plot(list_pref[[1]],col=col_vec[1],main=MAIN)
+
+  for(i in 2:length(list_pref))
+  {
+    plot( list_pref[[i]],col=col_vec[i],add=T)
+  }
+  ll<-NULL
+  for(i in 1:length(list_pref)){
+    ll<-c(ll,paste(method_vec[i],round(vec_auc[i],4)))
+  }
+
+  legend("bottomright",legend=ll,col=col_vec,lwd=1,cex=1)
+}
+
+
+
+
+
+######Analysis####
+load("E:/RNAseqProject/SIMULATION/SIM_2/SIM_2.RData")
+
+EST_MU_1<-apply(bayNorm_out$Bay_array_list$`Group 1`,1,mean)
+EST_MU_2<-apply(bayNorm_out$Bay_array_list$`Group 2`,1,mean)
+
+EST_SD_1<-apply(apply(bayNorm_out$Bay_array_list$`Group 1`, c(1,3), sd), 1, mean)
+EST_SD_2<-apply(apply(bayNorm_out$Bay_array_list$`Group 2`, c(1,3), sd), 1, mean)
+
+EST_SIZE_1<-EST_MU_1^2/(EST_SD_1^2-EST_MU_1)
+EST_SIZE_2<-EST_MU_2^2/(EST_SD_2^2-EST_MU_2)
+
+plot(EST_MU_1,TrueMU,log='xy')
+abline(0,1)
+plot(EST_SIZE_1,TrueSIZES1,log='xy',pch=16)
+abline(0,1)
+plot(EST_SIZE_2,TrueSIZES2,log='xy',pch=16)
+abline(0,1)
+
+
+
+

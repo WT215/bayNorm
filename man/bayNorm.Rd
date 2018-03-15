@@ -94,7 +94,7 @@ A wrapper function of prior estimation
 and bayNorm function.
 }
 \examples{
-data("EXAMPLE_DATA_list")
+data('EXAMPLE_DATA_list')
 \dontrun{
 #Return 3D array normalzied data:
 bayNorm_3D<-bayNorm(Data=EXAMPLE_DATA_list$inputdata,

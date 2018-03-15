@@ -1,0 +1,329 @@
+#########LOADING#############
+#load("E:/RNAseqProject/tung2017batch/tung2017_load_raw.RData")
+#load("E:/RNAseqProject/tung2017batch/CaptureEfficiency_ERCC.RData")
+load("E:/RNAseqProject/tung2017batch/MMEADJ_ERCCBETA/tung2017batch_Bay_ERCCBETA.RData")
+source("E:/RNAseqProject/TSTAT_140817.r")
+source("E:/RNAseqProject/MANY_DE_FUN.R")
+source("E:/RNAseqProject/MANY_NORM_FUN.R")
+
+library(SAVER)
+saver_all<-saver(x=cbind(N1_DAT,N2_DAT,N3_DAT))
+save(saver_all,file="E:/RNAseqProject/tung2017batch/FINAL/SAVER_all.RData")
+saver_N1<-saver(x=N1_DAT)
+saver_N2<-saver(x=N2_DAT)
+saver_N3<-saver(x=N3_DAT)
+save(saver_N1,saver_N2,saver_N3,file="E:/RNAseqProject/tung2017batch/FINAL/SAVER_individuals.RData")
+
+saver_N1<-saver(x=N1_DAT,size.factor = efficiency[colnames(N1_DAT)])
+saver_N2<-saver(x=N2_DAT,size.factor = efficiency[colnames(N2_DAT)])
+saver_N3<-saver(x=N3_DAT,size.factor = efficiency[colnames(N3_DAT)])
+save(saver_N1,saver_N2,saver_N3,file="E:/RNAseqProject/tung2017batch/FINAL/SAVER_individuals_BETA.RData")
+
+
+grep(rownames(N1_DAT),pattern='ERCC')
+
+#baymat.
+grs<-c(dim(N2_DAT)[2],dim(N3_DAT)[2])
+M_bay_mat<-foreach(i=1:5,.combine=cbind)%do%{
+  Inputdat_bay<-cbind(Bay_2[,,i],Bay_3[,,i])
+ qq = SCnorm_runMAST(Data=Inputdat_bay, NumCells=as.numeric(grs))
+ return(qq$adjpval)
+}
+
+
+save(M_bay_mat,file="E:/RNAseqProject/tung2017batch/FINAL/M_bay_mat.RData")
+
+
+
+
+Inputdat_raw<-cbind(N2_DAT,N3_DAT)
+Inputdat_bay<-cbind(Bay_2[,,1],Bay_3[,,1])
+grs<-c(dim(N2_DAT)[2],dim(N3_DAT)[2])
+TMM_norm <-tmm(Inputdat_raw)$counts
+DESeq_norm<-deseq(Inputdat_raw)$counts
+Scran_norm<-scran_norm(Inputdat_raw, sizes = c(20,30,40,50,100,200))$counts
+rpm_norm<-rpm(Inputdat_raw)$counts
+
+load("E:/RNAseqProject/tung2017batch/DE/SCnorm_out/SCnorm_out.RData")
+scnorm_norm<-SCnorm_out@metadata$NormalizedData
+
+library(SAVER)
+system.time(saver_temp<-saver(x=Inputdat_raw))
+saver_norm<-saver_temp$estimate
+#save(saver_temp,saver_norm,file="E:/RNAseqProject/tung2017batch/FINAL/SAVER_norm.RData")
+load("E:/RNAseqProject/tung2017batch/FINAL/SAVER_norm.RData")
+
+
+#save(Bay_1,Bay_2,Bay_3,TMM_norm,DESeq_norm,Scran_norm,scnorm_norm,rpm_norm,file="E:/RNAseqProject/tung2017batch/FINAL/ALL_6norms.RData")
+load("E:/RNAseqProject/tung2017batch/FINAL/ALL_6norms.RData")
+
+
+
+#MAST analysis#########
+load("E:/RNAseqProject/tung2017batch/FINAL/ALL_6norms.RData")
+MAST_bay = SCnorm_runMAST(Data=Inputdat_bay, NumCells=as.numeric(grs))
+MAST_scnorm = SCnorm_runMAST(Data=scnorm_norm, NumCells=as.numeric(grs))
+#MAST_saver = SCnorm_runMAST(Data=saver_norm, NumCells=as.numeric(grs))
+MAST_saver = SCnorm_runMAST(Data=cbind(saver_N2$estimate,saver_N3$estimate), NumCells=as.numeric(grs))
+MAST_scran = SCnorm_runMAST(Data=Scran_norm, NumCells=as.numeric(grs))
+
+MAST_rpm=SCnorm_runMAST(Data=rpm_norm, NumCells=as.numeric(grs))
+MAST_tmm = SCnorm_runMAST(Data=TMM_norm, NumCells=as.numeric(grs))
+MAST_deseq = SCnorm_runMAST(Data=DESeq_norm, NumCells=as.numeric(grs))
+
+MAST_Tung = SCnorm_runMAST(Data=Tung2017_final[,c(colnames(N2_DAT),colnames(N3_DAT))], NumCells=as.numeric(grs))
+
+save(MAST_saver,MAST_bay,MAST_scnorm,MAST_scran,MAST_rpm,MAST_tmm,MAST_deseq,MAST_Tung,file="E:/RNAseqProject/tung2017batch/FINAL/M_6norms.RData")
+load("E:/RNAseqProject/tung2017batch/FINAL/M_6norms.RData")
+
+
+
+
+
+###wilcox.test analysis#########
+Tung_condition<-c(rep(1,dim(N2_DAT)[2]),rep(2,dim(N3_DAT)[2]))
+
+system.time(tstat_bay<-tStatAnalysis_2groups_2(cells=Bay_2,ctrls=Bay_3, list_mode=NULL, verbose=T, plotFDR = FALSE))
+
+system.time(tstat_scnorm<-tStatAnalysis_2groups_2(cells=scnorm_norm[,Tung_condition==1],ctrls=scnorm_norm[,Tung_condition==2], list_mode=NULL, verbose=T, plotFDR = FALSE))
+
+#system.time(tstat_saver<-tStatAnalysis_2groups_2(cells=saver_norm[,Tung_condition==1],ctrls=saver_norm[,Tung_condition==2], list_mode=NULL, verbose=T, plotFDR = FALSE))
+system.time(tstat_saver<-tStatAnalysis_2groups_2(cells=cbind(saver_N2$estimate,saver_N3$estimate)[,Tung_condition==1],ctrls=cbind(saver_N2$estimate,saver_N3$estimate)[,Tung_condition==2], list_mode=NULL, verbose=T, plotFDR = FALSE))
+
+system.time(tstat_scran<-tStatAnalysis_2groups_2(cells=Scran_norm[,Tung_condition==1],ctrls=Scran_norm[,Tung_condition==2], list_mode=NULL, verbose=T, plotFDR = FALSE))
+
+system.time(tstat_rpm<-tStatAnalysis_2groups_2(cells=rpm_norm[,Tung_condition==1],ctrls=rpm_norm[,Tung_condition==2], list_mode=NULL, verbose=T, plotFDR = FALSE))
+
+system.time(tstat_tmm<-tStatAnalysis_2groups_2(cells=TMM_norm[,Tung_condition==1],ctrls=TMM_norm[,Tung_condition==2], list_mode=NULL, verbose=T, plotFDR = FALSE))
+
+system.time(tstat_deseq<-tStatAnalysis_2groups_2(cells=DESeq_norm[,Tung_condition==1],ctrls=DESeq_norm[,Tung_condition==2], list_mode=NULL, verbose=T, plotFDR = FALSE))
+
+
+system.time(tstat_Tung<-tStatAnalysis_2groups_2(cells=as.matrix(Tung2017_final[,c(colnames(N2_DAT),colnames(N3_DAT))][,Tung_condition==1]),ctrls=as.matrix(Tung2017_final[,c(colnames(N2_DAT),colnames(N3_DAT))][,Tung_condition==2]), list_mode=NULL, verbose=T, plotFDR = FALSE))
+
+
+#TFDR 2, PValue 3, PVAL_fdr 5
+metric<-5
+
+tstat_bay2<-do.call(cbind,lapply(tstat_bay,function(x){return(x[[metric]])}))
+tstat_bay2<-apply(tstat_bay2,1,median)
+
+tstat_scnorm2<-do.call(cbind,lapply(tstat_scnorm,function(x){return(x[[metric]])}))
+tstat_scnorm2<-apply(tstat_scnorm2,1,median)
+
+tstat_saver2<-do.call(cbind,lapply(tstat_saver,function(x){return(x[[metric]])}))
+tstat_saver2<-apply(tstat_saver2,1,median)
+
+tstat_tmm2<-do.call(cbind,lapply(tstat_tmm,function(x){return(x[[metric]])}))
+tstat_tmm2<-apply(tstat_tmm2,1,median)
+
+tstat_rpm2<-do.call(cbind,lapply(tstat_rpm,function(x){return(x[[metric]])}))
+tstat_rpm2<-apply(tstat_rpm2,1,median)
+
+tstat_scran2<-do.call(cbind,lapply(tstat_scran,function(x){return(x[[metric]])}))
+tstat_scran2<-apply(tstat_scran2,1,median)
+
+tstat_deseq2<-do.call(cbind,lapply(tstat_deseq,function(x){return(x[[metric]])}))
+tstat_deseq2<-apply(tstat_deseq2,1,median)
+
+
+tstat_Tung2<-do.call(cbind,lapply(tstat_Tung,function(x){return(x[[metric]])}))
+tstat_Tung2<-apply(tstat_Tung2,1,median)
+
+
+
+save(tstat_bay,tstat_scnorm,tstat_saver,tstat_scran,tstat_rpm,tstat_tmm,tstat_deseq,tstat_Tung,tstat_bay2,tstat_scnorm2,tstat_saver2,tstat_scran2,tstat_rpm2,tstat_tmm2,tstat_deseq2,tstat_Tung2,file="E:/RNAseqProject/tung2017batch/FINAL/T_6norms.RData")
+load("E:/RNAseqProject/tung2017batch/FINAL/T_6norms.RData")
+
+
+
+
+
+
+
+
+
+
+###plot########
+load("E:/RNAseqProject/tung2017batch/FINAL/M_6norms.RData")
+load("E:/RNAseqProject/tung2017batch/FINAL/M_bay_mat.RData")
+MAST_RE_LIST<-list(MAST_bay=apply(M_bay_mat,1,median),MAST_scnorm=MAST_scnorm$adjpval,MAST_saver=MAST_saver$adjpval,MAST_scran=MAST_scran$adjpval,MAST_rpm=MAST_rpm$adjpval,MAST_tmm=MAST_tmm$adjpval,MAST_DESeq=MAST_deseq$adjpval,MAST_Tung=MAST_Tung$adjpval)
+#MAST_RE_LIST<-list(MAST_bay=MAST_bay$adjpval,MAST_scnorm=MAST_scnorm$adjpval,MAST_saver=MAST_saver$adjpval,MAST_scran=MAST_scran$adjpval,MAST_rpm=MAST_rpm$adjpval,MAST_tmm=MAST_tmm$adjpval,MAST_DESeq=MAST_deseq$adjpval,MAST_Tung=MAST_Tung$adjpval)
+
+load("E:/RNAseqProject/tung2017batch/FINAL/T_6norms.RData")
+TSTAT_RE_LIST<-list(TSTAT_bay=tstat_bay2,TSTAT_scnorm=tstat_scnorm2,TSTAT_saver=tstat_saver2,TSTAT_scran=tstat_scran2,TSTAT_rpm=tstat_rpm2,TSTAT_tmm=tstat_tmm2,TSTAT_deseq=tstat_deseq2,TSTAT_Tung=tstat_Tung2)
+
+source("E:/RNAseqProject/TSTAT_140817.r")
+source("E:/RNAseqProject/MANY_DE_FUN.R")
+source("E:/RNAseqProject/MANY_NORM_FUN.R")
+
+load('E:/RNAseqProject/tung2017batch/MMEADJ_ERCCBETA/DE_benchmark.RData')
+
+library(foreach)
+
+Sele<-'MAST'
+Sele<-'wilcox.test'
+
+method_vec<-c('bayNorm','SCnorm','SAVER','scran','RPM','TMM','DESeq','Tung')
+col_vec<-seq(1,8)
+
+if(Sele=='MAST'){
+  Input_re_list<-MAST_RE_LIST
+  mainn=''
+} else if(Sele=='wilcox.test'){
+  Input_re_list<-TSTAT_RE_LIST
+  mainn='DE detection method: wilcox.test'
+}
+
+
+auc_vec<-NULL
+TRUE_LABEL_input<-DE_TRUE_LABEL
+
+TRUE_LABEL_input[TRUE_LABEL_input==0]=3
+TRUE_LABEL_input[TRUE_LABEL_input==1]=0
+TRUE_LABEL_input[TRUE_LABEL_input==3]=1
+
+
+table(DE_TRUE_LABEL)
+length(DE_TRUE_LABEL)
+length(MAST_bay$adjpval)
+
+library(ROCR)
+list_pref<-foreach(i=1:length(Input_re_list))%do%{
+  pred_MAST <- prediction(Input_re_list[[i]], TRUE_LABEL_input)
+  perf_MAST <- performance( pred_MAST, "tpr", "fpr" )
+
+  auc_temp<-performance( pred_MAST, measure='auc' )
+  auc_temp<-auc_temp@y.values[[1]]
+  auc_vec<-c(auc_vec,auc_temp)
+  return(perf_MAST)
+}
+
+jpeg("E:/RNAseqProject/tung2017batch/FINAL/DE_M.jpeg", width = 40, height = 30, units = 'in', res = 300)
+par(mar=c(5,6,4,1)+.1)
+ROC_fun(list_pref=list_pref,vec_auc=auc_vec,method_vec=method_vec,col_vec=col_vec,MAIN=mainn,cex=5,lwd=3,cex.lab=4,cex.axis=5)
+abline(0,1)
+dev.off()
+
+
+######BATCH EFFECT######
+library(abind)
+system.time(Bay_comb<-abind(Bay_1,Bay_2,Bay_3,along=2))
+grep(rownames(Bay_comb),pattern='ERCC')
+
+pca_try <- prcomp(t(Bay_comb[,,1]),scale=T)
+#pca_try <- prcomp(t(saver_all$estimate),scale=T)
+#pca_try <- prcomp(t(cbind(saver_N1$estimate,saver_N2$estimate,saver_N3$estimate)),scale=T)
+
+
+pr_v<-summary(pca_try )$importance[2,]*100
+percentage <- paste( colnames(pca_try$x), "(", paste( as.character(pr_v), "%", ")", sep="") )
+dat<-pca_try$x[,1:2]
+dim(N1_DAT)
+library(ggplot2)
+textsize<-40
+BATCH<-ggplot(data=as.data.frame(dat),aes(x=PC1,y=PC2))+geom_point(aes(color=as.factor(LABEL_INDIVIDUAL),shape=as.factor(LABEL_REP)),size=10)+labs(color='Individual',shape='Replicate') + xlab(percentage[1]) + ylab(percentage[2])+ggtitle('')+theme(legend.position='right',plot.title = element_text(hjust = 0))+
+  theme(legend.text = element_text(size = textsize),legend.title  = element_text(size = textsize),axis.title = element_text(size = textsize),panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"),plot.subtitle = element_text(size =textsize),plot.caption =  element_text(size = textsize),axis.text=element_text(size=textsize) )
+
+jpeg("E:/RNAseqProject/tung2017batch/FINAL/BATCH_bayNorm.jpeg", width = 40, height = 30, units = 'in', res = 300)
+#par(mar=c(5,6,4,1)+.1)
+BATCH
+dev.off()
+
+
+####N1 batch explore##########
+load("E:/RNAseqProject/tung2017batch/FINAL/SAVER_individuals_BETA.RData")
+load("E:/RNAseqProject/tung2017batch/MMEADJ_ERCCBETA/tung2017batch_Bay_ERCCBETA.RData")
+source("E:/RNAseqProject/TSTAT_140817.r")
+source("E:/RNAseqProject/MANY_DE_FUN.R")
+source("E:/RNAseqProject/MANY_NORM_FUN.R")
+
+##no need to run again
+BATCH_N1<-LABEL_REP[seq(1,dim(N1_DAT)[2])]
+grs<-table(BATCH_N1)
+
+bayinput_n1<-Bay_1[,,1]
+scnorm_n1<-scnorm_fun(x=N1_DAT,Conditions = BATCH_N1)
+scnorm_count_n1<-scnorm_n1@metadata$NormalizedData
+Scran_norm_n1<-scran_norm(N1_DAT, sizes = c(20,30,40,50))$counts
+rpm_norm_n1<-rpm(N1_DAT)$counts
+TMM_norm_n1 <-tmm(N1_DAT)$counts
+DESeq_norm_n1<-deseq(N1_DAT)$counts
+Tung_norm_n1<-Tung2017_final[,grep(colnames(Tung2017_final),pattern='NA19098')]
+
+
+save(bayinput_n1,scnorm_count_n1,Scran_norm_n1,rpm_norm_n1,TMM_norm_n1,DESeq_norm_n1,Tung_norm_n1,file="E:/RNAseqProject/tung2017batch/FINAL/N1_all6norms.RData")
+
+
+load("E:/RNAseqProject/tung2017batch/FINAL/N1_all6norms.RData")
+MAST_bay_n1 = SCnorm_runMAST(Data=bayinput_n1, NumCells=as.numeric(grs))
+MAST_saver_n1 = SCnorm_runMAST(Data=saver_N1$estimate, NumCells=as.numeric(grs))
+MAST_scnorm_n1 = SCnorm_runMAST(Data=scnorm_count_n1, NumCells=as.numeric(grs))
+MAST_scran_n1 = SCnorm_runMAST(Data=Scran_norm_n1, NumCells=as.numeric(grs))
+
+MAST_rpm_n1=SCnorm_runMAST(Data=rpm_norm_n1, NumCells=as.numeric(grs))
+MAST_tmm_n1 = SCnorm_runMAST(Data=TMM_norm_n1, NumCells=as.numeric(grs))
+MAST_deseq_n1 = SCnorm_runMAST(Data=DESeq_norm_n1, NumCells=as.numeric(grs))
+
+MAST_Tung_n1 = SCnorm_runMAST(Data=Tung_norm_n1, NumCells=as.numeric(grs))
+
+save(MAST_bay_n1,MAST_saver_n1,MAST_scnorm_n1,MAST_scran_n1,MAST_rpm_n1,MAST_tmm_n1,MAST_deseq_n1,MAST_Tung_n1,file="E:/RNAseqProject/tung2017batch/FINAL/N1_M_all6norms.RData")
+load("E:/RNAseqProject/tung2017batch/FINAL/N1_M_all6norms.RData")
+
+##begin analysis
+load("E:/RNAseqProject/tung2017batch/FINAL/N1_M_all6norms.RData")
+M_n1_list<-list(MAST_bay=MAST_bay_n1$adjpval,MAST_saver=MAST_saver_n1$adjpval,MAST_scnorm=MAST_scnorm_n1$adjpval,MAST_scran=MAST_scran_n1$adjpval,MAST_rpm=MAST_rpm_n1$adjpval,MAST_tmm=MAST_tmm_n1$adjpval,MAST_deseq=MAST_deseq_n1$adjpval,MAST_Tung=MAST_Tung_n1$adjpval)
+
+
+
+method_vec<-c('bayNorm','SAVER','SCnorm','scran','RPM','TMM','DESeq','Tung')
+col_vec<-c(1,3,4,5,6,7)
+library(foreach)
+thrrr_vec<-c(0.01,0.05,0.1)
+BAR_DAT<-foreach(i = seq(1,3),.combine=rbind)%do%{
+thrrr<-thrrr_vec[i]
+  ng_vec<-unlist(lapply(M_n1_list,function(x){length(which(x<thrrr))}))
+  ng_vec<-cbind(ng_vec,rep(thrrr,length(M_n1_list)))
+  ng_vec<-cbind(ng_vec,method_vec)
+}
+
+
+
+colnames(BAR_DAT)<-c('Number of detected DE genes','Adjusted P-values threshold','Normalization method')
+
+BAR_DAT<-as.data.frame(BAR_DAT)
+
+BAR_DAT[,1]<-as.numeric(as.character(BAR_DAT[,1]))
+BAR_DAT[,2]<-factor(BAR_DAT[,2],levels=unique(BAR_DAT[,2]))
+BAR_DAT[,3]<-factor(BAR_DAT[,3],levels=unique(BAR_DAT[,3]))
+
+textsize<-40
+N1_BATCH_FIG<-ggplot(data=BAR_DAT, aes(x=BAR_DAT[,2], y=BAR_DAT[,1], fill=BAR_DAT[,3])) +
+  geom_bar(stat="identity", position = position_dodge(0.9),width=0.9)+
+  geom_text(aes(label=BAR_DAT[,1]), vjust=1.6, color="black", position = position_dodge(0.9), size=10)+
+  labs(x = 'Adjusted P-values threshold',y='Number of detected DE genes',fill='Normalization methods')+ggtitle("(a)") +
+  scale_fill_brewer(palette="Paired")+
+  theme(legend.text = element_text(size = textsize),legend.title  = element_text(size = textsize),plot.title = element_text(size = textsize),axis.title = element_text(size = textsize),panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"),plot.subtitle = element_text(size =textsize),plot.caption =  element_text(size = textsize),axis.text=element_text(size=textsize) )
+
+jpeg("E:/RNAseqProject/tung2017batch/FINAL/BATCH_DE_CHECK/N1_twobatches.jpeg", width = 40, height = 30, units = 'in', res = 600)
+N1_BATCH_FIG
+dev.off()
+
+######Tung 2017 final good data######
+Tung2017_final<-read.table(file="E:/RNAseqProject/tung2017batch/molecules-final.txt")
+load("E:/RNAseqProject/tung2017batch/MMEADJ_ERCCBETA/tung2017batch_Bay_ERCCBETA.RData")
+dim(Tung2017_final)
+
+length(LABEL_REP)
+
+pca_try <- prcomp(t(Tung2017_final),scale=T)
+pr_v<-summary(pca_try )$importance[2,]*100
+percentage <- paste( colnames(pca_try$x), "(", paste( as.character(pr_v), "%", ")", sep="") )
+dat<-pca_try$x[,1:2]
+dim(N1_DAT)
+library(ggplot2)
+textsize<-25
+ggplot(data=as.data.frame(dat),aes(x=PC1,y=PC2))+geom_point(aes(color=as.factor(LABEL_INDIVIDUAL),shape=as.factor(LABEL_REP)))+labs(color='Individual',shape='Replicate') + xlab(percentage[1]) + ylab(percentage[2])+ggtitle("Tung et al. 2017")+theme(legend.position='right',plot.title = element_text(hjust = 0.5))+
+  theme(legend.text = element_text(size = textsize),legend.title  = element_text(size = textsize),plot.title = element_text(size = textsize),axis.title = element_text(size = textsize),panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"),plot.subtitle = element_text(size =textsize),plot.caption =  element_text(size = textsize),axis.text=element_text(size=textsize) )
+
+

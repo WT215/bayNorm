@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1520859451811.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "557516951",
+    "id" : "7C170273",
+    "lastKnownWriteTime" : 1520955546,
+    "last_content_update" : 1520955546701,
+    "path" : "E:/RNAseqProject/SIMULATION/SIM_1/DE_sim_1.R",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "230,0",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 13,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

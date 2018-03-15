@@ -1,0 +1,643 @@
+############load data########
+#load("C:/Research/PROJECT_scRNAseq/BOX_FILES/Box Sync/RNAseqProject/Noise_detection_code/RAW/filtered.genes.210617.rda")
+#load("C:/Research/PROJECT_scRNAseq/BOX_FILES/Box Sync/RNAseqProject/Noise_detection_code/RAW/ERCC_and_table_list_filter_AND_unfilt_without0907_1.RData")
+#Rcpp::sourceCpp('C:/Research/PROJECT_scRNAseq/Rcpp_files/Bay_debug_norm.cpp')
+#Rcpp::sourceCpp('C:/Research/PROJECT_scRNAseq/Rcpp_files/DownSampling.cpp')
+
+
+load("E:/RNAseqProject/PROJECT_CellSize/ERCC_and_table_list_filter_AND_unfilt_without0907_1.RData")
+
+Rcpp::sourceCpp('E:/RNAseqProject/PROJECT_RNAseq/Rcpp_maybeuseful/DownSampling.cpp')
+Rcpp::sourceCpp('E:/RNAseqProject/PROJECT_RNAseq/Rcpp_maybeuseful/Bay_debug_norm.cpp')
+load("E:/RNAseqProject/PROJECT_CellSize/RData_store/filtered.genes.210617.rda")
+
+##################BB_GG 29:MU SIZE 11:MU SIZE ##################
+AdjustSIZE_fun<-function(BB_size,MME_MU,MME_SIZE){
+  fitind<-which(BB_size< max(BB_size) & BB_size> min(BB_size))
+  lmfit<-lm(log(BB_size)[fitind]~log(MME_SIZE)[fitind])
+  MME_SIZE_adjust<-coef(lmfit)[1]+coef(lmfit)[2]*log(MME_SIZE)
+  MME_SIZE_adjust<-exp(MME_SIZE_adjust)
+  return(MME_SIZE_adjust)
+}
+
+EstPrior<-function(inputt){
+  CoefDat<-foreach(i=1:nrow(inputt),.combine=rbind)%do%{
+    print(i)
+    qq<-fitdistrplus::fitdist(inputt[i,],'nbinom',method='mme',keepdata=F)
+    return(coef(qq))
+  }
+  rownames(CoefDat)<-filtered.genes.210617
+  M_ave_ori<-CoefDat[,2]
+  size_est<-CoefDat[,1]
+  return(list(MU=M_ave_ori,SIZE=size_est))
+}
+SyntheticControl<-function(Data,Beta){
+  nGenes<-dim(Data)[1]
+  nCells<-dim(Data)[2]
+  beta_c<-Beta
+  Mean_depth<-mean(colSums(Data)/beta_c)
+  Data_norm<-t(t(Data)/colSums(Data))*Mean_depth
+  MU<-rowMeans(Data_norm)
+  mu_mat<- MU%*%t(rep(1,length(MU)))
+  
+  N_c <- matrix(rpois(nGenes * nCells, lambda =mu_mat ),nrow = nGenes, ncol = nCells,byrow=F)
+  
+  N_c<-DownSampling(N_c ,beta_c)
+  
+  return(list(N_c=N_c,beta_c=beta_c,Mean_depth=Mean_depth,MU=MU))
+}
+
+#######BETA7##########
+
+
+BETA7_fun<-function(Dat1,Control){
+  Dat1_norm<-t(t(Dat1)/colSums(Dat1))*mean(colSums(Dat1))
+  means <- rowMeans(Dat1_norm)
+  lmeans <- log(means)
+  med <- median(lmeans)
+  mad <- mad(lmeans)
+  bound <- med + 2.5* mad
+  outs <- which(lmeans > bound)
+  
+  
+  library(scater)
+  library(scran)
+  Noise_list<-foreach(i=1:11)%do%{
+    
+    if(i==4){
+      sce<-newSCESet(countData=RNA_11Raw_list[[i]][filtered.genes.210617,-temp_drop])
+    }else{
+      
+      sce<-newSCESet(countData=RNA_11Raw_list[[i]][filtered.genes.210617,])
+    }
+    
+    
+    
+    
+    sce <- scran::computeSumFactors(sce, sizes=c(20,30,40))
+    sce <- normalize(sce)
+    var.fit <- trendVar(sce, method="loess", use.spikes=FALSE, span=0.2)
+    var.out <- decomposeVar(sce, var.fit)
+    ind_noise<-which(var.out$FDR <= 0.05 & var.out$bio>=0.1)
+    return(ind_noise)
+  }
+  
+  Noise_counttable<-table(unlist(Noise_list))
+  Noise_5d<-as.numeric(names(which(Noise_counttable>5)))
+  
+  #Dropout
+  dropout=apply(Dat1,1,function(x){length(which(x==0))/length(x)})
+  keep_lessdrop<-which(dropout<0.7)
+  keep_noout<-seq(1,dim(Dat1)[1])[-outs]
+  
+  
+  usfulindd<-Reduce(intersect, list(seq(1,dim(Dat1)[1])[-Noise_5d],keep_lessdrop,keep_noout))
+  return(list(BETA_geneind=usfulindd,Noisygeneind=Noise_5d,Outlierind=outs,Dropoutind=which(dropout>=0.7)))
+}
+
+
+
+
+
+
+nor0str1_lab<-c(0,1,0,0,0,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1)
+rm(RNA_11c_list)
+rm(RNA_11n_list)
+rm(RNA_11ERCC_list)
+library(foreach)
+Dat_28<-do.call(cbind,Raw_list_unfilt)[filtered.genes.210617,]
+
+Dat_11<-foreach(i=1:11,.combine=cbind)%do%{
+  RNA_11Raw_list[[i]][filtered.genes.210617,]
+}
+
+
+Stress12<-c("1712_2_97","1712_2_98","1712_2_99","1712_2_100","1712_2_101" ,"1712_2_102" ,"1712_2_103" ,"1712_2_104","1712_2_105" ,"1712_2_106" ,"1712_2_107", "1712_2_108")
+temp_drop<-which(colnames(RNA_11Raw_list[[4]]) %in% Stress12)
+
+names(RNA_11Raw_list)
+colnames(RNA_11Raw_list[[4]])
+dim(RNA_11Raw_list[[4]][filtered.genes.210617,-temp_drop])
+
+
+
+BETA_result<-BETA7_fun(Dat_28,Dat_11)
+BETA_ind<-BETA_result$BETA_geneind
+
+length(BETA_result)
+
+#save(BETA_result,file="E:/RNAseqProject/PROJECT_CellSize/CELL_SIZE/Noise_detection/New_Simulation/Rmarkdown/Prepare_Plots_files/Give_to_Sam/Workflow_SC/new_NOISE/new_BETA7/BB_GG_29_11/BETA_result.RData")
+
+
+
+#filtCellname<-unlist(lapply(Raw_list,colnames))
+#allBeta_1<-allBeta/mean(allBeta)
+#cor(allBeta_1[filtCellname],unlist(Size_list)/mean(unlist(Size_list)))
+
+
+
+
+
+
+
+
+
+#############PRIOR ESTIMATION#######
+Inputdat<-Dat_28
+length(BETA_ind)
+allBeta<-colMeans(Inputdat[BETA_ind,])
+GlobalMeanBeta_28<-mean(allBeta)
+allBeta<-allBeta/GlobalMeanBeta_28*0.03
+names(allBeta)<-colnames(Dat_28)
+
+length(which(allBeta==0))
+
+summary(allBeta)
+if(length(which(allBeta==0))>0){
+  allBeta[which(allBeta==0)]=min(allBeta[which(allBeta!=0)])
+}
+filtCellname<-unlist(lapply(Raw_list[-13],colnames))
+Mean_depth=mean(colSums(Inputdat)/allBeta)
+normcount_N<-t(t(Inputdat)/colSums(Inputdat))*Mean_depth
+
+###another prior:
+MME_Priors<-EstPrior(normcount_N)
+MME_MU<-MME_Priors$MU
+MME_SIZE<-MME_Priors$SIZE
+MME_SIZE[is.na(MME_SIZE)]<-min(MME_SIZE[!is.na(MME_SIZE)])
+
+BETA_GENE<-filtered.genes.210617[BETA_ind]
+
+MU_LOWER<-min(MME_MU)
+MU_UPPER<-ceiling(max(MME_MU))
+SIZE_LOWER<-min(MME_SIZE)
+SIZE_UPPER<-ceiling(max(MME_SIZE))
+#########Long time BB estimation###########
+#system.time(BB_parmat_28<-BB_Fun(Dat_28,BETA_vec=allBeta,INITIAL_MU_vec=MME_MU,INITIAL_SIZE_vec=MME_SIZE,MU_lower=MU_LOWER,MU_upper=MU_UPPER,SIZE_lower=SIZE_LOWER,SIZE_upper=SIZE_UPPER))
+system.time(BB_SIZE_28<-BB_Fun_1D(Dat_28,BETA_vec=allBeta,INITIAL_MU_vec=MME_MU,INITIAL_SIZE_vec=MME_SIZE,SIZE_lower=SIZE_LOWER,SIZE_upper=SIZE_UPPER,Para=T))
+
+
+#BB_SIZE<-BB_parmat_28[,1]
+#BB_MU<-BBB_parmat_28[,2]
+
+MME_SIZE_adjust<-AdjustSIZE_fun(BB_SIZE_28,MME_MU,MME_SIZE)
+plot(MME_MU,MME_SIZE_adjust,log='xy',pch=16,xlab='MME MU',ylab='SIZE')
+abline(0,1)
+points(MME_MU,MME_SIZE,log='xy',pch=16,col=3)
+legend('topleft',legend=c("Adjusted MME SIZE","MME SIZE"),col=c(1,3),pch=16,cex=0.7)
+###################Bay 28###########
+load("E:/RNAseqProject/FORMAL_DATA/new_BETA7/BB_GG_28_11/MBB_GG_28_11/MBB_GG_28_11_PRIORS.RData")
+
+Bay_28_list<-list()
+Bay_28_list_c<-list()
+
+INPUT_SIZE<-MME_SIZE_adjust
+INPUT_MU<-MME_MU
+#dataind<-1
+
+for(dataind in 1:28){
+
+  print(names(Raw_list_unfilt)[dataind])
+  
+  Data<-Raw_list_unfilt[[dataind]][filtered.genes.210617,]
+  inputBeta<-allBeta[colnames(Data)]
+  
+  Bay_28_list[[dataind]]<-Main_Bay(Table=Data, Beta_origin=inputBeta, size=INPUT_SIZE, M_ave_ori=INPUT_MU,S=100,thres=100000,Mean_depth=100000)
+  #qq<-Main_Bay(Table=Data, Beta_origin=inputBeta, size=INPUT_SIZE, M_ave_ori=INPUT_MU,S=100,thres=100000,Mean_depth=100000)
+  
+  rownames(Bay_28_list[[dataind]])<-filtered.genes.210617
+  colnames(Bay_28_list[[dataind]])<-colnames(Raw_list_unfilt[[dataind]])
+  
+  
+  #28c
+  SC_out<-SyntheticControl(Data,Beta=allBeta[colnames(Data)])
+  Data_c<-SC_out$N_c
+  
+  Bay_28_list_c[[dataind]]<-Main_Bay(Table=Data_c, Beta_origin=SC_out$beta_c,size=INPUT_SIZE, M_ave_ori=INPUT_MU,S=100,thres=100000,Mean_depth=100000)
+  rownames(Bay_28_list_c[[dataind]])<-rownames(Raw_list_unfilt[[dataind]][filtered.genes.210617,])
+  colnames(Bay_28_list_c[[dataind]])<-colnames(Raw_list_unfilt[[dataind]][filtered.genes.210617,])
+  
+  
+  
+}# end of Bay28
+names(Bay_28_list)<-names(Raw_list_unfilt)   
+names(Bay_28_list_c)<-names(Raw_list_unfilt)  
+
+save(Bay_28_list,Bay_28_list_c,filtered.genes.210617,file="E:/RNAseqProject/PROJECT_CellSize/CELL_SIZE/Noise_detection/New_Simulation/Rmarkdown/Prepare_Plots_files/Give_to_Sam/Workflow_SC/new_NOISE/new_BETA7/BB_GG_28_11/MBB_GG_28_11/Bay_28_list.RData")
+
+
+#########Bay 28 mode#####
+
+Bay_28_mode_list<-list()
+system.time(for(dataind in 1:28){
+  print(names(Raw_list_unfilt)[dataind])
+  
+  Dat<-Raw_list_unfilt[[dataind]][filtered.genes.210617,]
+  inputBeta<-allBeta[colnames(Dat)]
+  
+  Bay_28_mode_list[[dataind]]<-Main_mode_Bay(Table=Dat, Beta_origin=inputBeta, size=INPUT_SIZE, M_ave_ori=INPUT_MU,S=100,thres=100000,Mean_depth=100000)
+  rownames(Bay_28_mode_list[[dataind]])<-rownames(Raw_list_unfilt[[dataind]][filtered.genes.210617,])
+  colnames(Bay_28_mode_list[[dataind]])<-colnames(Raw_list_unfilt[[dataind]])
+})
+names(Bay_28_mode_list)<-names(Raw_list_unfilt)
+
+
+save(Bay_28_mode_list,filtered.genes.210617,file="E:/RNAseqProject/PROJECT_CellSize/CELL_SIZE/Noise_detection/New_Simulation/Rmarkdown/Prepare_Plots_files/Give_to_Sam/Workflow_SC/new_NOISE/new_BETA7/BB_GG_28_11/MBB_GG_28_11/Bay_28_mode_list.RData")
+#######Dat_28 mat############
+
+library(locfit)
+library(fdrtool)
+library(foreach)
+par(mar = rep(2, 4))
+par(mfrow=c(5,6))
+Dat_28_fdrmat_f<-foreach(dataind = 1:28,.combine=cbind)%do%{
+ 
+  
+   print(dataind)
+  if(dataind!=17){
+    
+    mean_1 = apply(Bay_28_list[[dataind]], 1, mean)
+    mean_1c = apply(Bay_28_list_c[[dataind]], 1, mean)
+    
+    sd_1 = apply(apply(Bay_28_list[[dataind]], c(1,3), sd), 1, mean)
+    sd_1c = apply(apply(Bay_28_list_c[[dataind]], c(1,3), sd), 1, mean)
+    
+  }else{
+    mean_1 = apply(Bay_28_list[[dataind]][,-(97:108),], 1, mean)
+    mean_1c = apply(Bay_28_list_c[[dataind]][,-(97:108),], 1, mean)
+    
+    sd_1 = apply(apply(Bay_28_list[[dataind]][,-(97:108),], c(1,3), sd), 1, mean)
+    sd_1c = apply(apply(Bay_28_list_c[[dataind]][,-(97:108),], c(1,3), sd), 1, mean)
+    
+  }
+  
+  
+  
+  
+  noise_1 = (sd_1/mean_1)^2
+  noise_1c = (sd_1c/mean_1c)^2
+  
+  noise_1_abovePo<-noise_1-(1/mean_1)
+  #######################################################
+  sum(is.na(noise_1c))
+  
+  Select<-!is.na(noise_1)
+  x=log(mean_1)[Select]
+  y=log(noise_1)[Select]
+  
+  Select_c<-!is.na(noise_1c)
+  xc = log(mean_1c)[Select_c]
+  yc = log(noise_1c)[Select_c]
+  
+  
+  library(locfit) 
+  loessfit<-locfit.robust(yc ~ xc)
+  h<-predict(loessfit, newdata=x, se.fit=T)
+  zval<-(y-h$fit)/h$residual.scale
+  
+  #####script###
+  # use kernel density estimate to find the peak
+  dor <- density(zval, kernel = "gaussian")
+  distMid <-dor$x[which.max(dor$y)]
+  dist2 <- zval - distMid
+  tmpDist <- c(dist2[dist2 <= 0], abs(dist2[dist2 < 0])) + distMid
+  library(MASS)
+  distFit <- fitdistr(tmpDist, "normal")
+  pRaw <- pnorm(zval, mean = distFit$estimate[1], sd = distFit$estimate[2], lower.tail = FALSE)
+  pAdj <- p.adjust(pRaw, 'BH')
+  noisy<-which(pAdj<0.05)
+  noisy_ind<-match(names(noisy),filtered.genes.210617[Select])
+  noisy_name<-names(noisy)
+  
+  plot(x, y,pch=16,main=paste(names(Raw_list_unfilt)[dataind]))
+  lines(loessfit,col=6,lwd=3)
+  points(xc, yc, col = rgb(red = 0, green = 0, blue = 1, alpha = 0.5),pch=16)
+  points(x["SPBC1198.14c"], y["SPBC1198.14c"], col = 7,pch=16)
+  points(x["SPBC1105.11c"], y["SPBC1105.11c"], col = 8,pch=16)
+  points(x[noisy_ind], y[noisy_ind], col = rgb(red = 0, green = 1, blue = 0, alpha = 0.5),pch=16)
+  abline(0,-1)
+  #legend('topright',legend=c('Genes','Controls','Noise genes','SPBC1198.14c','SPBC1105.11c'),col=c(1,4,3,7,8),pch=16,cex=0.001)
+  which(noisy_name=='SPBC1198.14c')
+  which(noisy_name=='SPBC1105.11c')
+  
+  pAdj2<-rep(1,length(filtered.genes.210617))
+  pAdj2[Select]<-pAdj
+  return(pAdj2)
+}
+
+dim(Bay_28_list[[1]])
+library(stringr)
+colnames(Dat_28_fdrmat_f)<-str_sub(names(Raw_list_unfilt),7)
+rownames(Dat_28_fdrmat_f)<-filtered.genes.210617
+
+
+save(Dat_28_fdrmat_f,filtered.genes.210617,file="E:/RNAseqProject/PROJECT_CellSize/CELL_SIZE/Noise_detection/New_Simulation/Rmarkdown/Prepare_Plots_files/Give_to_Sam/Workflow_SC/new_NOISE/new_BETA7/BB_GG_28_11/MBB_GG_28_11/Dat_28_fdrmat_f.RData")
+
+
+
+
+
+##########Bay_11_list########
+Inputdat_c<-Dat_11
+usfulindd_c<-BETA_ind
+
+allBeta_c<-colMeans(Inputdat_c[usfulindd_c,])
+GlobalMeanBeta_11<-mean(allBeta_c)
+allBeta_c<-allBeta_c/GlobalMeanBeta_11*0.03
+names(allBeta_c)<-unlist(lapply(RNA_11Raw_list,colnames))
+summary(allBeta_c)
+if(length(which(allBeta_c==0))>0){
+  allBeta_c[which(allBeta_c==0)]=min(allBeta_c[which(allBeta_c!=0)])
+}
+Mean_depth_c=mean(colSums(Inputdat_c)/allBeta_c)
+normcount_C<-t(t(Dat_11)/colSums(Dat_11))*Mean_depth_c
+###MME prior:
+MME_Priors_C<-EstPrior(normcount_C)
+MME_MU_C<-MME_Priors_C$MU
+MME_SIZE_C<-MME_Priors_C$SIZE
+MME_SIZE_C[is.na(MME_SIZE_C)]<-min(MME_SIZE_C[!is.na(MME_SIZE_C)])
+
+MU_LOWER_C<-min(MME_MU_C)
+MU_UPPER_C<-ceiling(max(MME_MU_C))
+SIZE_LOWER_C<-min(MME_SIZE_C)
+SIZE_UPPER_C<-ceiling(max(MME_SIZE_C))
+
+#########Long time BB estimation 11###########
+#BB_parmat_11<-BB_Fun(Dat_11,BETA_vec=allBeta_c,MU_lower=MU_LOWER_C,MU_upper=MU_UPPER_C,SIZE_lower=SIZE_LOWER_C,SIZE_upper=SIZE_UPPER_C,INITIAL_SIZE_vec = MME_SIZE_C,INITIAL_MU_vec = MME_MU_C)
+
+system.time(BB_parmat_11<-BB_Fun_1D(Dat_11,BETA_vec=allBeta_c,SIZE_lower=SIZE_LOWER_C,SIZE_upper=SIZE_UPPER_C,Para=T,INITIAL_SIZE_vec = MME_SIZE_C,INITIAL_MU_vec = MME_MU_C))
+
+BB_SIZE_C<-BB_parmat_11
+#BB_SIZE_C<-BB_parmat_11[,1]
+#BB_MU_C<-BB_parmat_11[,2]
+
+
+
+MME_SIZE_adjust_C<-AdjustSIZE_fun(BB_SIZE_C,MME_MU_C,MME_SIZE_C)
+plot(MME_MU_C,MME_SIZE_adjust_C,log='xy',pch=16,xlab='MME MU',ylab='SIZE')
+abline(0,1)
+points(MME_MU_C,MME_SIZE_C,log='xy',pch=16,col=3)
+legend('topleft',legend=c("Adjusted MME SIZE","MME SIZE"),col=c(1,3),pch=16,cex=0.7)
+##########################Input MU_c and SIZE_c########
+INPUT_SIZE_C<-MME_SIZE_adjust_C
+INPUT_MU_C<-MME_MU_C
+inputBeta<-allBeta_c
+
+summary(INPUT_SIZE_C)
+##########Bay 11############
+
+Bay_11_list<-list()
+Bay_11_list_c<-list()
+for(dataind in 1:11){
+  Data<-RNA_11Raw_list[[dataind]][filtered.genes.210617,]
+  inputBeta<-allBeta_c[colnames(Data)]
+  
+  print(names(RNA_11Raw_list)[dataind])
+  
+  Bay_11_list[[dataind]]<-Main_Bay(Table=Data, Beta_origin=inputBeta, size=INPUT_SIZE_C, M_ave_ori=INPUT_MU_C,S=100,thres=100000,Mean_depth=100000)
+  rownames(Bay_11_list[[dataind]])<-filtered.genes.210617
+  colnames(Bay_11_list[[dataind]])<-colnames(RNA_11Raw_list[[dataind]])
+  
+  ##Bay11 c
+  SC_out<-SyntheticControl(Data,Beta=allBeta_c[colnames(Data)])
+  Data_c<-SC_out$N_c
+  
+  Bay_11_list_c[[dataind]]<-Main_Bay(Table=Data_c, Beta_origin=SC_out$beta_c,size=INPUT_SIZE_C, M_ave_ori=INPUT_MU_C,S=100,thres=100000,Mean_depth=100000)
+  rownames(Bay_11_list_c[[dataind]])<-rownames(RNA_11Raw_list[[dataind]][filtered.genes.210617,])
+  colnames(Bay_11_list_c[[dataind]])<-colnames(RNA_11Raw_list[[dataind]][filtered.genes.210617,])
+  
+}# end of Bay11
+names(Bay_11_list)<-names(RNA_11Raw_list)
+names(Bay_11_list_c)<-names(RNA_11Raw_list)
+
+save(Bay_11_list,Bay_11_list_c,filtered.genes.210617,file="E:/RNAseqProject/PROJECT_CellSize/CELL_SIZE/Noise_detection/New_Simulation/Rmarkdown/Prepare_Plots_files/Give_to_Sam/Workflow_SC/new_NOISE/new_BETA7/BB_GG_28_11/MBB_GG_28_11/Bay_11_list.RData")
+
+save(BETA_ind,allBeta,allBeta_c,MME_MU,MME_MU_C,MME_SIZE,MME_SIZE_C,MME_SIZE_adjust,MME_SIZE_adjust_C,BB_SIZE_28,BB_SIZE_C,filtered.genes.210617,file="E:/RNAseqProject/PROJECT_CellSize/CELL_SIZE/Noise_detection/New_Simulation/Rmarkdown/Prepare_Plots_files/Give_to_Sam/Workflow_SC/new_NOISE/new_BETA7/BB_GG_28_11/MBB_GG_28_11/MBB_GG_28_11_PRIORS.RData")
+##################DAT 11#########
+
+load("E:/RNAseqProject/FORMAL_DATA/new_BETA7/BB_GG_28_11/MBB_GG_28_11/Bay_11_list_c.RData")
+load("E:/RNAseqProject/FORMAL_DATA/new_BETA7/BB_GG_28_11/MBB_GG_28_11/Bay_11_list.RData")
+
+
+library(locfit)
+library(fdrtool)
+library(foreach)
+par(mar = rep(2, 4))
+par(mfrow=c(4,3))
+Dat_11_fdrmat_f<-foreach(dataind = 1:11,.combine=cbind)%do%{
+  print(dataind)
+  if(dataind!=4){
+    mean_1 = apply(Bay_11_list[[dataind]], 1, mean)
+    mean_1c = apply(Bay_11_list_c[[dataind]], 1, mean)
+    #sd of each gene
+    sd_1 = apply(apply(Bay_11_list[[dataind]], c(1,3), sd), 1, mean)
+    sd_1c = apply(apply(Bay_11_list_c[[dataind]], c(1,3), sd), 1, mean)
+  }else{
+    mean_1 = apply(Bay_11_list[[dataind]][,-(97:108),], 1, mean)
+    mean_1c = apply(Bay_11_list_c[[dataind]][,-(97:108),], 1, mean)
+    #sd of each gene
+    sd_1 = apply(apply(Bay_11_list[[dataind]][,-(97:108),], c(1,3), sd), 1, mean)
+    sd_1c = apply(apply(Bay_11_list_c[[dataind]][,-(97:108),], c(1,3), sd), 1, mean)
+    
+  }
+  
+  
+  noise_1 = (sd_1/mean_1)^2
+  noise_1c = (sd_1c/mean_1c)^2
+  
+  noise_1_abovePo<-noise_1-(1/mean_1)
+  #######################################################
+  sum(is.na(noise_1c))
+  
+  Select<-!is.na(noise_1)
+  x=log(mean_1)[Select]
+  y=log(noise_1)[Select]
+  
+  Select_c<-!is.na(noise_1c)
+  xc = log(mean_1c)[Select_c]
+  yc = log(noise_1c)[Select_c]
+  
+  library(locfit) 
+  loessfit<-locfit.robust(yc ~ xc)
+  h<-predict(loessfit, newdata=x, se.fit=T)
+  zval<-(y-h$fit)/h$residual.scale
+  dor <- density(zval, kernel = "gaussian")
+  distMid <-dor$x[which.max(dor$y)]
+  dist2 <- zval - distMid
+  tmpDist <- c(dist2[dist2 <= 0], abs(dist2[dist2 < 0])) + distMid
+  library(MASS)
+  distFit <- fitdistr(tmpDist, "normal")
+  pRaw <- pnorm(zval, mean = distFit$estimate[1], sd = distFit$estimate[2], lower.tail = FALSE)
+  pAdj <- p.adjust(pRaw, 'BH')
+  noisy<-which(pAdj<0.05)
+  noisy_ind<-match(names(noisy),filtered.genes.210617[Select])
+  noisy_name<-names(noisy)
+  
+  plot(x, y,pch=16,main=paste(names(RNA_11Raw_list)[dataind]))
+  lines(loessfit,col=6,lwd=3)
+  points(xc, yc, col = rgb(red = 0, green = 0, blue = 1, alpha = 0.5),pch=16)
+  points(x["SPBC1198.14c"], y["SPBC1198.14c"], col = 7,pch=16)
+  points(x["SPBC1105.11c"], y["SPBC1105.11c"], col = 8,pch=16)
+  points(x[noisy_ind], y[noisy_ind], col = rgb(red = 0, green = 1, blue = 0, alpha = 0.5),pch=16)
+  abline(0,-1)
+  #legend('topright',legend=c('Genes','Controls','Noise genes','SPBC1198.14c','SPBC1105.11c'),col=c(1,4,3,7,8),pch=16,cex=0.1)
+  
+  #aronind<-which(Aaron_fdrmat_11[,dataind]<0.05)
+  #points(x[aronind], y[aronind], col = rgb(red = 1, green = 0, blue = 0, alpha = 0.5),pch=16)
+  
+  
+  fdrr<-rep(1,length(filtered.genes.210617))
+  
+  fdrr[Select]<-pAdj
+  names(fdrr)<-filtered.genes.210617
+  
+  return(fdrr)
+}
+library(stringr)
+colnames(Dat_11_fdrmat_f)<-str_sub(names(RNA_11Raw_list),7)
+rownames(Dat_11_fdrmat_f)<-filtered.genes.210617
+
+
+save(Dat_11_fdrmat_f,filtered.genes.210617,file="E:/RNAseqProject/PROJECT_CellSize/CELL_SIZE/Noise_detection/New_Simulation/Rmarkdown/Prepare_Plots_files/Give_to_Sam/Workflow_SC/new_NOISE/new_BETA7/BB_GG_28_11/MBB_GG_28_11/Dat_11_fdrmat_f.RData")
+
+
+filtered.genes.210617[which(Dat_11_fdrmat_f[,1]<0.05)]
+
+kk<-which(colnames(GOfinal)=='ribosome')
+GOrib<-rownames(GOfinal)[which(GOfinal[,kk]==1)]
+firib<-which(filtered.genes.210617 %in% GOrib)
+
+length(intersect(filtered.genes.210617[which(Dat_11_fdrmat_f[,10]<0.05)],filtered.genes.210617[firib]))
+
+
+
+
+#####script###########
+load("E:/RNAseqProject/PROJECT_CellSize/RData_store/filtered.genes.210617.rda")
+
+#####LL
+load("E:/RNAseqProject/FORMAL_DATA/new_BETA7/BB_LL/MBB_LL/Bay_28_list.RData")
+MBB_LL_libcheck<-foreach(i =1:28,.combine=cbind)%do%{
+  a1<-colSums(Bay_28_list[[i]][,,1])
+  a2<-colSums(Raw_list_unfilt[[i]][filtered.genes.210617,])
+  #qq<-summary(a1/a2)
+  qq<-as.matrix(summary(a1/a2))
+  return(qq)
+}
+library(stringr)
+colnames(MBB_LL_libcheck)<-str_sub(names(Bay_28_list),5)
+write.csv(MBB_LL_libcheck,file="E:/RNAseqProject/FORMAL_DATA/new_BETA7/BB_LL/MBB_LL/MBB_LL_libcheck.csv")
+
+
+########GG
+load("E:/RNAseqProject/PROJECT_CellSize/ERCC_and_table_list_filter_AND_unfilt_without0907_1.RData")
+load("E:/RNAseqProject/PROJECT_CellSize/RData_store/filtered.genes.210617.rda")
+load("E:/RNAseqProject/FORMAL_DATA/new_BETA7/BB_GG_28_11/MBB_GG_28_11/Bay_28_list.RData")
+plot(a1,a2,pch=16)
+all.equal(str_sub(names(Bay_28_list),5),str_sub(names(Raw_list_unfilt),7))
+library(foreach)
+MBB_GG_libcheck<-foreach(i =1:28,.combine=cbind)%do%{
+  a1<-colSums(Bay_28_list[[i]][,,1])
+  a2<-colSums(Raw_list_unfilt[[i]][filtered.genes.210617,])
+  #qq<-summary(a1/a2)
+  qq<-as.matrix(summary(a1/a2))
+  return(qq)
+}
+library(stringr)
+colnames(MBB_GG_libcheck)<-str_sub(names(Bay_28_list),5)
+write.csv(MBB_GG_libcheck,file="E:/RNAseqProject/FORMAL_DATA/new_BETA7/BB_GG_28_11/MBB_GG_28_11/MBB_GG_libcheck.csv")
+
+#dropout check 28##########
+load("E:/RNAseqProject/PROJECT_CellSize/ERCC_and_table_list_filter_AND_unfilt_without0907_1.RData")
+load("E:/RNAseqProject/PROJECT_CellSize/RData_store/filtered.genes.210617.rda")
+load("E:/RNAseqProject/FORMAL_DATA/new_BETA7/BB_GG_28_11/MBB_GG_28_11/Bay_28_list.RData")
+
+
+
+#dropout check 28##########
+
+library(foreach)
+library(stringr)
+Drop_Bay_28<-foreach(i=1:28,.combine=rbind)%do%{
+  drop_temp<-NULL
+  
+  for(j in 1:100){
+    drop_temp<-c(drop_temp,length(which(Bay_28_list[[i]][,,j]==0))/length(Bay_28_list[[i]][,,j]))
+  }
+  
+  rr<-c(mean(drop_temp),sd(drop_temp)/length(drop_temp))
+}
+colnames(Drop_Bay_28)=c('Mean of Dropout rates (across 100 samples)','standard error of mean  of Dropout rates (across 100 samples)')
+rownames(Drop_Bay_28)<-str_sub(names(Raw_list_unfilt),7)
+Drop_Bay_28<-as.data.frame(Drop_Bay_28)
+
+
+
+Drop_Raw_28<-foreach(i=1:28,.combine=c)%do%{
+  drop_temp<-length(which(Raw_list_unfilt[[i]][filtered.genes.210617,]==0))/length(Raw_list_unfilt[[i]][filtered.genes.210617,])
+  return(drop_temp)
+}
+
+Drop_Raw_28<-as.data.frame(Drop_Raw_28)
+
+rownames(Drop_Raw_28)<-str_sub(names(Raw_list_unfilt),7)
+colnames(Drop_Raw_28)<-'Dropout rate of matrix'
+
+Drop_r_b_28<-cbind(Drop_Raw_28,Drop_Bay_28)
+
+#jpeg("E:/RNAseqProject/FORMAL_DATA/new_BETA7/BB_GG_28_11/MBB_GG_28_11/Dropout_matrix_28.jpeg", width = 25, height = 10, units = 'in', res = 500)
+library(ggplot2)
+ggplot(data=Drop_r_b_28, aes(x=rownames(Drop_r_b_28), y=Drop_r_b_28[,1])) +
+  geom_bar(stat="identity", position = position_dodge(0.9),width=0.6,fill = "#66CC99")+
+  geom_point(aes(x=rownames(Drop_r_b_28),y=Drop_r_b_28[,2]))+
+  geom_errorbar(aes(ymin=Drop_r_b_28[,2]-Drop_r_b_28[,3], ymax=Drop_r_b_28[,2]+Drop_r_b_28[,3]),size=1,width=.4,position=position_dodge(.9))+
+  labs(x = "Datasets",y='Proportion of 0 in the raw count matrix')+
+  ggtitle("Dropout rates of matrix") +
+  scale_fill_brewer(palette="Paired")+
+  theme(legend.text = element_text(size = 20),legend.title  = element_text(size = 20),plot.title = element_text(size = 20,hjust = 0.5),axis.title = element_text(size = 20))
+#dev.off()
+
+
+
+#dropout check 11##########
+
+library(foreach)
+library(stringr)
+Drop_Bay_11<-foreach(i=1:11,.combine=rbind)%do%{
+  drop_temp<-NULL
+  
+  for(j in 1:100){
+    drop_temp<-c(drop_temp,length(which(Bay_11_list[[i]][,,j]==0))/length(Bay_11_list[[i]][,,j]))
+  }
+  
+  rr<-c(mean(drop_temp),sd(drop_temp)/length(drop_temp))
+}
+colnames(Drop_Bay_11)=c('Mean of Dropout rates (across 100 samples)','standard error of mean  of Dropout rates (across 100 samples)')
+rownames(Drop_Bay_11)<-str_sub(names(RNA_11Raw_list),7)
+Drop_Bay_11<-as.data.frame(Drop_Bay_11)
+
+
+
+Drop_Raw_11<-foreach(i=1:11,.combine=c)%do%{
+  drop_temp<-length(which(RNA_11Raw_list[[i]][filtered.genes.210617,]==0))/length(RNA_11Raw_list[[i]][filtered.genes.210617,])
+  return(drop_temp)
+}
+
+Drop_Raw_11<-as.data.frame(Drop_Raw_11)
+
+rownames(Drop_Raw_11)<-str_sub(names(RNA_11Raw_list),7)
+colnames(Drop_Raw_11)<-'Dropout rate of matrix'
+
+Drop_r_b_11<-cbind(Drop_Raw_11,Drop_Bay_11)
+
+#jpeg("E:/RNAseqProject/FORMAL_DATA/new_BETA7/BB_GG_28_11/MBB_GG_28_11/Dropout_matrix_11.jpeg", width = 25, height = 10, units = 'in', res = 500)
+library(ggplot2)
+ggplot(data=Drop_r_b_11, aes(x=rownames(Drop_r_b_11), y=Drop_r_b_11[,1])) +
+  geom_bar(stat="identity", position = position_dodge(0.9),width=0.6,fill = "#66CC99")+
+  geom_point(aes(x=rownames(Drop_r_b_11),y=Drop_r_b_11[,2]))+
+  geom_errorbar(aes(ymin=Drop_r_b_11[,2]-Drop_r_b_11[,3], ymax=Drop_r_b_11[,2]+Drop_r_b_11[,3]),size=1,width=.4,position=position_dodge(.9))+
+  labs(x = "Datasets",y='Proportion of 0 in the raw count matrix')+
+  ggtitle("Dropout rates of matrix") +
+  scale_fill_brewer(palette="Paired")+
+  theme(legend.text = element_text(size = 20),legend.title  = element_text(size = 20),plot.title = element_text(size = 20,hjust = 0.5),axis.title = element_text(size = 20))
+#dev.off()

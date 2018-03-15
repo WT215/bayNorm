@@ -1,0 +1,5 @@
+ttt
+
+q<-readClipboard()
+pp<-read.table(q)
+ttt

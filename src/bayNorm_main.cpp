@@ -129,15 +129,19 @@ NumericVector post_wrapper_norm(IntegerVector x,double m,double beta,int last, i
 //' @title Main_Bay
 //'
 //' @description bayNorm
-//' If the observed count is above 500, then we use normal distribution to approximate binomial distribution.
+//' If the observed count is above 500,
+//' then we use normal distribution to
+//' approximate binomial distribution.
 //'
 //'
 //' @param Data raw count Data
 //' @param BETA_vec A vector of capture efficiencies of cells
 //' @param size A vector of size
 //' @param mu A vector of mu
-//' @param S number of samples that you want to generate for 3D array
-//' @param thres for observed count greater than \code{thres}, use uniform prior.
+//' @param S number of samples that you want to
+//' generate for 3D array
+//' @param thres for observed count greater
+//' than \code{thres}, use uniform prior.
 //' @return bayNorm normalized data
 //'
 //'
@@ -145,12 +149,16 @@ NumericVector post_wrapper_norm(IntegerVector x,double m,double beta,int last, i
 //' data("EXAMPLE_DATA_list")
 //' \dontrun{
 //' data("EXAMPLE_DATA_list")
-//' Norm_3D_array<-Main_Bay(Data=EXAMPLE_DATA_list$inputdata,BETA_vec = EXAMPLE_DATA_list$inputbeta,
-//' size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,S=20,thres=10000000)
+//' Norm_3D_array<-Main_Bay(Data=EXAMPLE_DATA_list$inputdata,
+//' BETA_vec = EXAMPLE_DATA_list$inputbeta,
+//' size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,
+//' S=20,thres=10000000)
 //' }
 //' @export
 // [[Rcpp::export]]
-NumericVector Main_Bay(NumericMatrix Data, NumericVector BETA_vec, NumericVector size, Nullable<NumericVector> mu,int S,int thres)
+NumericVector Main_Bay(NumericMatrix Data, NumericVector BETA_vec,
+                       NumericVector size, Nullable<NumericVector> mu,
+                       int S,int thres)
 {
 
 
@@ -259,7 +267,9 @@ return(Rcpp::wrap(Final_mat2));
 //' @title  Mode_Bay
 //'
 //' @description bayNorm
-//' If the observed count is above 500, then we use normal distribution to approximate binomial distribution.
+//' If the observed count is above 500,
+//' then we use normal distribution to
+//' approximate binomial distribution.
 //'
 //'
 //' @param Data raw count Data
@@ -267,7 +277,8 @@ return(Rcpp::wrap(Final_mat2));
 //' @param size A vector of size
 //' @param mu A vector of mu
 //' @param S number of samples that you want to generate
-//' @param thres for observed count greater than \code{thres}, use uniform prior.
+//' @param thres for observed count greater
+//' than \code{thres}, use uniform prior.
 //' @return bayNorm normalized data
 //'
 //' @examples
@@ -281,7 +292,11 @@ return(Rcpp::wrap(Final_mat2));
 //' }
 //' @export
 // [[Rcpp::export]]
-NumericMatrix Main_mode_Bay(NumericMatrix Data, NumericVector BETA_vec, NumericVector size, Nullable<NumericVector> mu,int S,int thres)
+NumericMatrix Main_mode_Bay(NumericMatrix Data,
+                            NumericVector BETA_vec,
+                            NumericVector size,
+                            Nullable<NumericVector> mu,
+                            int S,int thres)
 {
 
 
@@ -520,7 +535,9 @@ NumericVector D_SIZE_MU_2D(NumericVector SIZE_MU, NumericVector m_observed,Numer
 //'
 //' @export
 // [[Rcpp::export]]
-NumericVector GradientFun_2D(NumericVector SIZE_MU, NumericVector m_observed,NumericVector BETA){
+NumericVector GradientFun_2D(NumericVector SIZE_MU,
+                             NumericVector m_observed,
+                             NumericVector BETA){
   NumericVector m=m_observed;
   NumericVector Grad_vec(2);
   Grad_vec=D_SIZE_MU_2D(SIZE_MU,m,BETA);
@@ -544,7 +561,9 @@ NumericVector GradientFun_2D(NumericVector SIZE_MU, NumericVector m_observed,Num
 //' }
 //' @export
 // [[Rcpp::export]]
-double MarginalF_2D(NumericVector SIZE_MU, NumericVector m_observed, NumericVector BETA) {
+double MarginalF_2D(NumericVector SIZE_MU,
+                    NumericVector m_observed,
+                    NumericVector BETA) {
   NumericVector m=m_observed;
   int nCells=m.size();
   NumericVector temp_vec_2(nCells);
@@ -561,7 +580,8 @@ double MarginalF_2D(NumericVector SIZE_MU, NumericVector m_observed, NumericVect
 
     for(int j=0;j<n_length;j++){
 
-      temp_vec_1(j)=R::dbinom(m(i),n(j),BETA(i),false)*R::dnbinom_mu(n(j),SIZE_MU(0),SIZE_MU(1),false);
+      temp_vec_1(j)=R::dbinom(m(i),n(j),BETA(i),false)
+      *R::dnbinom_mu(n(j),SIZE_MU(0),SIZE_MU(1),false);
 
     }
 
@@ -631,7 +651,9 @@ double D_SIZE_MU_1D(double SIZE,double MU, NumericVector m_observed,NumericVecto
 //' }
 //' @export
 // [[Rcpp::export]]
-double GradientFun_1D(double SIZE,double MU, NumericVector m_observed,NumericVector BETA){
+double GradientFun_1D(double SIZE,double MU,
+                      NumericVector m_observed,
+                      NumericVector BETA){
   NumericVector m=m_observed;
   double Gradd;
   Gradd=D_SIZE_MU_1D(SIZE, MU,m,BETA);
@@ -657,7 +679,9 @@ double GradientFun_1D(double SIZE,double MU, NumericVector m_observed,NumericVec
 //' }
 //' @export
 // [[Rcpp::export]]
-double MarginalF_1D(double SIZE,double MU, NumericVector m_observed, NumericVector BETA) {
+double MarginalF_1D(double SIZE,double MU,
+                    NumericVector m_observed,
+                    NumericVector BETA) {
   NumericVector m=m_observed;
   int nCells=m.size();
   NumericVector temp_vec_2(nCells);
@@ -673,7 +697,8 @@ double MarginalF_1D(double SIZE,double MU, NumericVector m_observed, NumericVect
     NumericVector temp_vec_1(n_length);
 
     for(int j=0;j<n_length;j++){
-      temp_vec_1(j)=R::dbinom(m(i),n(j),BETA(i),false)*R::dnbinom_mu(n(j),SIZE,MU,false);
+      temp_vec_1(j)=R::dbinom(m(i),n(j),BETA(i),false)*
+        R::dnbinom_mu(n(j),SIZE,MU,false);
 
     }
 
@@ -708,7 +733,8 @@ double MarginalF_1D(double SIZE,double MU, NumericVector m_observed, NumericVect
 //'}
 //' @export
 // [[Rcpp::export]]
-NumericMatrix DownSampling(NumericMatrix Data ,NumericVector BETA_vec) {
+NumericMatrix DownSampling(NumericMatrix Data ,
+                           NumericVector BETA_vec) {
 
   int Nrows;
   int Ncols;
@@ -722,7 +748,8 @@ NumericMatrix DownSampling(NumericMatrix Data ,NumericVector BETA_vec) {
   for(i=0;i<Nrows;i++){
     for( j=0;j<Ncols;j++){
 
-      Counts_downsampling(i,j)= as<double>(rbinom(1,Data(i,j), BETA_vec(j)));
+      Counts_downsampling(i,j)= as<double>(rbinom(1,Data(i,j),
+                                           BETA_vec(j)));
     }
 
   }

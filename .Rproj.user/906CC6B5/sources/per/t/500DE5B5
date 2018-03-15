@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1516642768195.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3441891597",
+    "id" : "500DE5B5",
+    "lastKnownWriteTime" : 1518162121,
+    "last_content_update" : 1518162121,
+    "path" : "E:/RNAseqProject/PROJECT_scRNAseq/FIGURE_PRIOR/FIGURE_PRIOR_adjust.R",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "83,0",
+        "scrollLine" : "0",
+        "tempName" : "Untitled3"
+    },
+    "relative_order" : 19,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

@@ -15,22 +15,28 @@ Main_Bay(Data, BETA_vec, size, mu, S, thres)
 
 \item{mu}{A vector of mu}
 
-\item{S}{number of samples that you want to generate for 3D array}
+\item{S}{number of samples that you want to
+generate for 3D array}
 
-\item{thres}{for observed count greater than \code{thres}, use uniform prior.}
+\item{thres}{for observed count greater
+than \code{thres}, use uniform prior.}
 }
 \value{
 bayNorm normalized data
 }
 \description{
 bayNorm
-If the observed count is above 500, then we use normal distribution to approximate binomial distribution.
+If the observed count is above 500,
+then we use normal distribution to
+approximate binomial distribution.
 }
 \examples{
 data("EXAMPLE_DATA_list")
 \dontrun{
 data("EXAMPLE_DATA_list")
-Norm_3D_array<-Main_Bay(Data=EXAMPLE_DATA_list$inputdata,BETA_vec = EXAMPLE_DATA_list$inputbeta,
-size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,S=20,thres=10000000)
+Norm_3D_array<-Main_Bay(Data=EXAMPLE_DATA_list$inputdata,
+BETA_vec = EXAMPLE_DATA_list$inputbeta,
+size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,
+S=20,thres=10000000)
 }
 }

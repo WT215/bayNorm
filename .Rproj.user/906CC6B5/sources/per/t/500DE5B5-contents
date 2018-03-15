@@ -1,0 +1,137 @@
+Rcpp::sourceCpp('E:/RNAseqProject/PROJECT_RNAseq/Rcpp_maybeuseful/Bay_debug_norm.cpp')
+#######Functions##########
+#library(bayNorm)
+library(foreach)
+
+
+#Geneind<-150
+#Cellind<-3
+#names(Raw_list_unfilt)
+#m<-Raw_list_unfilt[[1]][Geneind,Cellind]
+#beta<-allBeta[colnames(Raw_list_unfilt[[1]])[Cellind]]
+#n<-seq(0,(m+1)/beta*3)
+#size<-BB_SIZE_28[Geneind]
+#mu<-MME_MU[Geneind]
+
+Prior_Fun<-function(m,size,mu,n){
+  Prior_prob<-foreach(i=1:length(n),.combine=c)%do%{
+    dnbinom(n[i],size=size,mu=mu)
+
+  }
+  return(Prior_prob)
+}
+
+#Prior_prob<-Prior_Fun(m)
+#plot(n,Prior_prob,type='l',xlab='Grid of true count')
+
+Like_Fun<-function(m,beta,n){
+  Like_prob<-foreach(i=1:length(n),.combine=c)%do%{
+    dbinom(m,n[i],prob=beta)
+
+  }
+  return(Like_prob)
+}
+
+#Like_prob<-Like_Fun(m,beta)
+#plot(n,Like_prob,type='l',xlab='Grid of true count')
+
+
+
+
+Posterior_Fun<-function(n,m,beta,size,mu){
+  Post_prob<-foreach(i=1:length(n),.combine=c)%do%{
+    compute_prob_prior2(n[i],m,beta,size,mu)
+    #Like_Fun(m,beta,n[i])*Prior_Fun(m,size,mu,n[i])
+  }
+  return(Post_prob)
+
+}
+
+plotPrior<-function(m,beta,mu,size,xlim_input,ylim_input,main=''){
+
+  n<-seq(0,(m+1)/beta*3)
+
+
+  Prior_prob<-Prior_Fun(m,size,mu,n)
+  Like_prob<-Like_Fun(m,beta,n)
+  Post_prob<-Posterior_Fun(n,m,beta,size,mu)
+
+  normfun<-function(x){
+    return((x-min(x))/(max(x)-min(x)))
+  }
+
+  Prior_prob<-Prior_prob/sum(Prior_prob)
+  Like_prob<-Like_prob/sum(Like_prob)
+  Post_prob<-Post_prob/sum(Post_prob)
+
+linesize<-3
+textsize<-40
+
+
+  library(ggplot2)
+  Gplot<-ggplot() +
+    geom_line(aes(n, Prior_prob, color="Prior"),size=linesize)+
+    geom_line(aes(n, Like_prob, color="Likelihood"),size=linesize)+
+    geom_line(aes(n, Post_prob, color="Posterior"),size=linesize)+
+    geom_vline(aes(xintercept=m/beta,colour='m/beta'),size=linesize)+
+    ylab("Probability, normalized to sum to 1")+
+    ylim(ylim_input)+xlim(xlim_input)+
+    xlab("Grid of true count")+
+    scale_colour_manual(name="Distribution",values=c("Prior"=3,"Likelihood"=4,"Posterior"=1,'m/beta'=5))+
+    ggtitle(paste(main,' m=',m,',',' beta=',round(beta,4),',',' mu=',round(mu,2),',',' size=',round(size,2),sep=''))+
+    #ggtitle(main)+
+    theme(legend.text = element_text(size = textsize),legend.title  = element_text(size = textsize),plot.title = element_text(size = textsize),axis.title = element_text(size = textsize),panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"),plot.subtitle = element_text(size =textsize),plot.caption =  element_text(size = textsize),axis.text=element_text(size=textsize) )
+
+  return(Gplot)
+
+}
+
+
+#####begin########
+MU_SIZE_mat<-rbind(c(10,100),c(0.5,2))
+BETA_vec<-c(0.01,0.01,0.01,0.1)
+m_mat<-rbind(c(0,0,2,2),c(0,0,5,5))
+lll<-rbind(c('(a)','(b)','(c)','(d)'),c('(e)','(f)','(g)','(h)'))
+
+ll<-list()
+q<-1
+for(i in 1:2){
+
+  for(j in 1:4){
+
+    if(j==3){
+      xlim_input=c(0,1000)
+      ylim_input=c(0,0.02)
+    }else if (j<3){
+      xlim_input=c(0,300)
+      ylim_input=c(0,0.02)
+    } else if(j==4){
+
+      if(i==1){
+        xlim_input=c(0,100)
+        ylim_input=c(0,0.05)
+      }else if(i==2){
+        xlim_input=c(0,200)
+        ylim_input=c(0,0.02)
+      }
+
+
+    }
+
+    ll[[q]]<-plotPrior(m=m_mat[i,j],beta=BETA_vec[j],mu=MU_SIZE_mat[1,i],size=MU_SIZE_mat[2,i],xlim_input=xlim_input,ylim_input=ylim_input,main=lll[i,j])
+    q<-q+1
+  }
+}
+
+#panel_1<-plotPrior(m=2,beta=0.01,mu=5,size=0.5,xlim_input=c(0,1000),ylim_input=c(0,0.05),main='')
+
+class(ll[[1]])
+ll[[1]]
+
+library(gridExtra)
+#jpeg("E:/RNAseqProject/PROJECT_scRNAseq/FIGURE_PRIOR/DIY_PPT.jpeg", width = 50, height = 20, units = 'in', res = 500)
+pdf("E:/RNAseqProject/PROJECT_scRNAseq/FIGURE_PRIOR/DIY_PPT.pdf",width = 45, height = 30)
+do.call("grid.arrange", c(ll,ncol=4,nrow=2))
+dev.off()
+
+?grid.arrange

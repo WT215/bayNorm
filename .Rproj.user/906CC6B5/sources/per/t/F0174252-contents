@@ -1,0 +1,49 @@
+
+plot_DROPOUT<-function(listused_N1,MAIN='',CAPTION=''){
+
+
+names(listused_N1)
+library(foreach)
+DROPOUT_DAT<-foreach(i=1:length(listused_N1),.combine=rbind)%do%{
+  dropout<-apply(listused_N1[[i]],1,function(x){length(which(x==0))/length(x)})
+  meann<-rowMeans(listused_N1[[i]])
+  qqq<-cbind(dropout,meann,rep(names(listused_N1)[i],length(dropout)))
+  return(qqq)
+}
+DROPOUT_DAT<-as.data.frame(DROPOUT_DAT)
+colnames(DROPOUT_DAT)<-c('Dropout rate','Mean expression','Dataset')
+DROPOUT_DAT$`Dropout rate`<-as.numeric(as.character(DROPOUT_DAT$`Dropout rate`))
+DROPOUT_DAT$`Mean expression`<-as.numeric(as.character(DROPOUT_DAT$`Mean expression`))
+DROPOUT_DAT$Dataset<-factor(DROPOUT_DAT$Dataset,levels=unique(DROPOUT_DAT$Dataset))
+
+#all.equal(DROPOUT_DAT$`Dropout rate`,features$pct_dropout_counts/100)
+
+
+
+sces<-listused_N1
+colours <- scales::hue_pal()(length(sces))
+point.size<-8
+point.alpha<-0.5
+linewidth<-3
+textsize<-80
+
+theoline<-data.frame(xx =DROPOUT_DAT$`Mean expression`[which(DROPOUT_DAT$Dataset=='Real')], yy=exp(-DROPOUT_DAT$`Mean expression`[which(DROPOUT_DAT$Dataset=='Real')]))
+
+mean.zeros <- ggplot(DROPOUT_DAT, aes_string(x = DROPOUT_DAT$`Mean expression`, y = DROPOUT_DAT$`Dropout rate`,colour = DROPOUT_DAT$Dataset)) +
+  geom_point(size = point.size, alpha = point.alpha) +
+  geom_line(data=theoline,mapping=aes(x=theoline$xx,y=theoline$yy),size=linewidth,col='black')+
+  scale_x_log10(labels = scales::comma) +
+  #scale_colour_manual(values = colours) +
+  #scale_fill_manual(values = colours) +
+  xlab("Mean expression") +
+  ylab("Percentage of zeros") +
+  #labs(colour='Dataset',caption=CAPTION,title=MAIN,subtitle='Black line: theoretical fitting line, exp(-mean exp)')+
+  labs(colour='Dataset',caption=CAPTION,title=MAIN)+
+  labs(x = "Mean count",y="Percentage zeros",fill='Dataset')+
+  guides(colour = guide_legend(override.aes = list(size=point.size)))+
+    scale_fill_brewer(palette="Paired")+
+      #theme(panel.border = element_blank(), panel.grid.major = element_blank(),panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+    theme(legend.text = element_text(size = textsize),legend.title  = element_text(size = textsize),plot.title = element_text(size = textsize),axis.title = element_text(size = textsize),panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"),plot.subtitle = element_text(size = textsize),plot.caption =  element_text(size = textsize),axis.text=element_text(size=textsize) ,legend.key.size = unit(3,"line"))
+return(mean.zeros)
+}
+#

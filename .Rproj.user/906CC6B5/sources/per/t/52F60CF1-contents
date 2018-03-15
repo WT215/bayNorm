@@ -1,0 +1,213 @@
+####import raw data##########
+library(data.table)
+
+data <- fread("E:/RNAseqProject/NEWPROJECT_PAPERS/Validation of noise models for single-cell transcriptomics/GSE54695_data_transcript_counts.txt")
+
+Gene.Ids = data$GENENAME
+Cell.Ids = names(data)[-1]
+
+RawCounts = cbind(subset(data, select = Cell.Ids[grep("SC_2i", Cell.Ids)]),subset(data, select = Cell.Ids[grep("RNA_2i", Cell.Ids)]))
+
+Cell.Colour = c( rep("lightpink3",length(grep("SC_2i", Cell.Ids))),rep("darkolivegreen3",length(grep("RNA_2i", Cell.Ids))) )
+
+Batch = c(rep(1, 40), rep(2, 40), rep(1, 40), rep(2, 40))
+dim(RawCounts)
+
+#Transforming the data into UMI counts
+# Function provided by Jong Kyoung Kim (EMBL-EBI)
+UMICount <- function(MoleculeCount, UMILength)
+{
+  # MoleculeCount is the normalized count
+  M = 4^UMILength
+  UMICount = M*(1-exp(-MoleculeCount/M))
+  return(UMICount)
+}
+CountsUMI = round(UMICount(RawCounts, 4))
+
+
+Pou5f1.per.cell <- as.numeric(CountsUMI[which(Gene.Ids == "Pou5f1"),])
+counts.per.cell <- colSums(CountsUMI)
+genes.per.cell <- apply(CountsUMI, 2, function(x) sum( x>0 ))
+ercc.per.cell <- colSums(CountsUMI[grep("ERCC", Gene.Ids),])
+
+###After filtering
+CountsUMI_1 <- CountsUMI[,Pou5f1.per.cell >= 10, with = FALSE]
+Cell.Colour_1 <- Cell.Colour[Pou5f1.per.cell >= 10]
+Batch_1 <- Batch[Pou5f1.per.cell >= 10]
+table(Cell.Colour_1)
+dim(CountsUMI_1)
+CountsUMI_2 = CountsUMI_1[rowSums(CountsUMI_1) >= 50, ]
+Gene.Ids_2 = Gene.Ids[rowSums(CountsUMI_1) >= 50]
+dim(CountsUMI_2)
+
+#Spike-in genes information#######
+SpikeInfo<-fread("E:/RNAseqProject/NEWPROJECT_PAPERS/Validation of noise models for single-cell transcriptomics/cms_095046.txt")
+names(SpikeInfo)[2]<-"ERCC_ID"
+names(SpikeInfo)[4]<-"concentration_in_Mix_1"
+
+
+SpikeInfo <- SpikeInfo[SpikeInfo$ERCC_ID %in% Gene.Ids_2[grep("ERCC", Gene.Ids_2)],]
+SpikeInfo$MoleculesPerCell <- SpikeInfo$concentration_in_Mix_1 * (1e-18) *(6.022e23) * (1/2500000)
+# To confirm with the 3.3% capture indicated by Grun et al
+SpikeOut <- data.table("ERCC_ID" = Gene.Ids_2[grep("ERCC", Gene.Ids_2)],"ERCC_MeanCount" = rowMeans(CountsUMI_2[grep("ERCC", Gene.Ids_2),]))
+SpikeOut = merge(SpikeInfo, SpikeOut, by = "ERCC_ID")
+SpikeInfoFilter = subset(SpikeInfo, select = c(ERCC_ID, MoleculesPerCell))
+Tech = grepl("ERCC", Gene.Ids_2)
+Total_ERCC<-sum(SpikeInfoFilter$MoleculesPerCell)
+BETA_ERCC<-colSums(CountsUMI_2[Tech,])/Total_ERCC
+summary(BETA_ERCC)
+BETA_TTC<-colSums(CountsUMI_SC)/mean(colSums(CountsUMI_SC))*0.033
+summary(BETA_TTC)
+
+summary(SpikeOut$ERCC_MeanCount/SpikeOut$MoleculesPerCell)
+
+
+#Separating expression counts for each condition
+CountsUMI_SC = as.matrix(CountsUMI_2)[, grep("SC_2i",colnames(CountsUMI_2))]
+CountsUMI_RNA = as.matrix(CountsUMI_2)[, grep("RNA_2i",colnames(CountsUMI_2))]
+rownames(CountsUMI_SC) <- Gene.Ids_2
+rownames(CountsUMI_RNA) <- Gene.Ids_2
+
+CountsUMI_SC_ERCC<-CountsUMI_SC[Tech,]
+CountsUMI_RNA_ERCC<-CountsUMI_RNA[Tech,]
+CountsUMI_SC<-CountsUMI_SC[-Tech,]
+CountsUMI_RNA<-CountsUMI_RNA[-Tech,]
+
+
+
+
+
+
+######begin analysis########
+
+load("E:/RNAseqProject/NEWPROJECT_PAPERS/Validation of noise models for single-cell transcriptomics/Grun_2014_smFISH/smFISH_norm_load.RData")
+load("E:/RNAseqProject/NEWPROJECT_PAPERS/Validation of noise models for single-cell transcriptomics/Grun_2014_RAW.RData")
+CONDITION=c(rep('SC',dim(CountsUMI_SC)[2]),rep('P&S',dim(CountsUMI_RNA)[2]))
+CONDITION_v2=c(rep(1,dim(CountsUMI_SC)[2]),rep(2,dim(CountsUMI_RNA)[2]))
+names(BETA_ERCC)<-colnames(CountsUMI_2)
+which.min(BETA_ERCC)
+which.max(BETA_ERCC)
+
+
+#use smFISH to estimate mean BETA######
+FISH_mean<-unlist(lapply(Fish_2iplot_list,mean))[Fig3Gene]
+SC_mean<-rowMeans(CountsUMI_SC[Fig3Gene,])[Fig3Gene]
+RNA_mean<-rowMeans(CountsUMI_RNA[Fig3Gene,])[Fig3Gene]
+
+#SC mean beta
+lmm<-lm(SC_mean~FISH_mean)
+lmm_summa<-summary(lmm)
+plot(FISH_mean,SC_mean,pch=16,xlab='Mean expression of FISH counts',ylab='Mean expression of corresponding raw counts (Raw)',main=paste('Estimated beta=',round(coef(lmm)[2],4)))
+legend('bottomright',legend=c(paste('adj R2 (fitted without intercept)=',round(lmm_summa$adj.r.squared,4)),paste('cor=',round(cor(FISH_mean,SC_mean),4))))
+abline(lmm)
+summary(lmm)
+MEANBETA_SC_2i<-coef(lmm)[2]
+MEANBETA_SC_2i
+
+
+
+
+#RNA mean beta
+lmm<-lm(RNA_mean~FISH_mean)
+lmm_summa<-summary(lmm)
+plot(FISH_mean,RNA_mean,pch=16,xlab='Mean expression of FISH counts',ylab='Mean expression of corresponding raw counts (Raw)',main=paste('Estimated beta=',round(coef(lmm)[2],4)))
+legend('bottomright',legend=c(paste('adj R2 (fitted without intercept)=',round(lmm_summa$adj.r.squared,4)),paste('cor=',round(cor(FISH_mean,RNA_mean),4))))
+abline(lmm)
+summary(lmm)
+MEANBETA_RNA_2i<-coef(lmm)[2]
+MEANBETA_RNA_2i
+
+summary(BETA_ERCC)
+BETA_ERCC_smFISH_SC_2i<-BETA_ERCC[CONDITION=='SC']/mean(BETA_ERCC[CONDITION=='SC'])*MEANBETA_SC_2i
+summary(BETA_ERCC_smFISH_SC_2i)
+
+
+###check BETA_ERCC_smFISH_SC_2i with another BETA###
+# library(foreach)
+# x<-unlist(lapply(Fish_2iplot_list,mean))
+# BETA_mat<-foreach(i=1:dim(CountsUMI_SC)[2],.combine=rbind)%do%{
+#   
+#   lmfit<-lm(CountsUMI_SC[names(Fish_2iplot_list),i]~x)
+#   summm<-summary(lmfit)
+#   betaaa<-coef(summm)[2,1]
+#   r2<-summm$adj.r.squared
+# re<-c(betaaa,r2)
+#   return(re)
+# }
+# colnames(BETA_mat)<-c('beta','R2')
+# rownames(BETA_mat)<-colnames(CountsUMI_SC)
+# plot(BETA_mat[,1]/mean(BETA_mat[,1]),BETA_ERCC_smFISH_SC_2i/mean(BETA_ERCC_smFISH_SC_2i),pch=16)
+# abline(0,1)
+
+
+
+BETA_ERCC_smFISH_RNA_2i<-BETA_ERCC[CONDITION=='P&S']/mean(BETA_ERCC[CONDITION=='P&S'])*MEANBETA_RNA_2i
+summary(BETA_ERCC_smFISH_RNA_2i)
+
+
+library(bayNorm)
+system.time(bayNorm_SC_2i<-bayNorm(Data=CountsUMI_SC,BETA_vec=BETA_ERCC_smFISH_SC_2i,Conditions=NULL,UMI_sffl = NULL,Prior_type = 'LL',mode_version = F,S=20,parallel=T,NCores=5,FIX_MU = T,GR=F,BB_SIZE = T,verbose=T))
+system.time(bayNorm_RNA_2i<-bayNorm(Data=CountsUMI_RNA,BETA_vec=BETA_ERCC_smFISH_RNA_2i,Conditions=NULL,UMI_sffl = NULL,Prior_type = 'LL',mode_version = F,S=20,parallel=T,NCores=5,FIX_MU = T,GR=F,BB_SIZE = T,verbose=T))
+
+save(bayNorm_SC_2i,bayNorm_RNA_2i,file='E:/RNAseqProject/NEWPROJECT_PAPERS/Validation of noise models for single-cell transcriptomics/Grun_smFISH_meanBETA/bayNorm_2i.RData')
+
+
+#save(bayNorm_Grun2014,file="E:/RNAseqProject/NEWPROJECT_PAPERS/Validation of noise models for single-cell transcriptomics/bayNorm_Grun2014.RData")
+summary(bayNorm_SC_2i$Bay_array['Pou5f1',,1])
+summary(Fish_2iplot_list$Pou5f1)
+
+plot(density(Fish_2iplot_list$Pou5f1))
+lines(density(bayNorm_SC_2i$Bay_array['Pou5f1',,1]),col=3)
+
+
+summary(bayNorm_2i['Pou5f1',,1])
+geneused<-c('Pou5f1','Sox2','Klf4')
+BAY_INPUT<-cbind(bayNorm_Grun2014$Bay_array_list$`Group 1`[geneused,,1],bayNorm_Grun2014$Bay_array_list$`Group 2`[geneused,,1])
+
+
+######run saver#######
+load('E:/RNAseqProject/NEWPROJECT_PAPERS/Validation of noise models for single-cell transcriptomics/Grun_smFISH_meanBETA/bayNorm_2i.RData')
+load("E:/RNAseqProject/NEWPROJECT_PAPERS/Validation of noise models for single-cell transcriptomics/Grun_2014_RAW.RData")
+dim(CountsUMI_SC)
+library(SAVER)
+smFISH_mean2i<-unlist(lapply(Fish_2iplot_list,mean))
+sf_saver<-bayNorm_SC_2i$BETA
+
+
+SAVER_SC_2i <- saver(CountsUMI_SC,size.factor=sf_saver)
+save(SAVER_SC_2i,file="E:/RNAseqProject/NEWPROJECT_PAPERS/Validation of noise models for single-cell transcriptomics/SAVER/SAVER_SC_2i_BETA.RData")
+
+
+library(SAVER)
+system.time(SAVER_RNA_2i <- saver(CountsUMI_RNA))
+save(SAVER_RNA_2i,file="E:/RNAseqProject/NEWPROJECT_PAPERS/Validation of noise models for single-cell transcriptomics/SAVER/SAVER_RNA_2i.RData")
+
+
+
+
+load("E:/RNAseqProject/NEWPROJECT_PAPERS/Validation of noise models for single-cell transcriptomics/Grun_2014_smFISH/smFISH_norm_load.RData")
+
+
+dim(SAVER_SC_2i$estimate)
+geneind<-3
+plot(density(SAVER_SC_2i$estimate[Fig3Gene[geneind],],bw=1))
+lines(density(Fish_2iplot_list[[Fig3Gene[geneind]]],bw=1),col=3)
+
+summary(SAVER_SC_2i$estimate[Fig3Gene[geneind],])
+summary(Fish_2iplot_list[[Fig3Gene[geneind]]])
+summary(CountsUMI_SC[Fig3Gene[geneind],])
+
+
+
+EST_MU<-apply(bayNorm_SC_2i$Bay_array,1,mean)
+EST_SD<-apply(apply(bayNorm_SC_2i$Bay_array, c(1,3), sd), 1, mean)
+
+
+BB_SIZE<-bayNorm_SC_2i$PRIORS$BB_prior[,2]
+a1<-which(BB_SIZE==max(BB_SIZE))
+a2<-which(BB_SIZE==min(BB_SIZE))
+
+plot(EST_MU,EST_SD/EST_MU,log='x',pch=16,xlab='mean est based on bayNorm',ylab='CV est based on bayNorm')
+abline(0,-1)
+points(EST_MU[names(a1)],(EST_SD/EST_MU)[names(a1)],col=3,pch=16)
+points(EST_MU[names(a2)],(EST_SD/EST_MU)[names(a2)],col=5,pch=16)

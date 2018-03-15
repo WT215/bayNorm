@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1521023399213.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3540557650",
+    "id" : "52A86159",
+    "lastKnownWriteTime" : 1521127277,
+    "last_content_update" : 1521127277891,
+    "path" : "E:/RNAseqProject/bayNorm_dev/bayNorm/src/bayNorm_main.cpp",
+    "project_path" : "src/bayNorm_main.cpp",
+    "properties" : {
+        "cursorPosition" : "751,43",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 9,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "cpp"
+}

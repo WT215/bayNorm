@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1517735769321.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3182505221",
+    "id" : "F0174252",
+    "lastKnownWriteTime" : 1520968333,
+    "last_content_update" : 1520968333607,
+    "path" : "E:/RNAseqProject/PROJECT_scRNAseq/FIGURE_DROPOUT/DROPOUT_MAIN/DROPOUT_FUN.r",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "27,12",
+        "scrollLine" : "0",
+        "tempName" : "Untitled3"
+    },
+    "relative_order" : 21,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

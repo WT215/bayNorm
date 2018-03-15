@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1519636854358.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3191878775",
+    "id" : "AAEC3313",
+    "lastKnownWriteTime" : 1520959092,
+    "last_content_update" : 1520959092269,
+    "path" : "E:/RNAseqProject/Bacher__SCnorm_2016/scaled_BAY/SCnorm_FINAL/SCnorm_FINAL.R",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "268,0",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 12,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1513158440480.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1911050265",
+    "id" : "D6FF36A1",
+    "lastKnownWriteTime" : 1513182394,
+    "last_content_update" : 1513182394760,
+    "path" : "E:/RNAseqProject/bayNorm_dev/bayNorm/R/PRIOR_FUNCTIONS.R",
+    "project_path" : "R/PRIOR_FUNCTIONS.R",
+    "properties" : {
+        "cursorPosition" : "16,0",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

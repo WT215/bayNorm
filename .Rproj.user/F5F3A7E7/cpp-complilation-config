@@ -1,0 +1,13 @@
+{
+    "args" : [
+        "-ID:/allR/RStudio/resources/libclang/builtin-headers/3.4",
+        "-ID:/allR/MRO/library/Rcpp/include",
+        "-ID:/allR/MRO/library/RcppArmadillo/include",
+        "-ID:/allR/MRO/include",
+        "-DNDEBUG",
+        "-IC:/swarm/workspace/External-R-3.4.2/vendor/extsoft/include"
+    ],
+    "hash" : "1513012484",
+    "is_cpp" : true,
+    "pch" : "Rcpp"
+}

@@ -1,0 +1,87 @@
+source("E:/RNAseqProject/TSTAT_140817.r")
+source("E:/RNAseqProject/MANY_DE_FUN.R")
+source("E:/RNAseqProject/MANY_NORM_FUN.R")
+
+library(foreach)
+M_TEST_FUN<-function(DATA_LIST,grs){
+
+  M_list<-foreach(i=1:length(DATA_LIST))%do%{
+
+    print(i)
+   mmm<-SCnorm_runMAST(Data=DATA_LIST[[i]], NumCells=as.numeric(grs))
+    mmm_p<-mmm$adjpval
+    return(mmm_p)
+  }
+
+  names(M_list)<-c('bayNorm','SAVER','SCnorm','scran','RPM','TMM','DESeq','Tung')
+  return(M_list)
+
+}
+
+
+T_TEST_FUN<-function(DATA_LIST,CONDITION){
+  qqq<-unique(CONDITION)
+
+  T_list<-foreach(i=1:length(DATA_LIST))%do%{
+
+    print(i)
+    if(i==1){
+
+      tttt<-tStatAnalysis_2groups_2(cells=DATA_LIST[[i]][,CONDITION==qqq[1],],ctrls=DATA_LIST[[i]][,CONDITION==qqq[2],], list_mode=NULL, verbose=T, plotFDR = FALSE)
+
+    }else{
+      DATA_LIST[[i]]<-as.matrix(DATA_LIST[[i]])
+      tttt<-tStatAnalysis_2groups_2(cells=DATA_LIST[[i]][,CONDITION==qqq[1]],ctrls=DATA_LIST[[i]][,CONDITION==qqq[2]], list_mode=NULL, verbose=T, plotFDR = FALSE)
+
+    }
+
+
+
+
+
+
+    metric=5
+    tttt_p<-do.call(cbind,lapply(tttt,function(x){return(x[[metric]])}))
+    tttt_p2<-apply(tttt_p,1,median)
+    return(tttt_p2)
+  }
+
+  names(T_list)<-c('bayNorm','SAVER','SCnorm','scran','RPM','TMM','DESeq','Tung')
+  return(T_list)
+
+}
+
+
+
+BATCH_BAR_FUN<-function(M_n1_list){
+
+method_vec<-c('bayNorm','SAVER','SCnorm','scran','RPM','TMM','DESeq','Tung')
+col_vec<-seq(1,length(method_vec))
+library(foreach)
+thrrr_vec<-c(0.01,0.05,0.1)
+BAR_DAT<-foreach(i = seq(1,length(thrrr_vec)),.combine=rbind)%do%{
+  thrrr<-thrrr_vec[i]
+  ng_vec<-unlist(lapply(M_n1_list,function(x){length(which(x<thrrr))}))
+  ng_vec<-cbind(ng_vec,rep(thrrr,length(M_n1_list)))
+  ng_vec<-cbind(ng_vec,method_vec)
+}
+
+
+
+colnames(BAR_DAT)<-c('Number of detected DE genes','Adjusted P-values threshold','Normalization method')
+
+BAR_DAT<-as.data.frame(BAR_DAT)
+
+BAR_DAT[,1]<-as.numeric(as.character(BAR_DAT[,1]))
+BAR_DAT[,2]<-factor(BAR_DAT[,2],levels=unique(BAR_DAT[,2]))
+BAR_DAT[,3]<-factor(BAR_DAT[,3],levels=unique(BAR_DAT[,3]))
+
+textsize<-40
+N1_BATCH_FIG<-ggplot(data=BAR_DAT, aes(x=BAR_DAT[,2], y=BAR_DAT[,1], fill=BAR_DAT[,3])) +
+  geom_bar(stat="identity", position = position_dodge(0.9),width=0.9)+
+  geom_text(aes(label=BAR_DAT[,1]), vjust=1.6, color="black", position = position_dodge(0.9), size=10)+
+  labs(x = 'Adjusted P-values threshold',y='Number of detected DE genes',fill='Normalization methods')+ggtitle("(a)") +
+  scale_fill_brewer(palette="Paired")+
+  theme(legend.text = element_text(size = textsize),legend.title  = element_text(size = textsize),plot.title = element_text(size = textsize),axis.title = element_text(size = textsize),panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"),plot.subtitle = element_text(size =textsize),plot.caption =  element_text(size = textsize),axis.text=element_text(size=textsize) )
+return(N1_BATCH_FIG)
+}

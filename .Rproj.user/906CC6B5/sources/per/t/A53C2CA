@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1520508962463.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "607640782",
+    "id" : "A53C2CA",
+    "lastKnownWriteTime" : 1520546520,
+    "last_content_update" : 1520546520886,
+    "path" : "E:/RNAseqProject/tung2017batch/FINAL/DE_differentmeanbeta/DE_diffmeanbeta.R",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "122,0",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 18,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

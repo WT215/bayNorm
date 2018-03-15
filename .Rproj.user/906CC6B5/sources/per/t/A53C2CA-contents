@@ -1,0 +1,125 @@
+load("E:/RNAseqProject/tung2017batch/MMEADJ_ERCCBETA/tung2017batch_Bay_ERCCBETA.RData")
+
+library(bayNorm)
+
+NCCC<-16
+#005
+BETA_005<-efficiency[c(colnames(N2_DAT),colnames(N3_DAT))]/mean(efficiency[c(colnames(N2_DAT),colnames(N3_DAT))])*0.05
+summary(BETA_005)
+bay_005<-bayNorm(Data=cbind(N2_DAT,N3_DAT),Conditions=c(rep(1,dim(N2_DAT)[2]),rep(2,dim(N3_DAT)[2])),Prior_type = 'LL',BETA_vec =BETA_005,NCores = NCCC)
+
+save(bay_005,file="E:/RNAseqProject/tung2017batch/FINAL/DE_differentmeanbeta/bay_005.RData")
+
+#01
+BETA_01<-efficiency[c(colnames(N2_DAT),colnames(N3_DAT))]/mean(efficiency[c(colnames(N2_DAT),colnames(N3_DAT))])*0.1
+summary(BETA_01)
+bay_01<-bayNorm(Data=cbind(N2_DAT,N3_DAT),Conditions=c(rep(1,dim(N2_DAT)[2]),rep(2,dim(N3_DAT)[2])),Prior_type = 'LL',BETA_vec =BETA_01 ,NCores =NCCC)
+save(bay_01,file="E:/RNAseqProject/tung2017batch/FINAL/DE_differentmeanbeta/bay_01.RData")
+
+#02
+BETA_02<-efficiency[c(colnames(N2_DAT),colnames(N3_DAT))]/mean(efficiency[c(colnames(N2_DAT),colnames(N3_DAT))])*0.2
+summary(BETA_02)
+bay_02<-bayNorm(Data=cbind(N2_DAT,N3_DAT),Conditions=c(rep(1,dim(N2_DAT)[2]),rep(2,dim(N3_DAT)[2])),Prior_type = 'LL',BETA_vec =BETA_02,NCores = NCCC)
+
+save(bay_02,file="E:/RNAseqProject/tung2017batch/FINAL/DE_differentmeanbeta/bay_02.RData")
+
+#####analysis######
+load("E:/RNAseqProject/tung2017batch/FINAL/DE_differentmeanbeta/bay_01.RData")
+load("E:/RNAseqProject/tung2017batch/FINAL/DE_differentmeanbeta/bay_005.RData")
+load("E:/RNAseqProject/tung2017batch/FINAL/DE_differentmeanbeta/bay_02.RData")
+
+
+source("E:/RNAseqProject/TSTAT_140817.r")
+source("E:/RNAseqProject/MANY_DE_FUN.R")
+source("E:/RNAseqProject/MANY_NORM_FUN.R")
+load('E:/RNAseqProject/tung2017batch/MMEADJ_ERCCBETA/DE_benchmark.RData')
+
+
+grs<-c(dim(N2_DAT)[2],dim(N3_DAT)[2])
+# M_005 = SCnorm_runMAST(Data=cbind(bay_005$Bay_array_list$`Group 1`[,,1],bay_005$Bay_array_list$`Group 2`[,,1]), NumCells=as.numeric(grs))
+# M_01 = SCnorm_runMAST(Data=cbind(bay_01$Bay_array_list$`Group 1`[,,1],bay_01$Bay_array_list$`Group 2`[,,1]), NumCells=as.numeric(grs))
+# M_02 = SCnorm_runMAST(Data=cbind(bay_02$Bay_array_list$`Group 1`[,,1],bay_02$Bay_array_list$`Group 2`[,,1]), NumCells=as.numeric(grs))
+
+
+library(foreach)
+M_Mat_005 = foreach(i=1:20,.combine=cbind)%do%{
+  print(i)
+  temmm<-  SCnorm_runMAST(Data=cbind(bay_005$Bay_array_list$`Group 1`[,,1],bay_005$Bay_array_list$`Group 2`[,,i]), NumCells=as.numeric(grs))
+return(temmm$adjpval)
+}
+
+
+M_Mat_01 = foreach(i=1:20,.combine=cbind)%do%{
+  print(i)
+  temmm<-  SCnorm_runMAST(Data=cbind(bay_01$Bay_array_list$`Group 1`[,,i],bay_01$Bay_array_list$`Group 2`[,,i]), NumCells=as.numeric(grs))
+  return(temmm$adjpval)
+}
+
+M_Mat_02 = foreach(i=1:20,.combine=cbind)%do%{
+  print(i)
+  temmm<-  SCnorm_runMAST(Data=cbind(bay_02$Bay_array_list$`Group 1`[,,i],bay_02$Bay_array_list$`Group 2`[,,i]), NumCells=as.numeric(grs))
+  return(temmm$adjpval)
+}
+
+
+
+
+save(M_Mat_005,M_Mat_01,M_Mat_02,file="E:/RNAseqProject/tung2017batch/FINAL/DE_differentmeanbeta/M_Mat.RData")
+
+
+
+
+#begin plotting ROC curves
+
+load("E:/RNAseqProject/tung2017batch/FINAL/M_6norms.RData")
+
+
+#MAST_RE_LIST<-list(M_ori=MAST_bay$adjpval,M_vec_005=M_005$adjpval,M_vec_01=M_01$adjpval,M_vec_02=M_02$adjpval)
+
+MAST_RE_LIST<-list(M_ori=MAST_bay$adjpval,M_vec_005=apply(M_Mat_005,1,median),M_vec_01=apply(M_Mat_01,1,median),M_vec_02=apply(M_Mat_02,1,median))
+
+library(foreach)
+
+Sele<-'MAST'
+Sele<-'wilcox.test'
+
+method_vec<-c('bayNorm_ori','bayNorm_005','bayNorm_01','bayNorm_02')
+col_vec<-c(1,3,4,5,6,7,8)
+
+if(Sele=='MAST'){
+  Input_re_list<-MAST_RE_LIST
+  mainn='DE detection method: MAST'
+} else if(Sele=='wilcox.test'){
+  Input_re_list<-TSTAT_RE_LIST
+  mainn='DE detection method: wilcox.test'
+}
+
+
+auc_vec<-NULL
+TRUE_LABEL_input<-DE_TRUE_LABEL
+
+TRUE_LABEL_input[TRUE_LABEL_input==0]=3
+TRUE_LABEL_input[TRUE_LABEL_input==1]=0
+TRUE_LABEL_input[TRUE_LABEL_input==3]=1
+
+
+table(DE_TRUE_LABEL)
+length(DE_TRUE_LABEL)
+length(MAST_bay$adjpval)
+
+library(ROCR)
+list_pref<-foreach(i=1:length(Input_re_list))%do%{
+  pred_MAST <- prediction(Input_re_list[[i]], TRUE_LABEL_input)
+  perf_MAST <- performance( pred_MAST, "tpr", "fpr" )
+
+  auc_temp<-performance( pred_MAST, measure='auc' )
+  auc_temp<-auc_temp@y.values[[1]]
+  auc_vec<-c(auc_vec,auc_temp)
+  return(perf_MAST)
+}
+
+ROC_fun(list_pref=list_pref,vec_auc=auc_vec,method_vec=method_vec,col_vec=col_vec,MAIN=mainn)
+abline(0,1)
+
+
+
