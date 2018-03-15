@@ -30,7 +30,8 @@ Suggests:
           knitr,
           rmarkdown,
 	        BiocStyle,
-	        devtools
+	        devtools,
+	        testthat
 VignetteBuilder: knitr
 biocViews: Normalization, RNASeq, SingleCell,Sequencing
 URL: https://github.com/WT215/bayNorm

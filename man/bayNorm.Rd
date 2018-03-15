@@ -18,9 +18,13 @@ This object should be of class matrix rather than data.frame.}
 If it is null, library size normalized to 0.06 will be used
 as the input BETA_vec. BETA_vec less and equal to 0 or
 greater and equal to 1 will be replaced by the minimum
-and maximum of the BETA_vec which range between (0,1) respectively.}
+and maximum of the BETA_vec which range between (0,1)
+respectively.}
 
-\item{Conditions}{vector of condition labels, this should correspond to the columns of the Data. Default is NULL, which assumes that all cells belong to the same group.}
+\item{Conditions}{vector of condition labels,
+this should correspond to the columns of the Data. D
+efault is NULL, which assumes that all cells
+belong to the same group.}
 
 \item{UMI_sffl}{(scaling factors for non UMI based data:
 divide Data by UMI_sffl) Only needed when the input data
@@ -30,30 +34,54 @@ number of groups. Default is set to be NULL.}
 
 \item{Prior_type}{Default is NULL. If \code{Conditions}
 is NULL, priors are estimated based on all cells. If
-\code{Conditions} is not NULL: if \code{Prior_type} is \code{LL}, priors are estimated within each group respectively.
+\code{Conditions} is not NULL: if \code{Prior_type}
+is \code{LL}, priors are estimated within
+each group respectively.
 If \code{Prior_type} is \code{GG}, priors are estimated
-based on cells from all groups. Basically, \code{LL} is suitable for DE detection. \code{GG} is prefered if there is
+based on cells from all groups. Basically, \code{LL} is
+suitable for DE detection. \code{GG} is prefered if there is
 a prior knowledge about the data such that there should
 not exist biological variation between groups.}
 
-\item{mode_version}{If TRUE, bayNorm return mode version normalized data which is of 2D matrix instead of 3D array. Default is FALSE.}
+\item{mode_version}{If TRUE, bayNorm return mode version
+normalized data which is of 2D matrix instead of 3D array.
+Default is FALSE.}
 
-\item{S}{The number of samples you would like to generate from estimated posterior distribution (The third dimension of 3D array). Default is 20. S needs to be specified if \code{mode_version}=FALSE.}
+\item{S}{The number of samples you would like to
+generate from estimated posterior distribution
+(The third dimension of 3D array). Default is 20.
+ S needs to be specified if \code{mode_version}=FALSE.}
 
-\item{parallel}{If TRUE, 5 cores will be used for parallelization.}
+\item{parallel}{If TRUE, 5 cores will be used
+for parallelization.}
 
-\item{NCores}{number of cores to use, default is 5. This will be used to set up a parallel environment using either MulticoreParam (Linux, Mac) or SnowParam (Windows) with NCores using the package BiocParallel.}
+\item{NCores}{number of cores to use, default is 5.
+This will be used to set up a parallel environment
+using either MulticoreParam (Linux, Mac) or
+SnowParam (Windows) with NCores using
+the package BiocParallel.}
 
-\item{FIX_MU}{Whether fix mu when estimating parameters by maximizing marginal distribution. If TRUE, then 1D optimization, otherwise 2D optimization (slow).}
+\item{FIX_MU}{Whether fix mu when estimating
+parameters by maximizing marginal distribution.
+If TRUE, then 1D optimization, otherwise 2D
+optimization (slow).}
 
-\item{GR}{If TRUE, the gradient function will be used in optimization. However since the gradient function itself is very complicated, it does not help too much in speeding up. Default is FALSE.}
+\item{GR}{If TRUE, the gradient function will be used
+in optimization. However since the gradient function
+itself is very complicated, it does not help too much
+in speeding up. Default is FALSE.}
 
-\item{BB_SIZE}{If TRUE, estimate BB size, and then use it for adjusting MME SIZE. Use the adjusted MME size for bayNorm. Default is TRUE.}
+\item{BB_SIZE}{If TRUE, estimate BB size, and then use
+it for adjusting MME SIZE. Use the adjusted MME size
+for bayNorm. Default is TRUE.}
 
 \item{verbose}{print out status messages. Default is TRUE.}
 }
 \value{
-List containing 3D arrays of normalized expression (if \code{mode_version}=FALSE) or 2D matrix of normalized expression (if \code{mode_version}=TRUE), estimated parameters and input \code{BETA_vec}.
+List containing 3D arrays of normalized
+expression (if \code{mode_version}=FALSE) or 2D matrix
+of normalized expression (if \code{mode_version}=TRUE),
+estimated parameters and input \code{BETA_vec}.
 }
 \description{
 Input raw data and a vector of capture
@@ -61,7 +89,8 @@ efficiencies of cells. You can also specify the condition
 of cells for normalizing multiple groups of cells separately.
 }
 \details{
-A wrapper function of prior estimation and bayNorm function.
+A wrapper function of prior estimation
+and bayNorm function.
 }
 \examples{
 data("EXAMPLE_DATA_list")

@@ -9,36 +9,66 @@ bayNorm_sup(Data, BETA_vec, PRIORS = NULL, Conditions = NULL,
   NCores = 5, BB_SIZE = TRUE, verbose = TRUE)
 }
 \arguments{
-\item{Data}{A matrix of single-cell expression where rows are genes and columns are samples (cells). This object should be of class matrix rather than data.frame.}
+\item{Data}{A matrix of single-cell expression where rows are
+genes and columns are samples (cells). This object should be
+of class matrix rather than data.frame.}
 
 \item{BETA_vec}{A vector of capture efficiencies of cells.}
 
 \item{PRIORS}{A list of estimated prior parameters obtained from bayNorm.}
 
-\item{Conditions}{vector of condition labels, this should correspond to the columns of the Data. Default is NULL, which assumes that all cells belong to the same group.}
+\item{Conditions}{vector of condition labels,
+this should correspond to the columns of the Data.
+Default is NULL, which assumes that all cells belong
+to the same group.}
 
-\item{UMI_sffl}{(scaling factors for non UMI based data: divide Data by UMI_sffl) Only needed when the input data is non UMI based. If non-null and Conditions is non-null, then UMI_sffl should be a vector of length equal to the number of groups. Default is set to be NULL.}
+\item{UMI_sffl}{(scaling factors for non UMI based data:
+divide Data by UMI_sffl) Only needed when the input data is
+non UMI based. If non-null and Conditions is non-null, then
+UMI_sffl should be a vector of length equal to the number of
+groups. Default is set to be NULL.}
 
 \item{mode_version}{If TRUE, bayNorm return mode version normalized data which is of 2D matrix instead of 3D array. Default is FALSE.}
 
-\item{S}{The number of samples you would like to generate from estimated posterior distribution (The third dimension of 3D array). Default is 20. S needs to be specified if \code{mode_version}=FALSE.}
+\item{S}{The number of samples you would like to
+generate from estimated posterior distribution
+(The third dimension of 3D array). Default is 20.
+S needs to be specified if \code{mode_version}=FALSE.}
 
-\item{parallel}{If TRUE, 5 cores will be used for parallelization.}
+\item{parallel}{If TRUE, 5 cores will be used for
+parallelization.}
 
-\item{NCores}{number of cores to use, default is 5. This will be used to set up a parallel environment using either MulticoreParam (Linux, Mac) or SnowParam (Windows) with NCores using the package BiocParallel.}
+\item{NCores}{number of cores to use, default is 5.
+This will be used to set up a parallel environment
+using either MulticoreParam (Linux, Mac) or
+SnowParam (Windows) with NCores using the package
+BiocParallel.}
 
-\item{BB_SIZE}{If TRUE, use adjusted size for normalization. The adjusted size is obtained by adjusting MME estimated size by a factor. The factor is calculated based on both MME estimated size and BB estimated size.}
+\item{BB_SIZE}{If TRUE, use adjusted size for
+normalization. The adjusted size is obtained by adjusting
+MME estimated size by a factor. The factor is
+calculated based on both MME estimated size and BB
+estimated size.}
 
 \item{verbose}{print out status messages. Default is TRUE.}
 }
 \value{
-List containing 3D arrays of normalized expression (if \code{mode_version}=FALSE) or 2D matrix of normalized expression (if \code{mode_version}=TRUE), estimated parameters and input \code{BETA_vec}.
+List containing 3D arrays of normalized
+expression (if \code{mode_version}=FALSE) or 2D matrix
+of normalized expression (if \code{mode_version}=TRUE),
+estimated parameters and input \code{BETA_vec}.
 }
 \description{
-This is a supplementary function for \code{bayNorm}. It is useful if you have already run \code{bayNorm} before and try to simulate 3D or 3D matrix using the same prior estimates.
+This is a supplementary function for
+\code{bayNorm}. It is useful if you have already run \code{bayNorm} before and try to simulate 3D or 3D matrix
+using the same prior estimates.
 }
 \details{
-If you have run bayNorm before and obtained a list of estimated prior parameters, then you may not want to run parameter estimation again. You can just use previous estimated parameters for obtaining 3D or 2D normalized data.
+If you have run bayNorm before and obtained a
+list of estimated prior parameters, then you may not want
+to run parameter estimation again. You can just use
+previous estimated parameters for obtaining 3D or
+2D normalized data.
 }
 \examples{
 data("EXAMPLE_DATA_list")
@@ -61,7 +91,8 @@ bayNorm_2D<-bayNorm_p(Data=inputdata,BETA_vec = inputbeta2
 ,PRIORS=bayNorm_3D$PRIORS_LIST,mode_version=T,Conditions
 =Origin_Conditions)
 
-#You can also generate 3D array using the same prior estimates
+#You can also generate 3D array using the same prior
+estimates
 #as generated before.
 }
 

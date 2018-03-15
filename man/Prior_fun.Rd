@@ -8,17 +8,28 @@ Prior_fun(Data, BETA_vec, parallel = TRUE, NCores = 5, FIX_MU = TRUE,
   GR = FALSE, BB_SIZE = TRUE, verbose = TRUE)
 }
 \arguments{
-\item{Data}{A matrix of single-cell expression where rows are genes and columns are samples (cells). This object should be of class \code{matrix} rather than \code{data.frame}.}
+\item{Data}{A matrix of single-cell expression where rows
+are genes and columns are samples (cells). This object
+should be of class \code{matrix} rather
+than \code{data.frame}.}
 
 \item{BETA_vec}{A vector of capture efficiencies of cells.}
 
-\item{parallel}{If TRUE, 5 cores will be used for parallelization. Default is TRUE.}
+\item{parallel}{If TRUE, 5 cores will be used for
+parallelization. Default is TRUE.}
 
-\item{NCores}{number of cores to use, default is 5. This will be used to set up a parallel environment using either MulticoreParam (Linux, Mac) or SnowParam (Windows) with \code{NCores} using the package \code{BiocParallel}.}
+\item{NCores}{number of cores to use, default is 5.
+This will be used to set up a parallel environment
+using either MulticoreParam (Linux, Mac) or
+SnowParam (Windows) with \code{NCores} using the
+package \code{BiocParallel}.}
 
 \item{FIX_MU}{If TRUE, then 1D optimization, otherwise 2D optimization (slow). Default is TRUE.}
 
-\item{GR}{If TRUE, the gradient function will be used in optimization. However since the gradient function itself is very complicated, it does not help too much in speeding up. Default is FALSE.}
+\item{GR}{If TRUE, the gradient function will be used
+in optimization. However since the gradient function
+itself is very complicated, it does not help too much
+in speeding up. Default is FALSE.}
 
 \item{BB_SIZE}{If TRUE, estimate BB size, and then use it for adjusting MME SIZE. Use the adjusted MME size for bayNorm. Default is TRUE.}
 
