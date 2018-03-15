@@ -84,6 +84,9 @@ BetaFun<-function(Data,MeanBETA){
 #'
 #' @export
 EstPrior<-function(Data,verbose=TRUE){
+
+  i<-NULL
+
   CoefDat<-foreach(i=1:nrow(Data),.combine=rbind)%do%{
     suppressWarnings(qq<-fitdistrplus::fitdist(Data[i,],'nbinom',method='mme',keepdata=FALSE))
     return(coef(qq))
@@ -244,6 +247,10 @@ if(BB_SIZE){
 #'
 BB_Fun<-function(Data,BETA_vec,INITIAL_MU_vec,INITIAL_SIZE_vec,MU_lower=0.01,MU_upper=500,SIZE_lower=0.01,SIZE_upper=30,parallel=FALSE,NCores=5,FIX_MU=TRUE,GR=FALSE)
 {
+
+  Geneind<-NULL
+
+
   if(FIX_MU){#1D
 
     lower_input=SIZE_lower

@@ -1,7 +1,7 @@
 Package: bayNorm
 Type: Package
 Title: Single-cell RNA sequencing data normalization
-Version: 0.1.0
+Version: 0.99.0
 Author: WENHAO TANG
 Maintainer: WENHAO TANG <wt215@ic.ac.uk>
 Description: bayNorm is used for normalizing single-cell RNA-seq data.

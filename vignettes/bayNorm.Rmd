@@ -1,0 +1,49 @@
+---
+title: "Introduction to bayNorm"
+date: "`r BiocStyle::doc_date()`"
+package: "`r BiocStyle::pkg_ver('bayNorm')`"
+author: 
+- name: Wenhao Tang
+  email: wt215@ic.ac.uk
+- name: Vahid Shahrezaei
+  email: v.shahrezaei@imperial.ac.uk
+output: 
+  BiocStyle::html_document:
+    toc: true
+    toc_depth: 2
+    fig_width: 16
+bibliography: library.bib
+vignette: >
+  %\VignetteIndexEntry{Introduction to bayNorm}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}  
+---
+
+```{r, echo=FALSE, results="hide", message=FALSE}
+require(knitr)
+opts_chunk$set(error=FALSE, message=FALSE, warning=FALSE, dpi = 30)
+knitr::opts_chunk$set(dev="png")
+```
+
+```{r library, echo=FALSE}
+library(bayNorm)
+library(BiocStyle)
+```
+
+# Introduction 
+
+Coming soon......
+
+***
+
+# Session information
+
+```{r SessionInfo}
+sessionInfo()
+```
+
+***
+
+# References
+
+
