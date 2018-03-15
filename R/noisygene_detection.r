@@ -41,8 +41,10 @@
 #' data("EXAMPLE_DATA_list")
 #' \dontrun{
 #' noisy_out<-noisy_gene_detection(Data=EXAMPLE_DATA_list$inputdata,BETA_vec
-#' =EXAMPLE_DATA_list$inputbeta, mode_version = FALSE, S = 20,parallel = TRUE, NCores = 5,
-#' FIX_MU = TRUE, GR = FALSE, BB_SIZE = TRUE, verbose = TRUE, plot.out = TRUE)
+#' =EXAMPLE_DATA_list$inputbeta, mode_version = FALSE,
+#' S = 20,parallel = TRUE, NCores = 5,
+#' FIX_MU = TRUE, GR = FALSE, BB_SIZE = TRUE,
+#' verbose = TRUE, plot.out = TRUE)
 #' }
 #'
 #' @import parallel

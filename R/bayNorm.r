@@ -87,17 +87,23 @@
 #'
 #' @export
 #'
-bayNorm<-function(Data,BETA_vec,Conditions=NULL,UMI_sffl=NULL,Prior_type=NULL,mode_version=FALSE,S=20,parallel=TRUE,NCores=5,FIX_MU=TRUE,GR=FALSE,BB_SIZE=TRUE,verbose=TRUE){
+bayNorm<-function(Data,BETA_vec,Conditions=NULL,UMI_sffl=NULL
+                  ,Prior_type=NULL,mode_version=FALSE,S=20
+                  ,parallel=TRUE,NCores=5,FIX_MU=TRUE,GR=FALSE
+                  ,BB_SIZE=TRUE,verbose=TRUE){
 
 
     #Adapted from SCnorm
     if(methods::is(Data, "SummarizedExperiment")){
 
-      if (is.null(  SummarizedExperiment::assayNames(Data)) || SummarizedExperiment::assayNames(Data)[1] != "Counts") {
+      if (is.null(SummarizedExperiment::assayNames(Data))
+          || SummarizedExperiment::assayNames(Data)[1] != "Counts") {
         message("Renaming the first element in assays(Data) to 'Counts'")
         SummarizedExperiment::assayNames(Data)[1] <- "Counts"
 
-        if (is.null(colnames(SummarizedExperiment::assays(Data)[["Counts"]]))) {stop("Must supply sample/cell names!")}
+        if (is.null(colnames(SummarizedExperiment::assays(
+          Data)[["Counts"]]))) {
+          stop("Must supply sample/cell names!")}
 
       }
       Data<-SummarizedExperiment::assays(Data)[["Counts"]]
@@ -124,13 +130,20 @@ bayNorm<-function(Data,BETA_vec,Conditions=NULL,UMI_sffl=NULL,Prior_type=NULL,mo
       }
 
 #Some pre-checkings:
-    if(class(Data)!='matrix'){stop("Input data should be of class matrix")}
-    if(sum(duplicated(rownames(Data)))>0){warning("There are duplicated row names in Data")}
-    if(sum(duplicated(colnames(Data)))>0){warning("There are duplicated column names in Data")}
+    if(class(Data)!='matrix'){
+      stop("Input data should be of class matrix")}
+    if(sum(duplicated(rownames(Data)))>0){
+      warning("There are duplicated row names in Data")}
+    if(sum(duplicated(colnames(Data)))>0){
+      warning("There are duplicated column names in Data")}
 
 
-    if(min(BETA_vec)<=0 | max(BETA_vec)>=1){stop("The range of BETA must be within (0,1).")}
-    if(ncol(Data)!=length(BETA_vec)){stop("The number of cells (columns) in Data is not consistent with the number of elements in BETA_vec.")}
+    if(min(BETA_vec)<=0 | max(BETA_vec)>=1){
+      stop("The range of BETA must be within (0,1).")}
+    if(ncol(Data)!=length(BETA_vec)){
+      stop("The number of cells (columns) in Data is
+           not consistent with the number of elements
+           in BETA_vec.")}
 
 
     if(is.null(Conditions)){
@@ -142,7 +155,10 @@ bayNorm<-function(Data,BETA_vec,Conditions=NULL,UMI_sffl=NULL,Prior_type=NULL,mo
       Data_sr<-round(Data/UMI_sffl)
       }
 
-    PRIORS=Prior_fun(Data=Data_sr,BETA_vec=BETA_vec,parallel=parallel,NCores=NCores,FIX_MU=FIX_MU,GR=GR,BB_SIZE=BB_SIZE,verbose=verbose)
+    PRIORS=Prior_fun(Data=Data_sr,BETA_vec=BETA_vec,
+                     parallel=parallel,NCores=NCores,
+                     FIX_MU=FIX_MU,GR=GR,BB_SIZE=BB_SIZE,
+                     verbose=verbose)
     if(BB_SIZE){
       MU_input=PRIORS$MME_prior$MME_MU
       SIZE_input=PRIORS$MME_SIZE_adjust
@@ -152,12 +168,16 @@ bayNorm<-function(Data,BETA_vec,Conditions=NULL,UMI_sffl=NULL,Prior_type=NULL,mo
     }
 
     if(!mode_version){
-    Bay_array<-Main_Bay(Data=Data_sr,BETA_vec=BETA_vec,size=SIZE_input,mu=MU_input,S=S,thres=max(Data_sr)*2)
+    Bay_array<-Main_Bay(Data=Data_sr,BETA_vec=BETA_vec,
+                        size=SIZE_input,mu=MU_input,S=S,
+                        thres=max(Data_sr)*2)
     rownames(Bay_array)<-rownames(Data)
     colnames(Bay_array)<-colnames(Data)
     return(list(Bay_array=Bay_array,PRIORS=PRIORS,BETA=BETA_vec))
     }else{ #mode
-      Bay_mat<-Main_mode_Bay(Data=Data_sr,BETA_vec=BETA_vec,size=SIZE_input,mu=MU_input,S=S,thres=max(Data_sr)*2)
+      Bay_mat<-Main_mode_Bay(Data=Data_sr,BETA_vec=BETA_vec,
+                             size=SIZE_input,mu=MU_input,
+                             S=S,thres=max(Data_sr)*2)
       rownames(Bay_mat)<-rownames(Data)
       colnames(Bay_mat)<-colnames(Data)
       return(list(Bay_mat=Bay_mat,PRIORS=PRIORS,BETA=BETA_vec))
@@ -169,36 +189,56 @@ bayNorm<-function(Data,BETA_vec,Conditions=NULL,UMI_sffl=NULL,Prior_type=NULL,mo
 
 
   } else{# multiple groups
-    if (ncol(Data) != length(Conditions)) {stop("Number of columns in
+    if (ncol(Data) != length(Conditions)) {
+stop("Number of columns in
       expression matrix must match length of conditions vector!")}
-    if(is.null(Prior_type)){warning("Prior_type needs to be specified when Conditions are specified, now Prior_type is set to be LL")
+    if(is.null(Prior_type)){
+      warning("Prior_type needs to be specified when
+              Conditions are specified, now Prior_type is
+              set to be LL")
      Prior_type='LL'
      }
-    if(is.null(names(Conditions))) {names(Conditions) <- colnames(Data)}
+    if(is.null(names(Conditions))) {
+      names(Conditions) <- colnames(Data)
+      }
    Levels <- unique(Conditions)
 
 
     if(is.null(UMI_sffl)){#UMI
-     DataList<- lapply(seq_along(Levels), function(x){Data[,which(Conditions == Levels[x])]})
-     DataList_sr <- lapply(seq_along(Levels), function(x){Data[,which(Conditions == Levels[x])]})
+     DataList<- lapply(seq_along(Levels),
+                       function(x){Data[,which(Conditions == Levels[x])]
+                         })
+     DataList_sr<-lapply(seq_along(Levels),
+                           function(x){
+                          Data[,which(Conditions == Levels[x])]})
 
-     BETAList <- lapply(seq_along(Levels), function(x){BETA_vec[which(Conditions == Levels[x])]})
+     BETAList <- lapply(seq_along(Levels),
+                        function(x){
+                          BETA_vec[which(Conditions == Levels[x])]})
    }else{#non-UMI
 
-     DataList<- lapply(seq_along(Levels), function(x){Data[,which(Conditions == Levels[x])]})
-     DataList_sr <- lapply(seq_along(Levels), function(x){round(Data[,which(Conditions == Levels[x])]/UMI_sffl[x])})
-     BETAList <- lapply(seq_along(Levels), function(x){BETA_vec[which(Conditions == Levels[x])]})
+     DataList<- lapply(seq_along(Levels), function(x){
+       Data[,which(Conditions == Levels[x])]})
+     DataList_sr <- lapply(seq_along(Levels), function(x){
+       round(Data[,which(Conditions == Levels[x])]/UMI_sffl[x])})
+     BETAList <- lapply(seq_along(Levels), function(x){
+       BETA_vec[which(Conditions == Levels[x])]})
    }
 
 
    if(Prior_type=='LL'){
      PRIORS_LIST<-list()
      for(i in 1:length(Levels)){
-       PRIORS_LIST[[i]]<-Prior_fun(Data=DataList_sr[[i]],BETA_vec=BETAList[[i]],parallel=parallel,NCores=NCores,FIX_MU=FIX_MU,GR=GR,BB_SIZE=BB_SIZE,verbose=verbose)
-
-     }
+       PRIORS_LIST[[i]]<-Prior_fun(Data=DataList_sr[[i]],
+          BETA_vec=BETAList[[i]],parallel=parallel,NCores=NCores,
+            FIX_MU=FIX_MU,GR=GR,BB_SIZE=BB_SIZE,verbose=verbose)
+}
    }else if (Prior_type=='GG'){
-     PROPRS_TEMP<-Prior_fun(Data=do.call(cbind,DataList_sr),BETA_vec=do.call(c,BETAList),parallel=parallel,NCores=NCores,FIX_MU=FIX_MU,GR=GR,BB_SIZE=BB_SIZE,verbose=verbose)
+     PROPRS_TEMP<-Prior_fun(Data=do.call(cbind,DataList_sr),
+                            BETA_vec=do.call(c,BETAList),parallel=parallel,
+                            NCores=NCores,FIX_MU=FIX_MU,
+                            GR=GR,BB_SIZE=BB_SIZE,
+                            verbose=verbose)
 
      PRIORS_LIST<-list()
      for(i in 1:length(Levels)){
@@ -227,13 +267,17 @@ bayNorm<-function(Data,BETA_vec,Conditions=NULL,UMI_sffl=NULL,Prior_type=NULL,mo
      }
 
 
-     Bay_array_list[[i]]<-Main_Bay(Data=DataList_sr[[i]],BETA_vec=BETAList[[i]],size=SIZE_input,mu=MU_input,S=S,thres=max(Data)*2)
+     Bay_array_list[[i]]<-Main_Bay(Data=DataList_sr[[i]],
+                                   BETA_vec=BETAList[[i]],
+                                   size=SIZE_input,mu=MU_input,
+                                   S=S,thres=max(Data)*2)
 
      rownames(Bay_array_list[[i]])<-rownames(DataList[[i]])
      colnames(Bay_array_list[[i]])<-colnames(DataList[[i]])
    }
    names(Bay_array_list)<-paste('Group',Levels)
-   return(list(Bay_array_list=Bay_array_list,PRIORS_LIST=PRIORS_LIST,BETA=BETAList))
+   return(list(Bay_array_list=Bay_array_list,
+               PRIORS_LIST=PRIORS_LIST,BETA=BETAList))
    }else{#mode
 
      Bay_mat_list<-list()
@@ -247,13 +291,18 @@ bayNorm<-function(Data,BETA_vec,Conditions=NULL,UMI_sffl=NULL,Prior_type=NULL,mo
          SIZE_input=PRIORS_LIST[[i]]$MME_prior$MME_SIZE
        }
 
-       Bay_mat_list[[i]]<-Main_mode_Bay(Data=DataList_sr[[i]],BETA_vec=BETAList[[i]],size=SIZE_input,mu=MU_input,S=S,thres=max(Data)*2)
+       Bay_mat_list[[i]]<-Main_mode_Bay(Data=DataList_sr[[i]],
+                                        BETA_vec=BETAList[[i]],
+                                        size=SIZE_input,
+                                        mu=MU_input,S=S,
+                                        thres=max(Data)*2)
 
        rownames(Bay_mat_list[[i]])<-rownames(DataList[[i]])
        colnames(Bay_mat_list[[i]])<-colnames(DataList[[i]])
      }
      names(Bay_mat_list)<-paste('Group',Levels)
-     return(list(Bay_mat_list=Bay_mat_list,PRIORS_LIST=PRIORS_LIST,BETA=BETAList))
+     return(list(Bay_mat_list=Bay_mat_list,
+                 PRIORS_LIST=PRIORS_LIST,BETA=BETAList))
 
    } #end of mode for multiple groups
  }# end for multiple groups
@@ -268,8 +317,9 @@ bayNorm<-function(Data,BETA_vec,Conditions=NULL,UMI_sffl=NULL,Prior_type=NULL,mo
 #' @title bayNorm with estimated parameters as input
 #'
 #' @description This is a supplementary function for
-#' \code{bayNorm}. It is useful if you have already run \code{bayNorm} before and try to simulate 3D or 3D matrix
-#' using the same prior estimates.
+#' \code{bayNorm}. It is useful if you have already
+#' run \code{bayNorm} before and try to simulate 3D
+#' or 3D matrix using the same prior estimates.
 #' @param Data A matrix of single-cell expression where rows
 #' are genes and columns are samples (cells). \code{Data}
 #' can be of class \code{SummarizedExperiment} or just matrix.
@@ -285,7 +335,9 @@ bayNorm<-function(Data,BETA_vec,Conditions=NULL,UMI_sffl=NULL,Prior_type=NULL,mo
 #' non UMI based. If non-null and Conditions is non-null, then
 #' UMI_sffl should be a vector of length equal to the number of
 #' groups. Default is set to be NULL.
-#' @param  mode_version If TRUE, bayNorm return mode version normalized data which is of 2D matrix instead of 3D array. Default is FALSE.
+#' @param  mode_version If TRUE, bayNorm return mode
+#' version normalized data which is of 2D matrix
+#' instead of 3D array. Default is FALSE.
 #' @param S The number of samples you would like to
 #' generate from estimated posterior distribution
 #' (The third dimension of 3D array). Default is 20.
@@ -349,16 +401,22 @@ bayNorm<-function(Data,BETA_vec,Conditions=NULL,UMI_sffl=NULL,Prior_type=NULL,mo
 #'
 #' @export
 #'
-bayNorm_sup<-function(Data,BETA_vec,PRIORS=NULL,Conditions=NULL,UMI_sffl=NULL,mode_version=FALSE,S=20,parallel=TRUE,NCores=5,BB_SIZE=TRUE,verbose=TRUE){
+bayNorm_sup<-function(Data,BETA_vec,PRIORS=NULL,
+                      Conditions=NULL,UMI_sffl=NULL,
+                      mode_version=FALSE,S=20,
+                      parallel=TRUE,NCores=5,BB_SIZE=TRUE,
+                      verbose=TRUE){
 
 
   if(methods::is(Data, "SummarizedExperiment")){
 
-    if (is.null(  SummarizedExperiment::assayNames(Data)) || SummarizedExperiment::assayNames(Data)[1] != "Counts") {
+    if (is.null(  SummarizedExperiment::assayNames(Data))
+        || SummarizedExperiment::assayNames(Data)[1] != "Counts") {
       message("Renaming the first element in assays(Data) to 'Counts'")
       SummarizedExperiment::assayNames(Data)[1] <- "Counts"
 
-      if (is.null(colnames(SummarizedExperiment::assays(Data)[["Counts"]]))) {stop("Must supply sample/cell names!")}
+      if (is.null(colnames(SummarizedExperiment::assays(Data)[["Counts"]]))) {
+        stop("Must supply sample/cell names!")}
 
     }
     Data<-SummarizedExperiment::assays(Data)[["Counts"]]
@@ -387,12 +445,17 @@ bayNorm_sup<-function(Data,BETA_vec,PRIORS=NULL,Conditions=NULL,UMI_sffl=NULL,mo
     }
 
     if(!mode_version){
-      Bay_array<-Main_Bay(Data=Data_sr,BETA_vec=BETA_vec,size=SIZE_input,mu=MU_input,S=S,thres=max(Data_sr)*2)
+      Bay_array<-Main_Bay(Data=Data_sr,BETA_vec=BETA_vec,
+                          size=SIZE_input,mu=MU_input,S=S,
+                          thres=max(Data_sr)*2)
       rownames(Bay_array)<-rownames(Data)
       colnames(Bay_array)<-colnames(Data)
-      return(list(Bay_array=Bay_array,PRIORS=PRIORS,BETA=BETA_vec))
+      return(list(Bay_array=Bay_array,PRIORS=PRIORS,
+                  BETA=BETA_vec))
     }else{ #mode
-      Bay_mat<-Main_mode_Bay(Data=Data_sr,BETA_vec=BETA_vec,size=SIZE_input,mu=MU_input,S=S,thres=max(Data_sr)*2)
+      Bay_mat<-Main_mode_Bay(Data=Data_sr,BETA_vec=BETA_vec,
+                             size=SIZE_input,mu=MU_input,
+                             S=S,thres=max(Data_sr)*2)
       rownames(Bay_mat)<-rownames(Data)
       colnames(Bay_mat)<-colnames(Data)
       return(list(Bay_mat=Bay_mat,PRIORS=PRIORS,BETA=BETA_vec))
@@ -404,20 +467,29 @@ bayNorm_sup<-function(Data,BETA_vec,PRIORS=NULL,Conditions=NULL,UMI_sffl=NULL,mo
 
 
   } else{# multiple groups
-    if (ncol(Data) != length(Conditions)) {stop("Number of columns in expression matrix must match length of conditions vector!")}
-    if(is.null(names(Conditions))) {names(Conditions) <- colnames(Data)}
+    if (ncol(Data) != length(Conditions)) {
+      stop("Number of columns in expression matrix
+           must match length of conditions vector!")}
+    if(is.null(names(Conditions))) {
+      names(Conditions) <- colnames(Data)}
     Levels <- unique(Conditions)
 
     if(is.null(UMI_sffl)){#UMI
-      DataList<- lapply(seq_along(Levels), function(x){Data[,which(Conditions == Levels[x])]})
-      DataList_sr <- lapply(seq_along(Levels), function(x){Data[,which(Conditions == Levels[x])]})
+      DataList<- lapply(seq_along(Levels),
+                        function(x){Data[,which(Conditions == Levels[x])]})
+      DataList_sr <- lapply(seq_along(Levels),
+                            function(x){Data[,which(Conditions == Levels[x])]})
 
-      BETAList <- lapply(seq_along(Levels), function(x){BETA_vec[which(Conditions == Levels[x])]})
+      BETAList <- lapply(seq_along(Levels),
+                         function(x){BETA_vec[which(Conditions == Levels[x])]})
     }else{#non-UMI
 
-      DataList<- lapply(seq_along(Levels), function(x){Data[,which(Conditions == Levels[x])]})
-      DataList_sr <- lapply(seq_along(Levels), function(x){round(Data[,which(Conditions == Levels[x])]/UMI_sffl[x])})
-      BETAList <- lapply(seq_along(Levels), function(x){BETA_vec[which(Conditions == Levels[x])]})
+      DataList<- lapply(seq_along(Levels),
+                        function(x){Data[,which(Conditions == Levels[x])]})
+      DataList_sr <- lapply(seq_along(Levels),function(x){
+                          round(Data[,which(Conditions == Levels[x])]/UMI_sffl[x])})
+      BETAList <- lapply(seq_along(Levels),
+                         function(x){BETA_vec[which(Conditions == Levels[x])]})
     }
 
 ##use existing PRIORS
@@ -434,13 +506,18 @@ bayNorm_sup<-function(Data,BETA_vec,PRIORS=NULL,Conditions=NULL,UMI_sffl=NULL,mo
           MU_input=PRIORS_LIST[[i]]$MME_prior$MME_MU
           SIZE_input=PRIORS_LIST[[i]]$MME_prior$MME_SIZE
         }
-        Bay_array_list[[i]]<-Main_Bay(Data=DataList_sr[[i]],BETA_vec=BETAList[[i]],size=SIZE_input,mu=MU_input,S=S,thres=max(Data)*2)
+        Bay_array_list[[i]]<-Main_Bay(Data=DataList_sr[[i]],
+                                      BETA_vec=BETAList[[i]],
+                                      size=SIZE_input,
+                                      mu=MU_input,S=S,
+                                      thres=max(Data)*2)
 
         rownames(Bay_array_list[[i]])<-rownames(DataList[[i]])
         colnames(Bay_array_list[[i]])<-colnames(DataList[[i]])
       }
       names(Bay_array_list)<-paste('Group',Levels)
-      return(list(Bay_array_list=Bay_array_list,PRIORS_LIST=PRIORS_LIST,BETA=BETAList))
+      return(list(Bay_array_list=Bay_array_list,
+                  PRIORS_LIST=PRIORS_LIST,BETA=BETAList))
     }else{#mode
 
       Bay_mat_list<-list()
@@ -454,13 +531,18 @@ bayNorm_sup<-function(Data,BETA_vec,PRIORS=NULL,Conditions=NULL,UMI_sffl=NULL,mo
           SIZE_input=PRIORS_LIST[[i]]$MME_prior$MME_SIZE
         }
 
-        Bay_mat_list[[i]]<-Main_mode_Bay(Data=DataList_sr[[i]],BETA_vec=BETAList[[i]],size=SIZE_input,mu=MU_input,S=S,thres=max(Data)*2)
+        Bay_mat_list[[i]]<-Main_mode_Bay(Data=DataList_sr[[i]],
+                                         BETA_vec=BETAList[[i]],
+                                         size=SIZE_input,
+                                         mu=MU_input,S=S,
+                                         thres=max(Data)*2)
 
         rownames(Bay_mat_list[[i]])<-rownames(DataList[[i]])
         colnames(Bay_mat_list[[i]])<-colnames(DataList[[i]])
       }
       names(Bay_mat_list)<-paste('Group',Levels)
-      return(list(Bay_mat_list=Bay_mat_list,PRIORS_LIST=PRIORS_LIST,BETA=BETAList))
+      return(list(Bay_mat_list=Bay_mat_list,
+                  PRIORS_LIST=PRIORS_LIST,BETA=BETAList))
 
     } #end of mode for multiple groups
   }# end for multiple groups

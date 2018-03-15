@@ -29,7 +29,9 @@ non UMI based. If non-null and Conditions is non-null, then
 UMI_sffl should be a vector of length equal to the number of
 groups. Default is set to be NULL.}
 
-\item{mode_version}{If TRUE, bayNorm return mode version normalized data which is of 2D matrix instead of 3D array. Default is FALSE.}
+\item{mode_version}{If TRUE, bayNorm return mode
+version normalized data which is of 2D matrix
+instead of 3D array. Default is FALSE.}
 
 \item{S}{The number of samples you would like to
 generate from estimated posterior distribution
@@ -61,8 +63,9 @@ estimated parameters and input \code{BETA_vec}.
 }
 \description{
 This is a supplementary function for
-\code{bayNorm}. It is useful if you have already run \code{bayNorm} before and try to simulate 3D or 3D matrix
-using the same prior estimates.
+\code{bayNorm}. It is useful if you have already
+run \code{bayNorm} before and try to simulate 3D
+or 3D matrix using the same prior estimates.
 }
 \details{
 If you have run bayNorm before and obtained a
