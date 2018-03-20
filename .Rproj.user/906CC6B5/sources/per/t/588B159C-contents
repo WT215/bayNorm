@@ -1,2 +1,0 @@
-library(formatR)
-tidy_source(source="E:/RNAseqProject/bayNorm_dev/bayNorm/R/PRIOR_FUNCTIONS.r",file="E:/RNAseqProject/bayNorm_dev/bayNorm/R/maybe.r")
