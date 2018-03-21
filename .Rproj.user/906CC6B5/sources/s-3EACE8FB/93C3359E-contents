@@ -1,0 +1,54 @@
+if (parallel) {
+    cluster = makeCluster(NCores, type = "SOCK")
+    registerDoSNOW(cluster)
+    getDoParWorkers()
+    
+    iterations <- dim(Data)[1]
+    pb <- txtProgressBar(max = iterations, style = 3)
+    progress <- function(n) setTxtProgressBar(pb, n)
+    opts <- list(progress = progress)
+    
+    BB_parmat <- foreach(
+        Geneind = 1:dim(Data)[1],
+        .combine = c,
+        .options.snow = opts) %dopar% {
+            # print(Geneind)
+            mu <- INITIAL_MU_vec[Geneind]
+            size <- INITIAL_SIZE_vec[Geneind]
+            m_observed = Data[Geneind, ]
+            
+            if (!GR) {
+                
+                BB_opt <- BB::spg(
+                    par = size, fn = MarginalF_1D,
+                    MU = mu,m_observed = m_observed,
+                    BETA = BETA_vec,
+                    control = list(
+                        maximize = TRUE,
+                        trace = FALSE,
+                        maxfeval = 500),
+                    lower = lower_input,
+                    upper = upper_input)
+            } else {
+                BB_opt <- BB::spg(
+                    par = size, fn = MarginalF_1D,
+                    gr = GradientFun_1D,MU = mu,
+                    m_observed = m_observed,
+                    BETA = BETA_vec,
+                    control = list(
+                        maximize = TRUE,
+                        trace = FALSE,
+                        maxfeval = 500),
+                    lower = lower_input,
+                    upper = upper_input)
+            }
+            
+            optimal_par <- BB_opt$par
+            return(optimal_par)
+        }
+    
+    close(pb)
+    stopCluster(cluster)
+    
+    
+} else {

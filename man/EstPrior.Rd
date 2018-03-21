@@ -5,12 +5,20 @@
 \title{Estimate size and mu for NB distribution for each gene
 using MME method}
 \usage{
-EstPrior(Data, verbose = TRUE)
+EstPrior(Data, parallel = FALSE, NCores = 5, verbose = TRUE)
 }
 \arguments{
 \item{Data}{A matrix of single-cell expression where rows
 are genes and columns are samples (cells). \code{Data}
 can be of class \code{SummarizedExperiment} or just matrix.}
+
+\item{parallel}{If TRUE, 5 cores will be used for parallelization.
+Default is TRUE.}
+
+\item{NCores}{number of cores to use, default is 5. This will
+be used to set up a parallel environment using either
+MulticoreParam (Linux, Mac) or SnowParam (Windows) with NCores
+using the package BiocParallel.}
 
 \item{verbose}{print out status messages. Default is TRUE.}
 }

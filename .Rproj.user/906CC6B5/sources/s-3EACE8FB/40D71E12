@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1521542657768.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "215658065",
+    "id" : "40D71E12",
+    "lastKnownWriteTime" : 1521126009,
+    "last_content_update" : 1521126009,
+    "path" : "E:/RNAseqProject/bayNorm_dev/bayNorm/R/EXAMPLE_DATA_list.r",
+    "project_path" : "R/EXAMPLE_DATA_list.r",
+    "properties" : {
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

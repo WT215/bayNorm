@@ -1,0 +1,21 @@
+library(BiocCheck)
+BiocCheck("E:/RNAseqProject/bayNorm_dev/bayNorm")
+
+
+library(formatR)
+if (TRUE) {
+x = 1  # inline comments
+} else {
+x = 2
+print("Oh no... ask the right bracket to go away!")
+}
+
+tidy_source(indent=4)
+?tidy_source
+library(formatR)
+if (TRUE) {
+  x = 1  # inline comments
+} else {
+  x = 2
+  print("Oh no... ask the right bracket to go away!")
+}

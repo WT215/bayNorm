@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1521647389823.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "966323530",
+    "id" : "5FFEA520",
+    "lastKnownWriteTime" : 1521108285,
+    "last_content_update" : 1521108285,
+    "path" : "E:/RNAseqProject/bayNorm_dev/bayNorm/tests/testthat.R",
+    "project_path" : "tests/testthat.R",
+    "properties" : {
+    },
+    "relative_order" : 10,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
