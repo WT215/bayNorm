@@ -65,6 +65,37 @@ Main_mode_Bay <- function(Data, BETA_vec, size, mu, S, thres) {
     .Call('_bayNorm_Main_mode_Bay', PACKAGE = 'bayNorm', Data, BETA_vec, size, mu, S, thres)
 }
 
+#' @title  Mean_Bay
+#'
+#' @description bayNorm
+#' If the observed count is above 500,
+#' then we use normal distribution to
+#' approximate binomial distribution.
+#'
+#'
+#' @param Data raw count Data
+#' @param BETA_vec A vector of capture efficiencies of cells
+#' @param size A vector of size
+#' @param mu A vector of mu
+#' @param S number of samples that you want to generate
+#' @param thres for observed count greater
+#' than \code{thres}, use uniform prior.
+#' @return bayNorm normalized data
+#'
+#' @examples
+#' data("EXAMPLE_DATA_list")
+#' \dontrun{
+#' data("EXAMPLE_DATA_list")
+#' Norm_2D_matrix<-Main_mean_Bay(Data=EXAMPLE_DATA_list$inputdata,
+#' BETA_vec = EXAMPLE_DATA_list$inputbeta,
+#' size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,
+#' S=20,thres=10000000)
+#' }
+#' @export
+Main_mean_Bay <- function(Data, BETA_vec, size, mu, S, thres) {
+    .Call('_bayNorm_Main_mean_Bay', PACKAGE = 'bayNorm', Data, BETA_vec, size, mu, S, thres)
+}
+
 #' @title GradientFun_2D
 #'
 #' @description GradientFun_2D

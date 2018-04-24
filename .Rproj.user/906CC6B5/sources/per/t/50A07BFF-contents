@@ -35,6 +35,9 @@
 #' @param  mode_version If TRUE, bayNorm return mode version
 #' normalized data which is of 2D matrix instead of 3D array.
 #' Default is FALSE.
+#' @param  mean_version If TRUE, bayNorm return mean version
+#' normalized data which is of 2D matrix instead of 3D array.
+#' Default is FALSE.
 #' @param S The number of samples you would like to
 #' generate from estimated posterior distribution
 #' (The third dimension of 3D array). Default is 20.
@@ -90,7 +93,9 @@
 bayNorm <- function(
     Data, BETA_vec, Conditions = NULL,
     UMI_sffl = NULL,Prior_type = NULL,
-    mode_version = FALSE, S = 20,
+    mode_version = FALSE,
+    mean_version=FALSE,
+    S = 20,
     parallel = TRUE,NCores = 5,
     FIX_MU = TRUE, GR = FALSE,
     BB_SIZE = TRUE, verbose = TRUE) {
@@ -169,7 +174,7 @@ bayNorm <- function(
             SIZE_input = PRIORS$MME_prior$MME_SIZE
         }
 
-        if (!mode_version) {
+        if (!mode_version & !mean_version) {
             Bay_array <- Main_Bay(
                 Data = Data_sr,
                 BETA_vec = BETA_vec,
@@ -182,7 +187,7 @@ bayNorm <- function(
                 Bay_array = Bay_array,
                 PRIORS = PRIORS,
                 BETA = BETA_vec))
-        } else {
+        } else if(mode_version){
             # mode
             Bay_mat <- Main_mode_Bay(
                 Data = Data_sr,
@@ -196,6 +201,23 @@ bayNorm <- function(
                 Bay_mat = Bay_mat,
                 PRIORS = PRIORS,
                 BETA = BETA_vec))
+        } else if(mean_version){
+            # mean
+            Bay_mat <- Main_mean_Bay(
+                Data = Data_sr,
+                BETA_vec = BETA_vec,
+                size = SIZE_input,
+                mu = MU_input, S = 1000,
+                thres = max(Data_sr) *2)
+            rownames(Bay_mat) <- rownames(Data)
+            colnames(Bay_mat) <- colnames(Data)
+            return(list(
+                Bay_mat = Bay_mat,
+                PRIORS = PRIORS,
+                BETA = BETA_vec))
+
+
+
         }
 
         if (verbose) {
@@ -279,7 +301,7 @@ bayNorm <- function(
         }
 
         names(PRIORS_LIST) <- paste("Group", Levels)
-        if (!mode_version) {
+        if (!mode_version & !mean_version) {
             Bay_array_list <- list()
             for (i in 1:length(Levels)) {
 
@@ -307,7 +329,7 @@ bayNorm <- function(
             return(list(Bay_array_list = Bay_array_list,
                         PRIORS_LIST = PRIORS_LIST,
                         BETA = BETAList))
-        } else {
+        } else if(mode_version){
             # mode
 
             Bay_mat_list <- list()
@@ -332,10 +354,48 @@ bayNorm <- function(
                 colnames(Bay_mat_list[[i]]) <- colnames(DataList[[i]])
             }
             names(Bay_mat_list) <- paste("Group", Levels)
+            names(BETAList)<-paste("Group", Levels)
+
             return(list(Bay_mat_list = Bay_mat_list,
                         PRIORS_LIST = PRIORS_LIST,
                         BETA = BETAList))
-        }  #end of mode for multiple groups
+            #end of mode for multiple groups
+        }else if(mean_version){
+            Bay_mat_list <- list()
+            for (i in 1:length(Levels)) {
+
+                if (BB_SIZE) {
+                    MU_input = PRIORS_LIST[[i]]$MME_prior$MME_MU
+                    SIZE_input = PRIORS_LIST[[i]]$MME_SIZE_adjust
+                } else {
+                    MU_input = PRIORS_LIST[[i]]$MME_prior$MME_MU
+                    SIZE_input = PRIORS_LIST[[i]]$MME_prior$MME_SIZE
+                }
+
+                Bay_mat_list[[i]] <- Main_mean_Bay(
+                    Data = DataList_sr[[i]],
+                    BETA_vec = BETAList[[i]],
+                    size = SIZE_input,
+                    mu = MU_input,S = 1000,
+                    thres = max(Data) * 2)
+
+                rownames(Bay_mat_list[[i]]) <- rownames(DataList[[i]])
+                colnames(Bay_mat_list[[i]]) <- colnames(DataList[[i]])
+            }
+            names(Bay_mat_list) <- paste("Group", Levels)
+            names(BETAList)<-paste("Group", Levels)
+
+            return(list(Bay_mat_list = Bay_mat_list,
+                        PRIORS_LIST = PRIORS_LIST,
+                        BETA = BETAList))
+
+
+            #end of mean for multiple groups
+
+        }
+
+
+
     }  # end for multiple groups
 
     if (verbose) {
@@ -368,6 +428,9 @@ bayNorm <- function(
 #' @param  mode_version If TRUE, bayNorm return mode
 #' version normalized data which is of 2D matrix
 #' instead of 3D array. Default is FALSE.
+#' @param  mean_version If TRUE, bayNorm return mean version
+#' normalized data which is of 2D matrix instead of 3D array.
+#' Default is FALSE.
 #' @param S The number of samples you would like to
 #' generate from estimated posterior distribution
 #' (The third dimension of 3D array). Default is 20.
@@ -434,7 +497,9 @@ bayNorm <- function(
 bayNorm_sup <- function(
     Data, BETA_vec, PRIORS = NULL,
     Conditions = NULL, UMI_sffl = NULL,
-    mode_version = FALSE, S = 20,
+    mode_version = FALSE,
+    mean_version=FALSE,
+    S = 20,
     parallel = TRUE, NCores = 5,
     BB_SIZE = TRUE, verbose = TRUE) {
 
@@ -482,7 +547,7 @@ bayNorm_sup <- function(
             SIZE_input = PRIORS$MME_prior$MME_SIZE
         }
 
-        if (!mode_version) {
+        if (!mode_version & !mean_version) {
             Bay_array <- Main_Bay(
                 Data = Data_sr,
                 BETA_vec = BETA_vec,
@@ -494,7 +559,7 @@ bayNorm_sup <- function(
             return(list(Bay_array = Bay_array,
                         PRIORS = PRIORS,
                         BETA = BETA_vec))
-        } else {
+        } else if(mode_version){
 
             # mode
             Bay_mat <- Main_mode_Bay(
@@ -509,6 +574,21 @@ bayNorm_sup <- function(
             return(list(Bay_mat = Bay_mat,
                         PRIORS = PRIORS,
                         BETA = BETA_vec))
+        } else if(mean_version){
+
+            Bay_mat <- Main_mean_Bay(
+                Data = Data_sr,
+                BETA_vec = BETA_vec,
+                size = SIZE_input,
+                mu = MU_input, S =1000,
+                thres = max(Data_sr) *2)
+            rownames(Bay_mat) <- rownames(Data)
+            colnames(Bay_mat) <- colnames(Data)
+
+            return(list(Bay_mat = Bay_mat,
+                        PRIORS = PRIORS,
+                        BETA = BETA_vec))
+
         }
 
         if (verbose) {
@@ -559,7 +639,7 @@ bayNorm_sup <- function(
         ## use existing PRIORS
         PRIORS_LIST <- PRIORS
 
-        if (!mode_version) {
+        if (!mode_version & !mean_version) {
             Bay_array_list <- list()
             for (i in 1:length(Levels)) {
                 if (BB_SIZE) {
@@ -580,12 +660,13 @@ bayNorm_sup <- function(
                 colnames(Bay_array_list[[i]]) <- colnames(DataList[[i]])
             }
             names(Bay_array_list) <- paste("Group", Levels)
+            names(BETAList)<-paste("Group", Levels)
 
             return(list(
                 Bay_array_list = Bay_array_list,
                 PRIORS_LIST = PRIORS_LIST,
                 BETA = BETAList))
-        } else {
+        } else if(mode_version){
             # mode
 
             Bay_mat_list <- list()
@@ -612,12 +693,48 @@ bayNorm_sup <- function(
                 colnames(Bay_mat_list[[i]]) <- colnames(DataList[[i]])
             }
             names(Bay_mat_list) <- paste("Group", Levels)
+            names(BETAList)<-paste("Group", Levels)
+
+            return(list(Bay_mat_list = Bay_mat_list,
+                        PRIORS_LIST = PRIORS_LIST,
+                        BETA = BETAList))
+            #end of mode for multiple groups
+
+        }else if(mean_version){
+            Bay_mat_list <- list()
+
+            for (i in 1:length(Levels)) {
+
+                if (BB_SIZE) {
+                    MU_input = PRIORS_LIST[[i]]$MME_prior$MME_MU
+                    SIZE_input = PRIORS_LIST[[i]]$MME_SIZE_adjust
+
+                } else {
+                    MU_input = PRIORS_LIST[[i]]$MME_prior$MME_MU
+                    SIZE_input = PRIORS_LIST[[i]]$MME_prior$MME_SIZE
+                }
+
+                Bay_mat_list[[i]] <- Main_mean_Bay(
+                    Data = DataList_sr[[i]],
+                    BETA_vec = BETAList[[i]],
+                    size = SIZE_input,
+                    mu = MU_input,S = 1000,
+                    thres = max(Data) * 2)
+
+                rownames(Bay_mat_list[[i]]) <- rownames(DataList[[i]])
+                colnames(Bay_mat_list[[i]]) <- colnames(DataList[[i]])
+            }
+            names(Bay_mat_list) <- paste("Group", Levels)
+            names(BETAList)<-paste("Group", Levels)
 
             return(list(Bay_mat_list = Bay_mat_list,
                         PRIORS_LIST = PRIORS_LIST,
                         BETA = BETAList))
 
-        }  #end of mode for multiple groups
+
+
+
+        }
     }  # end for multiple groups
 
     if (verbose) {

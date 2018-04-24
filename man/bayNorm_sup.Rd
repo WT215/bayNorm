@@ -5,8 +5,8 @@
 \title{bayNorm with estimated parameters as input}
 \usage{
 bayNorm_sup(Data, BETA_vec, PRIORS = NULL, Conditions = NULL,
-  UMI_sffl = NULL, mode_version = FALSE, S = 20, parallel = TRUE,
-  NCores = 5, BB_SIZE = TRUE, verbose = TRUE)
+  UMI_sffl = NULL, mode_version = FALSE, mean_version = FALSE, S = 20,
+  parallel = TRUE, NCores = 5, BB_SIZE = TRUE, verbose = TRUE)
 }
 \arguments{
 \item{Data}{A matrix of single-cell expression where rows
@@ -32,6 +32,10 @@ groups. Default is set to be NULL.}
 \item{mode_version}{If TRUE, bayNorm return mode
 version normalized data which is of 2D matrix
 instead of 3D array. Default is FALSE.}
+
+\item{mean_version}{If TRUE, bayNorm return mean version
+normalized data which is of 2D matrix instead of 3D array.
+Default is FALSE.}
 
 \item{S}{The number of samples you would like to
 generate from estimated posterior distribution

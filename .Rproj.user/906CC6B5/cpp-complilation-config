@@ -10,7 +10,7 @@
         "-ID:/allR/R-3.4.4patched/include",
         "-DNDEBUG"
     ],
-    "hash" : "1521540002",
+    "hash" : "1521647000",
     "is_cpp" : true,
     "pch" : "Rcpp"
 }

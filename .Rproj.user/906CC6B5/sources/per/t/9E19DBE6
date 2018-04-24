@@ -5,14 +5,14 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "106922467",
+    "hash" : "3835033850",
     "id" : "9E19DBE6",
-    "lastKnownWriteTime" : 1521647000,
-    "last_content_update" : 1521647000861,
+    "lastKnownWriteTime" : 1524585929,
+    "last_content_update" : 1524585929855,
     "path" : "E:/RNAseqProject/bayNorm_dev/bayNorm/DESCRIPTION",
     "project_path" : "DESCRIPTION",
     "properties" : {
-        "cursorPosition" : "14,12",
+        "cursorPosition" : "14,10",
         "scrollLine" : "0"
     },
     "relative_order" : 9,

@@ -1,0 +1,151 @@
+load("E:/RNAseqProject/FORMAL_DATA/FISH_31012018/GIVETOSAM/bayNorm_smFISH_onlyNormalCells.RData")
+bayNorm_smFISH$BETA
+####Functions###
+#plot density
+qwerfun<-function(DenDat){
+
+
+  bw=1
+  Gg<-unique(DenDat$Genename)
+
+  filenn<-paste('Gene:',Gg,', bw=',bw,sep='')
+  library(ggplot2)
+
+  cbPalette <-  c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+  textsize=50
+
+  density_plot<-ggplot() +
+    geom_density(aes(x=DenDat$`Normalized count`,group=DenDat$`Normalization method`,colour=DenDat$`Normalization method`),bw=bw,size=2,position="identity", alpha=0.6)+
+    scale_colour_manual( values = cbPalette)+
+    labs(x = "Normalized count",y='density',color='Normalization methods')+
+    ggtitle(filenn)+
+    theme(legend.text = element_text(size = textsize),legend.title  = element_text(size = textsize),plot.title = element_text(size = textsize),axis.title = element_text(size = textsize),panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+          panel.background = element_blank(), axis.line = element_line(colour = "black"),plot.subtitle = element_text(size = textsize),plot.caption =  element_text(size = textsize),axis.text=element_text(size=textsize) ,legend.key.size = unit(1.5,"line"))
+  return(density_plot)
+}
+
+#plot violin
+qwerfun_violin<-function(DenDat){
+  bw=1
+  Gg<-unique(DenDat$Genename)
+  filenn<-paste('Gene:',Gg,', bw=',bw,sep='')
+  library(ggplot2)
+
+  cbPalette <-  c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+  textsize=50
+  density_plot<-ggplot() +
+    geom_violin(aes(x=DenDat$`Normalization method`,y=DenDat$`Normalized count`,group=DenDat$`Normalization method`,colour=DenDat$`Normalization method`),bw=bw,size=2,position="identity", alpha=0.6)+
+
+    scale_colour_manual( values = cbPalette)+
+    labs(x = "Gene",y='Distribution',color='Normalization methods')+
+    ggtitle(filenn)+
+
+    theme(legend.text = element_text(size = textsize),legend.title  = element_text(size = textsize),plot.title = element_text(size = textsize),axis.title = element_text(size = textsize),panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+          panel.background = element_blank(), axis.line = element_line(colour = "black"),plot.subtitle = element_text(size = textsize),plot.caption =  element_text(size = textsize),axis.text=element_text(size=textsize) ,legend.key.size = unit(1.5,"line"))
+  return(density_plot)
+}
+
+
+###Prepare data for plotting#########
+gene_cname<-c('rpb1','lsd90',"mot1","rhp7","pds5","SPAC27D7.09c","ptc2","php2")
+gene_cname2<-c('SPBC28F2.12','SPBC16E9.16c','SPBC1826.01c','SPCC330.02','SPAC110.02',"SPAC27D7.09c",'SPCC1223.11','SPBC725.11c')
+
+#Use new bayNorm: normalized only normal cells, mean BETA was estimated using smFISH
+bayused<-bayNorm_smFISH$Bay_array
+summary(bayNorm_smFISH$BETA)
+#Normalize raw data by just dividing raw count table by the BETA
+Raw_normal2<-t(t(Raw_normal)/bayNorm_smFISH$BETA)
+
+
+
+#another bayNorm data####
+load("E:/RNAseqProject/FORMAL_DATA/new_BETA7/BB_GG_28_11/MBB_GG_28_11/Bay_28_list.RData")
+nor0str1_lab<-c(0,1,0,0,0,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1)
+Bay_28_list_normal<-Bay_28_list[nor0str1_lab==0]
+library(abind)
+library(foreach)
+bayused_list<-foreach(i=1:23)%do%{
+  qq<-Bay_28_list_normal[[i]][gene_cname2,,]
+  return(qq)
+}
+bayused<-abind(bayused_list,along=2)
+dim(bayused)
+
+
+
+#begin########
+#smoothing bandwidth is fixed to be 1.
+bw=1
+
+#Each element in the list DenDat_list represent one of the 8 genes picked in smFISH experiment.
+ks_distance<-list()
+DenDat_list<-list()
+for(i in 1:8){
+
+  inputGused<-gene_cname[i]
+  Gused<-gene_cname2[which(gene_cname==inputGused)]
+
+  #x1: vector of smFISH counts
+  x1<-saint_cellcorrect_list2[[which(names(saint_cellcorrect_list2)==inputGused)]]
+  #x2: vector of bayNorm counts
+  x2<-as.vector(bayused[Gused,colnames(Raw_normal),])
+  #x3: vector of Raw_div counts
+  x3<-Raw_normal2[Gused,colnames(Raw_normal2)]
+  #x4: Raw
+  x4<-Raw_normal[Gused,colnames(Raw_normal2)]
+  
+  # set.seed(123)
+  # x1<-jitter(x1,factor=1)
+  # set.seed(234)
+  # x2<-jitter(x2,factor=1)
+  # set.seed(156)
+  # x3<-jitter(x3,factor=1)
+  # set.seed(178)
+  # x4<-jitter(x4,factor=1)
+
+  
+  ks_distance[[i]]<-c(ks.test(x2,x1)$statistic,ks.test(x2,x1)$p.value,ks.test(x3,x1)$statistic,ks.test(x3,x1)$p.value,ks.test(x4,x1)$statistic,ks.test(x4,x1)$p.value)
+  names(ks_distance[[i]])<-c('bayNorm','bayNorm pval','Raw_BETA','Raw_BETA pval','Raw','Raw pval')
+
+  qq<-median(x1)
+
+  x1<-x1/mean(x1)*qq
+  x2<-x2/mean(x2)*qq
+  x3<-x3/mean(x3)*qq
+
+
+  inputlist<-list(smFISH=x1,bayNorm=x2,Raw_div=x3)
+  Gg<-inputGused
+  methodd<-names(inputlist)
+  library(ggplot2)
+  library(foreach)
+  DenDat<-foreach(ii=1:length(inputlist),.combine=rbind)%do%{
+    aa<-inputlist[[ii]]
+    bb<-cbind(aa,rep(methodd[ii],length(aa)),rep(ii,length(aa)),rep(Gg,length(aa)))
+    return(bb)
+  }
+  colnames(DenDat)<-c('Normalized count','Normalization method','Colour','Genename')
+  DenDat<-as.data.frame(DenDat)
+  DenDat$`Normalized count`<-as.numeric(as.character(DenDat$`Normalized count`))
+  DenDat$`Normalization method`<-factor(DenDat$`Normalization method`,levels=unique(DenDat$`Normalization method`))
+
+  DenDat_list[[i]]<-DenDat
+
+}
+
+ks_mat<-do.call(rbind,ks_distance)
+rownames(ks_mat)<-gene_cname
+write.csv(ks_mat,file="E:/RNAseqProject/FORMAL_DATA/FISH_31012018/GIVETOSAM/bayNorm_smFISH.csv")
+
+######################begin plotting #############
+
+#Option 1: plot density
+gg_list<-lapply(DenDat_list,qwerfun)
+#Option 2: plot violin
+gg_list<-lapply(DenDat_list,qwerfun_violin)
+
+library(gridExtra)
+pdf("C:/Users/Wenhao/Desktop/V_originMBB_GG.pdf",width = 45, height = 30)
+do.call("grid.arrange", c(gg_list,ncol=2,nrow=4))
+dev.off()
+
