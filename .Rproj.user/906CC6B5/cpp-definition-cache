@@ -86,7 +86,7 @@
                 "column" : 15,
                 "file" : "E:/RNAseqProject/bayNorm_dev/bayNorm/src/bayNorm_main.cpp",
                 "kind" : 6,
-                "line" : 295,
+                "line" : 297,
                 "name" : "Main_mode_Bay(NumericMatrix, NumericVector, NumericVector, Nullable<NumericVector>, int, int)",
                 "parent_name" : "",
                 "usr" : "c:@F@Main_mode_Bay#$@N@Rcpp@C@Matrix>#VI14#@N@Rcpp@CT>1#T@PreserveStorage#$@N@Rcpp@C@Vector>#VI14#@N@Rcpp@CT>1#T@PreserveStorage#S1_#$@N@Rcpp@C@Nullable>#S1_#I#I#"
@@ -95,7 +95,7 @@
                 "column" : 15,
                 "file" : "E:/RNAseqProject/bayNorm_dev/bayNorm/src/bayNorm_main.cpp",
                 "kind" : 6,
-                "line" : 432,
+                "line" : 434,
                 "name" : "Main_mean_Bay(NumericMatrix, NumericVector, NumericVector, Nullable<NumericVector>, int, int)",
                 "parent_name" : "",
                 "usr" : "c:@F@Main_mean_Bay#$@N@Rcpp@C@Matrix>#VI14#@N@Rcpp@CT>1#T@PreserveStorage#$@N@Rcpp@C@Vector>#VI14#@N@Rcpp@CT>1#T@PreserveStorage#S1_#$@N@Rcpp@C@Nullable>#S1_#I#I#"
@@ -104,7 +104,7 @@
                 "column" : 8,
                 "file" : "E:/RNAseqProject/bayNorm_dev/bayNorm/src/bayNorm_main.cpp",
                 "kind" : 6,
-                "line" : 547,
+                "line" : 549,
                 "name" : "D_SIZE(double, double, NumericVector, NumericVector)",
                 "parent_name" : "",
                 "usr" : "c:@F@D_SIZE#d#d#$@N@Rcpp@C@Vector>#VI14#@N@Rcpp@CT>1#T@PreserveStorage#S0_#"
@@ -113,7 +113,7 @@
                 "column" : 8,
                 "file" : "E:/RNAseqProject/bayNorm_dev/bayNorm/src/bayNorm_main.cpp",
                 "kind" : 6,
-                "line" : 586,
+                "line" : 588,
                 "name" : "D_MU(double, double, NumericVector, NumericVector)",
                 "parent_name" : "",
                 "usr" : "c:@F@D_MU#d#d#$@N@Rcpp@C@Vector>#VI14#@N@Rcpp@CT>1#T@PreserveStorage#S0_#"
@@ -122,7 +122,7 @@
                 "column" : 15,
                 "file" : "E:/RNAseqProject/bayNorm_dev/bayNorm/src/bayNorm_main.cpp",
                 "kind" : 6,
-                "line" : 618,
+                "line" : 620,
                 "name" : "D_SIZE_MU_2D(NumericVector, NumericVector, NumericVector)",
                 "parent_name" : "",
                 "usr" : "c:@F@D_SIZE_MU_2D#$@N@Rcpp@C@Vector>#VI14#@N@Rcpp@CT>1#T@PreserveStorage#S0_#S0_#"
@@ -131,7 +131,7 @@
                 "column" : 15,
                 "file" : "E:/RNAseqProject/bayNorm_dev/bayNorm/src/bayNorm_main.cpp",
                 "kind" : 6,
-                "line" : 677,
+                "line" : 679,
                 "name" : "GradientFun_2D(NumericVector, NumericVector, NumericVector)",
                 "parent_name" : "",
                 "usr" : "c:@F@GradientFun_2D#$@N@Rcpp@C@Vector>#VI14#@N@Rcpp@CT>1#T@PreserveStorage#S0_#S0_#"
@@ -140,7 +140,7 @@
                 "column" : 8,
                 "file" : "E:/RNAseqProject/bayNorm_dev/bayNorm/src/bayNorm_main.cpp",
                 "kind" : 6,
-                "line" : 703,
+                "line" : 705,
                 "name" : "MarginalF_2D(NumericVector, NumericVector, NumericVector)",
                 "parent_name" : "",
                 "usr" : "c:@F@MarginalF_2D#$@N@Rcpp@C@Vector>#VI14#@N@Rcpp@CT>1#T@PreserveStorage#S0_#S0_#"
@@ -149,7 +149,7 @@
                 "column" : 8,
                 "file" : "E:/RNAseqProject/bayNorm_dev/bayNorm/src/bayNorm_main.cpp",
                 "kind" : 6,
-                "line" : 738,
+                "line" : 740,
                 "name" : "D_SIZE_MU_1D(double, double, NumericVector, NumericVector)",
                 "parent_name" : "",
                 "usr" : "c:@F@D_SIZE_MU_1D#d#d#$@N@Rcpp@C@Vector>#VI14#@N@Rcpp@CT>1#T@PreserveStorage#S0_#"
@@ -158,7 +158,7 @@
                 "column" : 8,
                 "file" : "E:/RNAseqProject/bayNorm_dev/bayNorm/src/bayNorm_main.cpp",
                 "kind" : 6,
-                "line" : 793,
+                "line" : 795,
                 "name" : "GradientFun_1D(double, double, NumericVector, NumericVector)",
                 "parent_name" : "",
                 "usr" : "c:@F@GradientFun_1D#d#d#$@N@Rcpp@C@Vector>#VI14#@N@Rcpp@CT>1#T@PreserveStorage#S0_#"
@@ -167,7 +167,7 @@
                 "column" : 8,
                 "file" : "E:/RNAseqProject/bayNorm_dev/bayNorm/src/bayNorm_main.cpp",
                 "kind" : 6,
-                "line" : 821,
+                "line" : 823,
                 "name" : "MarginalF_1D(double, double, NumericVector, NumericVector)",
                 "parent_name" : "",
                 "usr" : "c:@F@MarginalF_1D#d#d#$@N@Rcpp@C@Vector>#VI14#@N@Rcpp@CT>1#T@PreserveStorage#S0_#"
@@ -176,13 +176,13 @@
                 "column" : 15,
                 "file" : "E:/RNAseqProject/bayNorm_dev/bayNorm/src/bayNorm_main.cpp",
                 "kind" : 6,
-                "line" : 875,
+                "line" : 877,
                 "name" : "DownSampling(NumericMatrix, NumericVector)",
                 "parent_name" : "",
                 "usr" : "c:@F@DownSampling#$@N@Rcpp@C@Matrix>#VI14#@N@Rcpp@CT>1#T@PreserveStorage#$@N@Rcpp@C@Vector>#VI14#@N@Rcpp@CT>1#T@PreserveStorage#"
             }
         ],
         "file" : "E:/RNAseqProject/bayNorm_dev/bayNorm/src/bayNorm_main.cpp",
-        "file_last_write" : 1522315360
+        "file_last_write" : 1524745373
     }
 ]

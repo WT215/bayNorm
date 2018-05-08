@@ -1,16 +1,13 @@
 {
     "args" : [
-        "-ID:/allR/RStudio/resources/libclang/builtin-headers/3.4",
-        "-Ic:/Rtools/mingw_64/x86_64-w64-mingw32/include",
-        "-Ic:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++",
-        "-Ic:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32",
-        "-ID:/allR/R-3.4.4patched/library/Rcpp/include",
-        "-ID:/allR/R-3.4.4patched/library/RcppArmadillo/include",
-        "-ID:/allR/R-3.4.4patched/library/RcppProgress/include",
-        "-ID:/allR/R-3.4.4patched/include",
+        "-ID:/ProgramData/Anaconda3/Library/share/rstudio/resources/libclang/builtin-headers/3.4",
+        "-ID:/allR/R-3.5.0patched/library/Rcpp/include",
+        "-ID:/allR/R-3.5.0patched/library/RcppArmadillo/include",
+        "-ID:/allR/R-3.5.0patched/library/RcppProgress/include",
+        "-ID:/allR/R-3.5.0patched/include",
         "-DNDEBUG"
     ],
-    "hash" : "1521647000",
+    "hash" : "1525082959",
     "is_cpp" : true,
     "pch" : "Rcpp"
 }

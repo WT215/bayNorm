@@ -156,8 +156,10 @@ NumericVector post_wrapper_norm(IntegerVector x,double m,double beta,int last, i
 //' }
 //' @export
 // [[Rcpp::export]]
-NumericVector Main_Bay(NumericMatrix Data, NumericVector BETA_vec,
-                       NumericVector size, Nullable<NumericVector> mu,
+NumericVector Main_Bay(NumericMatrix Data,
+                       NumericVector BETA_vec,
+                       NumericVector size,
+                       Nullable<NumericVector> mu,
                        int S,int thres)
 {
 

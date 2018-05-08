@@ -4,7 +4,11 @@ Title: Single-cell RNA sequencing data normalization
 Version: 0.99.0
 Authors@R: c(person("Wenhao", "Tang", role=c("aut", "cre"),
         email="wt215@ic.ac.uk"), 
-        person("Vahid", "Shahrezaei", role=c("aut"))) 
+        person("François", "Bertaux", role=c("aut")),
+        person("Claire", "Stefanelli", role=c("aut")),
+        person("Malika", "Saint", role=c("aut")),
+        person("Samuel", "Marguerat", role=c("aut")),
+        person("Vahid", "Shahrezaei", role=c("aut")))
 Maintainer: Wenhao Tang <wt215@ic.ac.uk>
 Description: bayNorm is used for normalizing single-cell RNA-seq data.
 License: GPL (>= 2)
