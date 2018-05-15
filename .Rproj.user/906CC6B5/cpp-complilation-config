@@ -1,0 +1,13 @@
+{
+    "args" : [
+        "-ID:/ProgramData/Anaconda3/Library/share/rstudio/resources/libclang/builtin-headers/3.4",
+        "-ID:/allR/R-3.5.0patched/library/Rcpp/include",
+        "-ID:/allR/R-3.5.0patched/library/RcppArmadillo/include",
+        "-ID:/allR/R-3.5.0patched/library/RcppProgress/include",
+        "-ID:/allR/R-3.5.0patched/include",
+        "-DNDEBUG"
+    ],
+    "hash" : "1525082959",
+    "is_cpp" : true,
+    "pch" : "Rcpp"
+}

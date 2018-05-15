@@ -1,0 +1,286 @@
+load("E:/RNAseqProject/SIMULATION/SIM_1/SIM_1.RData")
+
+
+TrueSIZES1<-1/(rowMeans(SCE@assays@.xData$data$BCV[,CONDITION==1])[-DROP])^2
+TrueSIZES2<-1/(rowMeans(SCE@assays@.xData$data$BCV[,CONDITION==2])[-DROP])^2
+TrueMU<-rowData(SCE)$BaseGeneMean[-DROP]
+
+TrueMU<-rowData(SCE)$BaseGeneMean[-DROP]
+
+Geneind<-500
+
+geneuse<-rownames(RAW_DAT)[Geneind]
+MMEADJSIZE<-mbayNorm_out$PRIORS_LIST$`Group 1`$MME_SIZE_adjust
+names(MMEADJSIZE)<-rownames(RAW_DAT)
+
+MME_SIZE<-mbayNorm_out$PRIORS_LIST$`Group 1`$MME_prior$MME_SIZE
+names(MME_SIZE)<-rownames(RAW_DAT)
+BBSIZE<-mbayNorm_out$PRIORS_LIST$`Group 1`$BB_prior[,2]
+
+
+
+plot(MME_SIZE,BBSIZE,log='xy')
+abline(0,1)
+
+plot(0.15*BBSIZE+(1-0.15)*MME_SIZE,TrueSIZES1,log='xy')
+abline(0,1)
+
+library(bayNorm)
+qq<-AdjustSIZE_fun(BBSIZE,mbayNorm_out$PRIORS_LIST$`Group 1`$MME_prior$MME_MU,MME_SIZE)
+
+plot(MME_SIZE,TrueSIZES1,log='xy')
+abline(0,1)
+plot(BBSIZE,TrueSIZES1,log='xy')
+abline(0,1)
+
+plot(MME_SIZE,BBSIZE,log='xy')
+abline(0,1)
+
+
+fitind <- which(BBSIZE < max(BBSIZE) & BBSIZE > min(BBSIZE))
+lmfit <- lm(log(BBSIZE)[fitind] ~ log(MME_SIZE)[fitind])
+MME_SIZE_adjust <- coef(lmfit)[1] + coef(lmfit)[2] * log(MME_SIZE)
+MME_SIZE_adjust <- exp(MME_SIZE_adjust)
+
+
+qq<-predict.lm(lmfit,newdata=data.frame(log(MME_SIZE[fitind])))
+qq2<-exp(qq)
+all.equal(qq2,MME_SIZE_adjust)
+
+
+
+
+MarginalF_1D(SIZE=,MU=,m_observed=,BETA=)
+
+
+library(foreach)
+library(doSNOW)
+library(parallel)
+cluster = makeCluster(5, type = "SOCK")
+registerDoSNOW(cluster)
+getDoParWorkers()
+iterations <- dim(RAW_DAT)[1]
+pb <- txtProgressBar(max = iterations, style = 3)
+progress <- function(n) setTxtProgressBar(pb, n)
+opts <- list(progress = progress)
+
+qq<-foreach(i=1:dim(RAW_DAT)[1],.combine=c,.options.snow = opts,.packages = 'bayNorm')%dopar%{
+    print(i)
+    ppp<-bayNorm::MarginalF_1D(SIZE=TrueSIZES1[i],MU=TrueMU[i],m_observed=RAW_DAT[i,seq(1,100)],BETA=mbayNorm_out$BETA$`Group 1`)
+}
+
+close(pb)
+stopCluster(cluster)
+#
+
+sum(log(abs(qq)))
+which(qq==-Inf)
+
+i<-1
+summary(RAW_DAT[i,seq(1,100)])
+bayNorm::MarginalF_1D(SIZE=TrueSIZES1[i],MU=TrueMU[i],m_observed=RAW_DAT[i,seq(1,100)],BETA=mbayNorm_out$BETA$`Group 1`)
+BBSIZE[i]
+
+
+
+
+RAW_DAT[7667,seq(1,100)]
+
+MME_SIZE[geneuse]
+BBSIZE[geneuse]
+MMEADJSIZE[geneuse]
+TrueSIZES1[geneuse]
+
+
+names(TrueMU)<-rownames(RAW_DAT)
+TrueMU[geneuse]
+
+
+INITIAL_MU_vec<-mbayNorm_out$PRIORS_LIST$`Group 1`$MME_prior$MME_MU
+INITIAL_SIZE_vec<-mbayNorm_out$PRIORS_LIST$`Group 1`$MME_prior$MME_SIZE
+Data<-RAW_DAT
+BETA_vec<-mbayNorm_out$BETA$`Group 1`
+
+
+
+
+
+mu <- INITIAL_MU_vec[Geneind]
+size <- INITIAL_SIZE_vec[Geneind]
+m_observed = Data[Geneind, CONDITION==1]
+Normdat<-t(t(Data)/colSums(Data))*mean(colSums(Data)/BETA_vec)
+
+muuuu<-round(Normdat[Geneind,])
+
+lower_input = min(INITIAL_SIZE_vec)
+upper_input = ceiling(max(INITIAL_SIZE_vec))
+
+library(bayNorm)
+BB_opt <- BB::spg(
+        par = size, fn = MarginalF_1D,
+        MU = mu,m_observed = m_observed,
+        BETA = BETA_vec,
+        control = list(
+            maximize = TRUE,
+            trace = FALSE,
+            maxfeval = 500),
+        lower = lower_input,
+        upper = upper_input)
+BB_opt$par
+
+# library(devtools)
+# devtools::install_github("eddelbuettel/rcppde")
+
+# library(RcppDE)
+# DEre<-DEoptim(fn= MarginalF_1D, lower=lower_input, upper=upper_input, control = DEoptim.control(itermax = 2), MU = mu,m_observed = m_observed,BETA = BETA_vec)
+#DEre$optim$bestmem
+
+library(lbfgsb3)
+qqq<-lbfgsb3(prm=MME_SIZE[geneuse], fn= MarginalF_1D_v2, gr=NULL, lower=lower_input, upper=upper_input,control=list(), MU = mu,m_observed = m_observed,BETA = BETA_vec)
+qqq$prm
+
+
+
+
+
+
+
+MarginalF_1D_v2(SIZE=3,MU=c(1,2,3,2,3),m_observed=c(8,8,3,2,3),BETA=c(0.1,0.8,0.3,0.2,0.1))
+
+
+
+BB_opt <- BB::spg(
+    par = size, fn = MarginalF_1D_v2,
+    MU = muuuu,m_observed = m_observed,
+    BETA = BETA_vec,
+    control = list(
+        maximize = TRUE,
+        trace = FALSE,
+        maxfeval = 500),
+    lower = lower_input,
+    upper = upper_input)
+BB_opt$par
+
+
+BB_opt <- BB::spg(
+    par = c(size,mu), fn = MarginalF_2D_v2,m_observed = m_observed,
+    BETA = BETA_vec,
+    control = list(
+        maximize = TRUE,
+        trace = FALSE,
+        maxfeval = 500),
+    lower = lower_input,
+    upper = upper_input)
+
+BB_opt$par
+
+
+###Torre######
+load("E:/RNAseqProject/NEWPROJECT_PAPERS/Torre_2017/BAY_8640_V2/New/bay_out.RData")
+load("E:/RNAseqProject/NEWPROJECT_PAPERS/Torre_2017/BAY_8640_V2/smFISH.RData")
+load("E:/RNAseqProject/NEWPROJECT_PAPERS/Torre_2017/BAY_8640_V2/UMILOAD_8640_V2.RData")
+load("E:/RNAseqProject/NEWPROJECT_PAPERS/Torre_2017/BAY_8640_V2/New/UMILOAD_8640_V2.RData")
+
+
+
+
+bay_out$PRIORS$MME_prior['LMNA',]
+bay_out$PRIORS$BB_prior['LMNA',]
+MMEADJ<-bay_out$PRIORS$MME_SIZE_adjust
+names(MMEADJ)<-rownames(bay_out$PRIORS$MME_prior)
+MMEADJ['LMNA']
+library(fitdistrplus)
+qqq<-smFISH_list$LMNA
+qqq2<-fitdist(qqq,distr="nbinom",method='mme')
+qqq2$estimate
+
+
+
+
+INITIAL_MU_vec<-bay_out$PRIORS$MME_prior$MME_MU
+INITIAL_SIZE_vec<-bay_out$PRIORS$MME_prior$MME_SIZE
+
+mu <- bay_out$PRIORS$MME_prior['LMNA',1]
+size <- bay_out$PRIORS$MME_prior['LMNA',2]
+
+#datttt<-Torre_dropseq
+datttt<-Torre_drop_sub
+
+BBB<-bay_out$BETA
+
+
+BBB<-datttt['GAPDH',]/mean(datttt['GAPDH',])*mean(datttt['LMNA',])/mean(smFISH_list$LMNA)
+summary(BBB)
+BBB[BBB<=0]=min(BBB[BBB>0])
+BBB[BBB>=1]=max(BBB[BBB<1])
+
+
+summary(BBB)
+
+names(smFISH_list)
+geneind<-24
+(geneuse<-names(smFISH_list)[geneind])
+
+bay_out$PRIORS$MME_prior[geneuse,]
+bay_out$PRIORS$BB_prior[geneuse,]
+MMEADJ<-bay_out$PRIORS$MME_SIZE_adjust
+names(MMEADJ)<-rownames(bay_out$PRIORS$MME_prior)
+MMEADJ[geneuse]
+
+qqq<-smFISH_list[[which(names(smFISH_list)==geneuse)]]
+qqq2<-fitdist(qqq,distr="nbinom",method='mme')
+qqq2$estimate
+
+
+m_observed = datttt[geneuse,]
+Normdat<-t(t(datttt)/colSums(datttt))*mean(colSums(datttt)/BBB)
+muuuu<-round(Normdat[geneuse,])
+
+
+
+lower_input = min(INITIAL_SIZE_vec)
+upper_input = ceiling(max(INITIAL_SIZE_vec))
+
+
+BB_opt <- BB::spg(
+    par = size, fn = MarginalF_1D_v2,
+    MU = mean(muuuu),m_observed = m_observed,
+    BETA = BBB,
+    control = list(
+        maximize = TRUE,
+        trace = FALSE,
+        maxfeval = 500),
+    lower = lower_input,
+    upper = upper_input)
+BB_opt$par
+
+
+#library(nloptr)
+# qq<-varmetric(x0= size, fn= MarginalF_1D_v2, lower = lower_input,upper = upper_input,MU = mean(muuuu),m_observed = m_observed,BETA = BBB)
+# qq$par
+# library(RcppDE)
+# DEre<-DEoptim(fn= MarginalF_1D_v2, lower=lower_input, upper=upper_input, control = DEoptim.control(itermax = 2), MU =muuuu,m_observed = m_observed,BETA = BBB)
+# DEre$optim$bestmem
+
+aaa<-Main_Bay(Data=rbind(m_observed,datttt[1,]),BETA_vec =BBB ,size=c(BB_opt$par,1),mu=c(mean(muuuu),1),S=20,thres=100000000)
+
+
+bw=10
+plot(density(smFISH_list[[which(names(smFISH_list)==geneuse)]],bw=bw))
+lines(density(aaa[1,,],bw=bw),col=3)
+lines(density(bay_out$Bay_array[geneuse,,],bw=bw),col=4)
+lines(density(m_observed,bw=bw),col=5)
+
+
+
+BB_opt <- BB::spg(
+    par = c(size,mu), fn = MarginalF_2D_v2,m_observed = m_observed,
+    BETA = bay_out$BETA,
+    control = list(
+        maximize = TRUE,
+        trace = FALSE,
+        maxfeval = 500),
+    lower = lower_input,
+    upper = upper_input)
+
+BB_opt$par

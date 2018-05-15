@@ -1,0 +1,160 @@
+#include <RcppArmadillo.h>
+#include <RcppArmadilloExtensions/sample.h>
+#include <Rmath.h>
+#include <Rcpp.h>
+#include <progress.hpp>
+#include <progress_bar.hpp>
+
+
+
+// [[Rcpp::depends(RcppArmadillo)]]
+// [[Rcpp::depends(RcppProgress)]]
+
+
+
+
+using namespace Rcpp;
+using namespace arma;
+using namespace std;
+
+
+struct add_multiple {
+    int incr;
+    int count;
+    add_multiple(int incr)
+        : incr(incr), count(0)
+    {}
+    inline int operator()(int d) {
+        return d + incr * count++;
+    }
+};
+
+Rcpp::NumericVector rcpp_seq(double from_, double to_, double by_ = 1.0) {
+    int adjust = std::pow(10, std::ceil(std::log10(10 / by_)) - 1);
+    int from = adjust * from_;
+    int to = adjust * to_;
+    int by = adjust * by_;
+
+    std::size_t n = ((to - from) / by) + 1;
+    Rcpp::IntegerVector res = Rcpp::rep(from, n);
+    add_multiple ftor(by);
+
+    std::transform(res.begin(), res.end(), res.begin(), ftor);
+    return Rcpp::NumericVector(res) / adjust;
+}
+
+
+double chooseC(double n, double k) {
+    return Rf_choose(n, k);
+}
+
+
+// [[Rcpp::export]]
+double MarginalF_1D_v2(double SIZE,double MU,
+                    NumericVector m_observed,
+                    NumericVector BETA) {
+    NumericVector m=m_observed;
+    int nCells=m.size();
+    NumericVector temp_vec_2(nCells);
+
+
+    double MarginalVal;
+
+    for(int i=0;i<nCells;i++){
+
+        int last=floor((m(i)+1)*3/BETA(i));
+        NumericVector n=rcpp_seq(0,last, 1.0) ;
+        int n_length=n.size();
+        NumericVector temp_vec_1(n_length);
+
+        for(int j=0;j<n_length;j++){
+            temp_vec_1(j)=R::dbinom(m(i),n(j),BETA(i),false)*
+                R::dnbinom_mu(n(j),SIZE,MU,false);
+
+        }
+
+        arma::vec temp_vec_1arma = Rcpp::as<arma::vec>(temp_vec_1);
+
+        temp_vec_2(i)=sum(temp_vec_1arma);
+
+    }
+    MarginalVal=sum(log(temp_vec_2));
+    return MarginalVal;
+}
+
+// [[Rcpp::export]]
+double MarginalF_1D_v3(double SIZE,double MU,
+                       NumericVector m_observed,
+                       NumericVector BETA) {
+    NumericVector m=m_observed;
+    int nCells=m.size();
+    NumericVector temp_vec_2(nCells);
+
+
+    double MarginalVal;
+
+    int last=floor((max(m)+1)*3/min(BETA));
+    NumericVector n=rcpp_seq(0,last, 1.0) ;
+    int n_length=n.size();
+
+
+
+
+    for(int j=0;j<n_length;j++){
+
+        NumericVector dbinom_vec(nCells);
+
+
+    for(int i=0;i<nCells;i++){
+
+
+
+
+        dbinom_vec(i)=R::dbinom(m(i),n(j),BETA(i),false)*
+                R::dnbinom_mu(n(j),SIZE,MU,false);
+
+        }
+
+        arma::vec temp_vec_1arma = Rcpp::as<arma::vec>(temp_vec_1);
+
+        temp_vec_2(i)=sum(temp_vec_1arma);
+
+    }
+    MarginalVal=sum(log(temp_vec_2));
+    return MarginalVal;
+}
+
+// [[Rcpp::export]]
+double MarginalF_2D_v2(NumericVector SIZE_MU,
+                    NumericVector m_observed,
+                    NumericVector BETA) {
+    NumericVector m=m_observed;
+    int nCells=m.size();
+    NumericVector temp_vec_2(nCells);
+
+
+    double MarginalVal;
+
+    for(int i=0;i<nCells;i++){
+
+        int last=floor((m(i)+1)*3/BETA(i));
+        NumericVector n=rcpp_seq(0,last, 1.0) ;
+        int n_length=n.size();
+        NumericVector temp_vec_1(n_length);
+
+        for(int j=0;j<n_length;j++){
+
+            temp_vec_1(j)=R::dbinom(m(i),n(j),BETA(i),false)
+            *R::dnbinom_mu(n(j),SIZE_MU(0),SIZE_MU(1),false);
+
+        }
+
+        arma::vec temp_vec_1arma = Rcpp::as<arma::vec>(temp_vec_1);
+
+        temp_vec_2(i)=sum(temp_vec_1arma);
+
+    }
+    MarginalVal=sum(log(temp_vec_2));
+    return MarginalVal;
+}
+

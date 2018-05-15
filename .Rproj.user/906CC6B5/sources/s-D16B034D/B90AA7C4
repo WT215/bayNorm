@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1526242931460.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "734144352",
+    "id" : "B90AA7C4",
+    "lastKnownWriteTime" : 1526392570,
+    "last_content_update" : 1526392570356,
+    "path" : "E:/RNAseqProject/bayNorm_dev/Debug/insteadofSPG.R",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "80,27",
+        "scrollLine" : "0",
+        "tempName" : "Untitled5"
+    },
+    "relative_order" : 19,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
