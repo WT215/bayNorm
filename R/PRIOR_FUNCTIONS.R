@@ -387,10 +387,10 @@ This part may be time-consuming.")
 
         return(list(
             MME_prior = MME_prior, BB_prior = BB_prior,
-            MME_SIZE_adjust = MME_SIZE_adjust))
+            MME_SIZE_adjust = MME_SIZE_adjust,BETA_vec=BETA_vec))
     }
 
-    return(list(MME_prior = MME_prior))
+    return(list(MME_prior = MME_prior,BETA_vec=BETA_vec))
 }
 
 

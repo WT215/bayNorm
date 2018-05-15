@@ -5,15 +5,15 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "2037491535",
+    "hash" : "1328673449",
     "id" : "898EA764",
-    "lastKnownWriteTime" : 1526243710,
-    "last_content_update" : 1526243710358,
+    "lastKnownWriteTime" : 1526396767,
+    "last_content_update" : 1526396767681,
     "path" : "E:/RNAseqProject/bayNorm_dev/bayNorm/R/PRIOR_FUNCTIONS.r",
     "project_path" : "R/PRIOR_FUNCTIONS.r",
     "properties" : {
-        "cursorPosition" : "383,0",
-        "scrollLine" : "0"
+        "cursorPosition" : "389,63",
+        "scrollLine" : "378"
     },
     "relative_order" : 2,
     "source_on_save" : false,
