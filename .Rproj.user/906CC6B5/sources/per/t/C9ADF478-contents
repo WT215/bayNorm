@@ -1,0 +1,62 @@
+par(mfrow=c(1,2), mgp=c(3,1,0), mar=c(5, 5, 4, 2), # mai=c(0.75,2,0.4,0.1),  
+    cex.lab=1.75, cex.axis=1.75, cex.main=1.75, cex.sub=1.75)
+
+#### Shalek et al. (2013)
+library(scRNASeqMouseShalekBMDCs)
+data("BMDCsMouseTPM")
+
+eset <- exprs(BMDCsMouseTPM)
+pd <- pData(BMDCsMouseTPM)
+
+esetBulk <- eset[, pd$sampleType == "bulk"]
+esetSC <- eset[, pd$sampleType == "SC"]
+
+xx = esetBulk[,1];
+yy = esetSC
+plot(x = log2(xx+1), y = log2(rowMeans(yy)+1), col = "black", pch = ".",
+     xlim = c(0, 15), ylim = c(0, 15),
+     xlab = expression("log"[2]*"(bulk profile)"),
+     ylab = expression("log"[2]*"(single-cell profile average)"),
+     main = paste0("Scatter plot"))
+abline(0, 1, col = 2, lwd = 3)
+cor(log2(xx+1), log2(rowMeans(yy)+1)) 
+mtext("A", side = 3, 1, cex = 3, at = -1.5)
+
+#########################  ma plot 
+sm <- function(x, y, x.log = FALSE,n.bins = 25){
+    if(x.log){ 
+        brks <- unique(quantile(x, probs = seq(0,1,len=25))) 
+    } else {
+        brks <- 2^unique(quantile(log2(x), probs = seq(0,1,len=n.bins))) 
+    }
+    mids <- (brks[-1] + brks[-length(brks)] )/ 2
+    x.in <- cut(x, breaks = brks, include.lowest = TRUE)
+    m <- tapply(y, x.in, mean)
+    fit = lm(y~x)
+    l <- predict(fit, newdata = data.frame(x  = mids))
+    dat <- data.frame(x=mids, y = m, n = as.numeric(table(x.in)), pred = l)
+}
+
+
+dropoutfun<-function(data){
+    xx<-rowMeans(data)
+    yy<-apply(data,1,function(x){length(which(x==0))/length(x)})
+    qq<-cbind(xx,yy)
+    return(qq)
+}
+
+
+xx = (log2(esetBulk[,1]+1) + log2(rowMeans(esetSC)+1))/2
+yy = log2(rowMeans(esetSC)+1) - log2(esetBulk[,1]+1)
+yy <- yy[order(xx)]
+xx <- sort(xx)
+plot(x = xx, y = yy, ylim = c(-5, 5), pch = ".",
+     xlab = expression("A = (log"[2]*"(single-cell profile avg) + log"[2]*"(bulk profile))/2"),
+     ylab = expression("M = log"[2]*"(single-cell profile avg) - log"[2]*"(bulk profile)"),
+     main = paste0("MA plot"))
+abline(h = 0, col = 2, lwd = 3)
+smDat <- sm(x = xx, y = yy)
+lines(smDat$x, smDat$y, lwd = 7, col = 4, lty=2)
+mtext("B", side = 3, 1, cex = 3, at = -1.5)
+
+dev.off()

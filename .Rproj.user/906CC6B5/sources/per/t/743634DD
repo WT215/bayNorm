@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1530002696117.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1653685397",
+    "id" : "743634DD",
+    "lastKnownWriteTime" : 1530002738,
+    "last_content_update" : 1530002738797,
+    "path" : "E:/RNAseqProject/Bacher__SCnorm_2016/scaled_BAY/H1.r",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "175,0",
+        "scrollLine" : "164"
+    },
+    "relative_order" : 29,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1529330962161.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "293381302",
+    "id" : "AC8C0D14",
+    "lastKnownWriteTime" : 1529330988,
+    "last_content_update" : 1529330988216,
+    "path" : "E:/RNAseqProject/bayNorm_dev/bayNorm/R/Binomial_protocol_sim.R",
+    "project_path" : "R/Binomial_protocol_sim.R",
+    "properties" : {
+        "cursorPosition" : "342,0",
+        "scrollLine" : "0",
+        "tempName" : "Untitled3"
+    },
+    "relative_order" : 27,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

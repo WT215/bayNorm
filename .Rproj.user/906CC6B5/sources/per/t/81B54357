@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1527189679577.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "632462192",
+    "id" : "81B54357",
+    "lastKnownWriteTime" : 1522341659,
+    "last_content_update" : 1522341659,
+    "path" : "E:/RNAseqProject/tung2017batch/tung2017batch.r",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "32,0",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 24,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

@@ -1,0 +1,495 @@
+Rcpp::sourceCpp("E:/RNAseqProject/PROJECT_RNAseq/Rcpp_maybeuseful/DownSampling.cpp")
+Rcpp::sourceCpp('E:/RNAseqProject/PROJECT_RNAseq/Rcpp_maybeuseful/Bay_debug_norm.cpp')
+##############################################
+mydata = read.table("E:/RNAseqProject/tung2017batch/molecules-filter.txt")
+which(rowSums(mydata)==0)
+dim(mydata)
+
+mydata_bulk = read.table("E:/RNAseqProject/tung2017batch/reads-bulk-filter.txt")
+ERCC_bulk_ind<-grepl("ERCC", rownames(mydata_bulk))
+sum(ERCC_bulk_ind)
+mydata_bulk_ERCC<-mydata_bulk[ERCC_bulk_ind,]
+mydata_bulk_raw<-mydata_bulk[!ERCC_bulk_ind,]
+
+BULK_2<-mydata_bulk_raw[,seq(4,6)]
+BULK_3<-mydata_bulk_raw[,-seq(1,6)]
+group=c(rep("NA19101",3),rep("NA19239",3))
+
+# Limma_re<-Run_Limma_ori(rawData=cbind(BULK_2,BULK_3), gr1=3, gr2=3)
+#
+# DE_TRUE_LABEL<-rep(0,dim(BULK_2)[1])
+# length(which(Limma_re$adj.P.Val<0.5))
+# DE_TRUE_LABEL[which(Limma_re$adj.P.Val<0.5)]=1
+# names(DE_TRUE_LABEL)<-rownames(BULK_2)
+#save(Limma_re,DE_TRUE_LABEL,file='E:/RNAseqProject/tung2017batch/MMEADJ_ERCCBETA/DE_benchmark.RData')
+load('E:/RNAseqProject/tung2017batch/MMEADJ_ERCCBETA/DE_benchmark.RData')
+
+
+DECENT_UP = read.table("E:/RNAseqProject/tung2017batch/DESCENT_DE/tung_bulk_191vs192_up_voom.txt")
+DECENT_UP $V1<-as.character(DECENT_UP $V1)
+DECENT_DN = read.table("E:/RNAseqProject/tung2017batch/DESCENT_DE/tung_bulk_191vs192_dn_voom.txt")
+DECENT_DN $V1<-as.character(DECENT_DN$V1)
+
+length(intersect(DECENT_UP$V1,rownames(mydata)))
+
+
+dim(N1_1_DAT)
+
+DE_TRUE_LABEL<-rep(0,13058)
+names(DE_TRUE_LABEL)<-rownames(mydata)[!ERCC_ind]
+dim(mydata)
+length(intersect(DECENT_UP$V1,rownames(mydata)))
+length(DECENT_UP$V1)
+length(intersect(DECENT_DN$V1,rownames(mydata)))
+length(DECENT_DN$V1)
+
+
+DE_TRUE_LABEL[intersect(DECENT_UP$V1,rownames(N1_DAT))]=1
+DE_TRUE_LABEL[intersect(DECENT_DN$V1,rownames(N1_DAT))]=1
+
+sum(DE_TRUE_LABEL)
+
+save(DECENT_UP,DECENT_DN,DE_TRUE_LABEL,file='E:/RNAseqProject/tung2017batch/MMEADJ_ERCCBETA/DE_benchmark.RData')
+
+
+
+
+#save(Limma_re,DE_TRUE_LABEL,file='E:/RNAseqProject/tung2017batch/MMEADJ_ERCCBETA/DE_benchmark.RData')
+
+#NA19098,NA19101,NA19239
+
+N1_1<-grepl("NA19098.r1", colnames(mydata))
+N1_2<-grepl("NA19098.r2", colnames(mydata))
+N1_3<-grepl("NA19098.r3", colnames(mydata))
+
+N2_1<-grepl("NA19101.r1", colnames(mydata))
+N2_2<-grepl("NA19101.r2", colnames(mydata))
+N2_3<-grepl("NA19101.r3", colnames(mydata))
+
+N3_1<-grepl("NA19239.r1", colnames(mydata))
+N3_2<-grepl("NA19239.r2", colnames(mydata))
+N3_3<-grepl("NA19239.r3", colnames(mydata))
+
+#ERCC
+ERCC_ind<-grepl("ERCC", rownames(mydata))
+sum(ERCC_ind)
+rownames(mydata)[ERCC_ind]
+
+
+
+
+
+N1_1_DAT<-mydata[!ERCC_ind,N1_1]
+N1_2_DAT<-mydata[!ERCC_ind,N1_2]
+N1_3_DAT<-mydata[!ERCC_ind,N1_3]
+
+N2_1_DAT<-mydata[!ERCC_ind,N2_1]
+N2_2_DAT<-mydata[!ERCC_ind,N2_2]
+N2_3_DAT<-mydata[!ERCC_ind,N2_3]
+
+N3_1_DAT<-mydata[!ERCC_ind,N3_1]
+N3_2_DAT<-mydata[!ERCC_ind,N3_2]
+N3_3_DAT<-mydata[!ERCC_ind,N3_3]
+
+
+N123_123_DAT<-cbind(N1_1_DAT,N1_3_DAT,N2_1_DAT,N2_2_DAT,N2_3_DAT,N3_1_DAT,N3_2_DAT,N3_3_DAT)
+dim(N123_123_DAT)
+
+N1_DAT<-cbind(N1_1_DAT,N1_3_DAT)
+N2_DAT<-cbind(N2_1_DAT,N2_2_DAT,N2_3_DAT)
+N3_DAT<-cbind(N3_1_DAT,N3_2_DAT,N3_3_DAT)
+
+LABEL_INDIVIDUAL<-c(rep("NA19098",dim(N1_DAT)[2]),rep("NA19101",dim(N2_DAT)[2]),rep("NA19239",dim(N3_DAT)[2]))
+
+
+LABEL_REP<-c(rep(1,dim(N1_1_DAT)[2]),rep(3,dim(N1_3_DAT)[2]),rep(1,dim(N2_1_DAT)[2]),rep(2,dim(N2_2_DAT)[2]),rep(3,dim(N2_3_DAT)[2]),rep(1,dim(N3_1_DAT)[2]),rep(2,dim(N3_2_DAT)[2]),rep(3,dim(N3_3_DAT)[2]))
+
+length(which(rowSums(cbind(N1_DAT,N2_DAT,N3_DAT))==0))
+#############################end of importing data#######
+
+#BETA3 ERCC#######
+#load("C:/tung2017batch/CaptureEfficiency.RData")
+load("E:/RNAseqProject/tung2017batch/CaptureEfficiency_ERCC.RData")
+
+Inputbeta1<-efficiency[colnames(N1_DAT)]
+Inputbeta2<-efficiency[colnames(N2_DAT)]
+Inputbeta3<-efficiency[colnames(N3_DAT)]
+
+
+summary(Inputbeta1)
+summary(Inputbeta2)
+summary(Inputbeta3)
+
+N1_DAT<-as.matrix(N1_DAT)
+N2_DAT<-as.matrix(N2_DAT)
+N3_DAT<-as.matrix(N3_DAT)
+
+dim(N1_DAT)
+dim(N2_DAT)
+dim(N3_DAT)
+
+
+Dropout<-apply(N1_DAT,1,function(x){length(which(x==0))/length(x)})
+Meanexp<-rowMeans(N1_DAT)
+plot(Meanexp,Dropout,log='x',pch=16)
+lines(sort(Meanexp),exp(-sort(Meanexp)),col=3,lwd=5)
+
+mean((Dropout-exp(-Meanexp))^2)
+
+
+#MME estimation
+library(foreach)
+PRIOR_1<-Prior_fun(Dat=N1_DAT,InputBeta=Inputbeta1)
+PRIOR_2<-Prior_fun(Dat=N2_DAT,InputBeta=Inputbeta2)
+PRIOR_3<-Prior_fun(Dat=N3_DAT,InputBeta=Inputbeta3)
+#MME adjusted priors
+MU1<-PRIOR_1$MME_prior$MME_MU
+SIZE1<-PRIOR_1$MME_SIZE_adjust
+
+MU2<-PRIOR_2$MME_prior$MME_MU
+SIZE2<-PRIOR_2$MME_SIZE_adjust
+
+MU3<-PRIOR_3$MME_prior$MME_MU
+SIZE3<-PRIOR_3$MME_SIZE_adjust
+
+#########BAY#######
+system.time(Bay_1<-Main_Bay(Table=N1_DAT,Beta_origin=Inputbeta1, size=SIZE1, M_ave_ori=MU1,S=5,thres=100000,Mean_depth=100000))
+rownames(Bay_1)<-rownames(N1_DAT)
+colnames(Bay_1)<-colnames(N1_DAT)
+system.time(Bay_2<-Main_Bay(Table=N2_DAT,Beta_origin=Inputbeta2, size=SIZE2, M_ave_ori=MU2,S=5,thres=100000,Mean_depth=100000))
+rownames(Bay_2)<-rownames(N2_DAT)
+colnames(Bay_2)<-colnames(N2_DAT)
+system.time(Bay_3<-Main_Bay(Table=N3_DAT,Beta_origin=Inputbeta3, size=SIZE3, M_ave_ori=MU3,S=5,thres=100000,Mean_depth=100000))
+rownames(Bay_3)<-rownames(N3_DAT)
+colnames(Bay_3)<-colnames(N3_DAT)
+
+#NA19098,NA19101,NA19239
+#LABEL_INDIVIDUAL<-c(rep(1,dim(N1_DAT)[2]),rep(3,dim(N2_DAT)[2]),rep(4,dim(N3_DAT)[2]))
+
+#limma
+limma_N1<-limma::removeBatchEffect(N1_DAT, batch = LABEL_REP[grep('NA19098',names(LABEL_REP))])
+limma_N2<-limma::removeBatchEffect(N2_DAT, batch = LABEL_REP[grep('NA19101',names(LABEL_REP))])
+limma_N3<-limma::removeBatchEffect(N3_DAT, batch = LABEL_REP[grep('NA19239',names(LABEL_REP))])
+#ComBat
+library(sva)
+# combat_N1<-sva::ComBat(N1_DAT, batch = LABEL_REP[grep('NA19098',names(LABEL_REP))])
+# combat_N2<-sva::ComBat(N2_DAT, batch = LABEL_REP[grep('NA19101',names(LABEL_REP))])
+# combat_N3<-sva::ComBat(N3_DAT, batch = LABEL_REP[grep('NA19239',names(LABEL_REP))])
+
+combat_N123<-sva::ComBat(cbind(N1_DAT,N2_DAT,N3_DAT), batch =LABEL_REP)
+combat_N1<-combat_N123[,colnames(N1_DAT)]
+combat_N2<-combat_N123[,colnames(N2_DAT)]
+combat_N3<-combat_N123[,colnames(N3_DAT)]
+####kBET check#########
+library(kBET)
+names(LABEL_REP)<-colnames(Bay_comb)
+
+n_repeat=500
+#kBET bay
+system.time(batch_B_NA19098 <- kBET(Bay_1[,,1],LABEL_REP[grep('NA19098',names(LABEL_REP))],n_repeat=n_repeat))
+system.time(batch_B_NA19101 <- kBET(Bay_2[,,1],LABEL_REP[grep('NA19101',names(LABEL_REP))],n_repeat=n_repeat))
+system.time(batch_B_NA19239 <- kBET(Bay_3[,,1],LABEL_REP[grep('NA19239',names(LABEL_REP))] ,n_repeat=n_repeat))
+
+
+#kBET raw
+system.time(batch_R_NA19098 <- kBET(N1_DAT,LABEL_REP[grep('NA19098',names(LABEL_REP))],n_repeat=n_repeat))
+system.time(batch_R_NA19101 <- kBET(N2_DAT,LABEL_REP[grep('NA19101',names(LABEL_REP))],n_repeat=n_repeat))
+system.time(batch_R_NA19239 <- kBET(N3_DAT,LABEL_REP[grep('NA19239',names(LABEL_REP))] ,n_repeat=n_repeat))
+
+#kBET limma
+system.time(batch_l_NA19098 <- kBET(limma_N1,LABEL_REP[grep('NA19098',names(LABEL_REP))],n_repeat=n_repeat))
+system.time(batch_l_NA19101 <- kBET(limma_N2,LABEL_REP[grep('NA19101',names(LABEL_REP))],n_repeat=n_repeat))
+system.time(batch_l_NA19239 <- kBET(limma_N3,LABEL_REP[grep('NA19239',names(LABEL_REP))] ,n_repeat=n_repeat))
+
+#kBET combat
+system.time(batch_c_NA19098 <- kBET(combat_N1,LABEL_REP[grep('NA19098',names(LABEL_REP))],n_repeat=n_repeat))
+system.time(batch_c_NA19101 <- kBET(combat_N2,LABEL_REP[grep('NA19101',names(LABEL_REP))],n_repeat=n_repeat))
+system.time(batch_c_NA19239 <- kBET(combat_N3,LABEL_REP[grep('NA19239',names(LABEL_REP))] ,n_repeat=n_repeat))
+
+
+
+library(gridExtra)
+plot_B_NA19098<-plot_kBET(batch_B_NA19098,title=paste('Bayesian: NA19098'))
+plot_B_NA19101<-plot_kBET(batch_B_NA19101,title=paste('Bayesian: NA19101'))
+plot_B_NA19239<-plot_kBET(batch_B_NA19239,title=paste('Bayesian: NA19239'))
+
+plot_R_NA19098<-plot_kBET(batch_R_NA19098,title=paste('Raw: NA19098'))
+plot_R_NA19101<-plot_kBET(batch_R_NA19101,title=paste('Raw: NA19101'))
+plot_R_NA19239<-plot_kBET(batch_R_NA19239,title=paste('Raw: NA19239'))
+
+plot_l_NA19098<-plot_kBET(batch_l_NA19098,title=paste('limma: NA19098'))
+plot_l_NA19101<-plot_kBET(batch_l_NA19101,title=paste('limma: NA19101'))
+plot_l_NA19239<-plot_kBET(batch_l_NA19239,title=paste('limma: NA19239'))
+
+plot_c_NA19098<-plot_kBET(batch_c_NA19098,title=paste('ComBat: NA19098'))
+plot_c_NA19101<-plot_kBET(batch_c_NA19101,title=paste('ComBat: NA19101'))
+plot_c_NA19239<-plot_kBET(batch_c_NA19239,title=paste('ComBat: NA19239'))
+
+#row method column individual
+grid.arrange(plot_R_NA19098,plot_R_NA19101,plot_R_NA19239,plot_B_NA19098,plot_B_NA19101,plot_B_NA19239, plot_l_NA19098,plot_l_NA19101,plot_l_NA19239,plot_c_NA19098,plot_c_NA19101,plot_c_NA19239,ncol=3,nrow=4)
+
+
+
+
+
+
+
+
+
+
+
+library(ggfortify)
+library(abind)
+system.time(Bay_comb<-abind(Bay_1,Bay_2,Bay_3,along=2))
+dim(Bay_comb)
+
+
+
+
+N1_IND<-as.logical(N1_1+N1_3)
+N2_IND<-as.logical(N2_1+N2_2+N2_3)
+N3_IND<-as.logical(N3_1+N3_2+N3_3)
+
+#Bay_mat<-cbind(Bay_1,Bay_2,Bay_3)
+######PCA############
+#bay
+erccind<-grep(rownames(Bay_comb),pattern='ERCC')
+
+pca_try <- prcomp(t(Bay_comb[-erccind,,1]),scale=T)
+#pca_try <- prcomp(t(Bay_mat),scale=T)
+pr_v<-summary(pca_try )$importance[2,]*100
+percentage <- paste( colnames(pca_try$x), "(", paste( as.character(pr_v), "%", ")", sep="") )
+dat<-pca_try$x[,1:2]
+dim(N1_DAT)
+library(ggplot2)
+ggplot(data=as.data.frame(dat),aes(x=PC1,y=PC2))+geom_point(aes(color=as.factor(LABEL_INDIVIDUAL),shape=as.factor(LABEL_REP)))+labs(color='Individual',shape='Replicate') + xlab(percentage[1]) + ylab(percentage[2])+ggtitle("Bayesian normalized data(1 sample)")+theme(legend.position='right',plot.title = element_text(hjust = 0.5))
+
+#limma
+pca_try <- prcomp(t(cbind(limma_N1,limma_N2,limma_N3)),scale=T)
+#pca_try <- prcomp(t(Bay_mat),scale=T)
+pr_v<-summary(pca_try )$importance[2,]*100
+percentage <- paste( colnames(pca_try$x), "(", paste( as.character(pr_v), "%", ")", sep="") )
+dat<-pca_try$x[,1:2]
+dim(N1_DAT)
+ggplot(data=as.data.frame(dat),aes(x=PC1,y=PC2))+geom_point(aes(color=as.factor(LABEL_INDIVIDUAL),shape=as.factor(LABEL_REP)))+labs(color='Individual',shape='Replicate') + xlab(percentage[1]) + ylab(percentage[2])+ggtitle("limma based on raw count")+theme(legend.position='right',plot.title = element_text(hjust = 0.5))
+
+#ComBat
+pca_try <- prcomp(t(cbind(combat_N1,combat_N2,combat_N3)),scale=T)
+#pca_try <- prcomp(t(Bay_mat),scale=T)
+pr_v<-summary(pca_try )$importance[2,]*100
+percentage <- paste( colnames(pca_try$x), "(", paste( as.character(pr_v), "%", ")", sep="") )
+dat<-pca_try$x[,1:2]
+dim(N1_DAT)
+ggplot(data=as.data.frame(dat),aes(x=PC1,y=PC2))+geom_point(aes(color=as.factor(LABEL_INDIVIDUAL),shape=as.factor(LABEL_REP)))+labs(color='Individual',shape='Replicate') + xlab(percentage[1]) + ylab(percentage[2])+ggtitle("ComBat based on raw count")+theme(legend.position='right',plot.title = element_text(hjust = 0.5))
+
+
+
+
+
+N_all<-as.matrix(cbind(N1_DAT,N2_DAT,N3_DAT))
+scran_out<-scran_norm(N_all, sizes = c(20, 40, 60, 80, 100))
+rpm_out<-rpm(N_all)
+deseq_out<-deseq(N_all)
+tmm_out<-tmm(N_all)
+
+
+pca_try <- prcomp(t(scran_out$counts),scale=T)
+pr_v<-summary(pca_try )$importance[2,]*100
+percentage <- paste( colnames(pca_try$x), "(", paste( as.character(pr_v), "%", ")", sep="") )
+dat<-pca_try$x[,1:2]
+dim(N1_DAT)
+ggplot(data=dat,aes(x=PC1,y=PC2))+geom_point(aes(color=as.factor(LABEL_INDIVIDUAL),shape=as.factor(LABEL_REP)))+labs(color='Individual',shape='Replicate') + xlab(percentage[1]) + ylab(percentage[2])+ggtitle("Scran")+theme(legend.position='right',plot.title = element_text(hjust = 0.5))
+
+pca_try <- prcomp(t(rpm_out$counts),scale=T)
+pr_v<-summary(pca_try )$importance[2,]*100
+percentage <- paste( colnames(pca_try$x), "(", paste( as.character(pr_v), "%", ")", sep="") )
+dat<-pca_try$x[,1:2]
+dim(N1_DAT)
+ggplot(data=dat,aes(x=PC1,y=PC2))+geom_point(aes(color=as.factor(LABEL_INDIVIDUAL),shape=as.factor(LABEL_REP)))+labs(color='Individual',shape='Replicate') + xlab(percentage[1]) + ylab(percentage[2])+ggtitle("RPM")+theme(legend.position='right',plot.title = element_text(hjust = 0.5))
+
+
+pca_try <- prcomp(t(deseq_out$counts),scale=T)
+pr_v<-summary(pca_try )$importance[2,]*100
+percentage <- paste( colnames(pca_try$x), "(", paste( as.character(pr_v), "%", ")", sep="") )
+dat<-pca_try$x[,1:2]
+dim(N1_DAT)
+ggplot(data=dat,aes(x=PC1,y=PC2))+geom_point(aes(color=as.factor(LABEL_INDIVIDUAL),shape=as.factor(LABEL_REP)))+labs(color='Individual',shape='Replicate') + xlab(percentage[1]) + ylab(percentage[2])+ggtitle("DESeq")+theme(legend.position='right',plot.title = element_text(hjust = 0.5))
+
+
+pca_try <- prcomp(t(tmm_out$counts),scale=T)
+pr_v<-summary(pca_try )$importance[2,]*100
+percentage <- paste( colnames(pca_try$x), "(", paste( as.character(pr_v), "%", ")", sep="") )
+dat<-pca_try$x[,1:2]
+dim(N1_DAT)
+ggplot(data=dat,aes(x=PC1,y=PC2))+geom_point(aes(color=as.factor(LABEL_INDIVIDUAL),shape=as.factor(LABEL_REP)))+labs(color='Individual',shape='Replicate') + xlab(percentage[1]) + ylab(percentage[2])+ggtitle("TMM")+theme(legend.position='right',plot.title = element_text(hjust = 0.5))
+
+
+
+
+
+
+
+
+
+
+
+
+
+ggplot(data=dat[N1_IND,],aes(x=PC1,y=PC2))+geom_point(aes(color=as.factor(LABEL_INDIVIDUAL[N1_IND]),shape=as.factor(LABEL_REP[N1_IND])))+labs(color='Individual',shape='Replicate') + xlab(percentage[1]) + ylab(percentage[2])+ggtitle("Bayesian normalized data(1 sample)")+theme(legend.position='right',plot.title = element_text(hjust = 0.5))
+
+ggplot(data=dat[N2_IND,],aes(x=PC1,y=PC2))+geom_point(aes(color=as.factor(LABEL_INDIVIDUAL[N2_IND]),shape=as.factor(LABEL_REP[N2_IND])))+labs(color='Individual',shape='Replicate') + xlab(percentage[1]) + ylab(percentage[2])+ggtitle("Bayesian normalized data(1 sample)")+theme(legend.position='right',plot.title = element_text(hjust = 0.5))
+
+ggplot(data=dat[N3_IND,],aes(x=PC1,y=PC2))+geom_point(aes(color=as.factor(LABEL_INDIVIDUAL[N3_IND]),shape=as.factor(LABEL_REP[N3_IND])))+labs(color='Individual',shape='Replicate') + xlab(percentage[1]) + ylab(percentage[2])+ggtitle("Bayesian normalized data(1 sample)")+theme(legend.position='right',plot.title = element_text(hjust = 0.5))
+
+
+
+#plot(dat,col=LABEL_INDIVIDUAL,pch=LABEL_REP)
+#legend('bottomright',legend=c('1','2','3'),col=c(1,3,4),pch=16)
+pca_try <- prcomp(t(N123_123_DAT),scale=T)
+pr_v<-summary(pca_try )$importance[2,]*100
+percentage <- paste( colnames(pca_try$x), "(", paste( as.character(pr_v), "%", ")", sep="") )
+dat<-pca_try$x[,1:2]
+
+
+ggplot(data=dat,aes(x=PC1,y=PC2))+geom_point(aes(color=as.factor(LABEL_INDIVIDUAL),shape=as.factor(LABEL_REP)))+labs(color='Individual',shape='Replicate') + xlab(percentage[1]) + ylab(percentage[2])+ggtitle("Raw molecule counts")+theme(legend.position='right',plot.title = element_text(hjust = 0.5))
+
+
+
+
+######tung ERCC explore#########
+anno <- read.table("E:/RNAseqProject/tung2017batch/annotation.txt", header = TRUE,stringsAsFactors = FALSE)
+head(anno)
+
+
+ercc <- read.table("E:/RNAseqProject/tung2017batch/ercc-info.txt", header = TRUE, sep = "\t",stringsAsFactors = FALSE)
+colnames(ercc) <- c("num", "id", "subgroup", "conc_mix1", "conc_mix2", "expected_fc", "log2_mix1_mix2")
+head(ercc)
+stopifnot(nrow(ercc) == 92)
+
+molecules <- read.table("E:/RNAseqProject/tung2017batch/molecules.txt", header = TRUE,stringsAsFactors = FALSE)
+quality_single_cells <- scan("E:/RNAseqProject/tung2017batch/quality-single-cells.txt",what = "character")
+
+qc <- read.table("E:/RNAseqProject/tung2017batch/qc-ipsc.txt", header = TRUE, stringsAsFactors = FALSE)
+stopifnot(nrow(qc) == sum(anno$well != "bulk"))
+length(molecules$NA19098.r1.A03[rownames(N1_DAT)])
+
+
+
+#Prepare single cell molecule data
+molecules_single <- molecules[, anno$well != "bulk"]
+anno_single <- anno[anno$well != "bulk", ]
+#Remove genes with zero read counts in the single cells.
+expressed_single <- rowSums(molecules_single) > 0
+molecules_single <- molecules_single[expressed_single, ]
+dim(molecules_single)
+
+overexpressed_genes <- rownames(molecules_single)[apply(molecules_single, 1,function(x) any(x >= 1024))]
+length(overexpressed_genes)
+
+#####Calculate number of ERCC molecules added to each well
+summary(ercc$conc_mix1)
+
+# Dilute 1:2500
+ercc_conc_diluted <- ercc$conc_mix1 / 2500
+# Dilute 1:20
+ercc_conc_lysis <- ercc_conc_diluted / 20
+ercc_molecules_lysis <- ercc_conc_lysis *
+  20 * # Number of uL of lysis buffer
+  1/10^18 * # Number of attomoles in a mole
+  6.02214179e23 # Number of molecules in a mole
+# 9 uL added to chip
+ercc_molecules_chip <- ercc_molecules_lysis * 9 / 20
+summary(ercc_molecules_chip)
+# 9 nL per well
+ercc_molecules_well <- ercc_molecules_lysis * 9e-3 / 20
+summary(ercc_molecules_well)
+sum(ercc_molecules_well)
+sum(ercc_molecules_well >= 1)
+sum(ercc_molecules_well > 1024)
+sum(ercc_molecules_well %% 2 == 0)
+
+ercc_index <- grep("ERCC", rownames(molecules_single))
+length(ercc_index)
+#####capture efficiency
+expected_ercc_molecules <- read.table("E:/RNAseqProject/tung2017batch/expected-ercc-molecules.txt", header = TRUE, sep = "\t",stringsAsFactors = FALSE)
+
+efficiency <- numeric(length = ncol(molecules_single))
+total_ercc_molecules <- sum(ercc_molecules_well)
+for (i in 1:ncol(molecules_single)) {
+  efficiency[i] <- sum(molecules_single[ercc_index, i]) / total_ercc_molecules
+}
+summary(efficiency)
+names(efficiency)<-colnames(molecules_single)
+
+dim(cbind(N1_1_DAT,N1_3_DAT))
+dim(cbind(N2_1_DAT,N2_2_DAT,N2_3_DAT))
+dim(cbind(N3_1_DAT,N3_2_DAT,N3_3_DAT))
+colnames(N1_1_DAT)
+
+
+summary(efficiency[colnames(N1_DAT)])
+summary(efficiency[colnames(N2_DAT)])
+summary(efficiency[colnames(N3_DAT)])
+
+plot(efficiency[colnames(N1_DAT)],Inputbeta1,log='xy',pch=16)
+abline(0,1)
+plot(efficiency[colnames(N2_DAT)],Inputbeta2,log='xy',pch=16)
+abline(0,1)
+plot(efficiency[colnames(N3_DAT)],Inputbeta3,log='xy',pch=16)
+abline(0,1)
+summary(Inputbeta1)
+
+
+
+
+######batch effect check########
+load("E:/RNAseqProject/tung2017batch/tung2017_final/bayNorm_scranBETA.RData")
+Bay_1_o<-BAY_3$Bay_array
+load("E:/RNAseqProject/tung2017batch/MMEADJ_ERCCBETA/tung2017batch_Bay_ERCCBETA.RData")
+Bay_1_n<-Bay_3
+
+
+dim(Bay_1_o)
+dim(Bay_1_n)
+sum(ERCC_ind)
+colnames(Bay_1_n)
+BATCH1<-LABEL_REP[seq(1,142)]
+BATCH1<-LABEL_REP[seq(143,343)]
+
+BATCH1<-LABEL_REP[seq(344,564)]
+
+source("E:/RNAseqProject/TSTAT_140817.r")
+source("E:/RNAseqProject/MANY_DE_FUN.R")
+source("E:/RNAseqProject/MANY_NORM_FUN.R")
+
+
+DE_1_o<-SCnorm_runMAST(Data=Bay_1_o[,which(BATCH1!=1),1],NumCells=table(BATCH1[BATCH1!=1]))
+DE_1_n<-SCnorm_runMAST(Data=Bay_1_n[,which(BATCH1!=1),1],NumCells=table(BATCH1[BATCH1!=1]))
+
+
+length(which(DE_1_o$adjpval<0.05))
+length(which(DE_1_n$adjpval<0.05))
+
+
+THRES_VEC<-c(0.01,0.05,0.1,0.5)
+
+library(foreach)
+BAR_MAST_DAT<-foreach(i=1:length(THRES_VEC),.combine=rbind)%do%{
+  x1<-length(which(DE_1_o$adjpval<THRES_VEC[i]))
+  x2<-length(which(DE_1_n$adjpval<THRES_VEC[i]))
+  q1<-cbind(c(x1,x2),c('scran_beta','ERCC_beta'),rep(THRES_VEC[i],2))
+return(q1)
+}
+colnames(BAR_MAST_DAT)<-c('NumG','Method','Thre')
+BAR_MAST_DAT<-as.data.frame(BAR_MAST_DAT)
+BAR_MAST_DAT$NumG<-as.numeric(as.character(BAR_MAST_DAT$NumG))
+BAR_MAST_DAT$Method<-factor(BAR_MAST_DAT$Method,levels=unique(BAR_MAST_DAT$Method))
+BAR_MAST_DAT$Thre<-factor(BAR_MAST_DAT$Thre,levels=unique(BAR_MAST_DAT$Thre))
+
+
+ggplot(data=BAR_MAST_DAT, aes(x=BAR_MAST_DAT$Thre, y=BAR_MAST_DAT$NumG, fill=BAR_MAST_DAT$Method)) +
+  geom_bar(stat="identity", position = position_dodge(0.9),width=0.9)+
+  geom_text(aes(label=BAR_MAST_DAT[,1]), vjust=1.6, color="black", position = position_dodge(0.9), size=4)+
+  labs(x = "Fdr thresholds",y='Number of detected DE genes',fill='Methods for estimating BETA')+ggtitle("(a)") +
+  scale_fill_brewer(palette="Paired")+
+  theme(legend.text = element_text(size = 20),legend.title  = element_text(size = 20),plot.title = element_text(size = 20),axis.title = element_text(size = 20),panel.background = element_rect(fill = 'white', colour = 'black',size =1))

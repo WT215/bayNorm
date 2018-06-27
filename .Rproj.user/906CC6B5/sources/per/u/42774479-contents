@@ -1,0 +1,66 @@
+######################### load functions##########
+sm <- function(x, y, x.log = FALSE,n.bins = 25){
+    if(x.log){ 
+        brks <- unique(quantile(x, probs = seq(0,1,len=25))) 
+    } else {
+        brks <- 2^unique(quantile(log2(x), probs = seq(0,1,len=n.bins))) 
+    }
+    mids <- (brks[-1] + brks[-length(brks)] )/ 2
+    x.in <- cut(x, breaks = brks, include.lowest = TRUE)
+    m <- tapply(y, x.in, mean)
+    fit = lm(y~x)
+    l <- predict(fit, newdata = data.frame(x  = mids))
+    dat <- data.frame(x=mids, y = m, n = as.numeric(table(x.in)), pred = l)
+}
+
+
+dropoutfun<-function(data){
+    xx<-rowMeans(data)
+    yy<-apply(data,1,function(x){length(which(x==0))/length(x)})
+    qq<-cbind(xx,yy)
+    return(qq)
+}
+SIM_FUN<-function(DATA,MU,SIZE,BETA)
+{
+    
+    nCells<-dim(DATA)[2]
+    nGenes<-dim(DATA)[1]
+    
+    GeneMean_mat<-matrix(MU,ncol=nCells ,nrow=nGenes,byrow=F)
+    
+    one_bcv2<-SIZE
+    
+    Gamma_Means_mat <- matrix(rgamma(nGenes * nCells, shape =one_bcv2, scale = GeneMean_mat * (1/one_bcv2)),nrow = nGenes, ncol = nCells)
+    
+    true.counts <- matrix(rpois(nGenes * nCells, lambda =  Gamma_Means_mat ),nrow = nGenes, ncol = nCells)
+    rownames(true.counts)<-rownames(DATA)
+    colnames(true.counts)<-colnames(DATA)
+    
+    downsample.counts <-bayNorm::DownSampling(true.counts,BETA)
+    
+    rownames(downsample.counts)<-rownames(DATA)
+    colnames(downsample.counts)<-colnames(DATA)
+    
+    return(list(true.counts=true.counts,downsample.counts=downsample.counts))
+}
+
+
+######TUNG N1#########
+load("E:/RNAseqProject/tung2017batch/MMEADJ_ERCCBETA/tung2017batch_Bay_ERCCBETA.RData")
+load("E:/RNAseqProject/tung2017batch/MMEADJ_ERCCBETA/mean_bayNorm/mean_bayNorm.RData")
+library(bayNorm)
+SIM_TungN1<-SIM_FUN(DATA=N1_DAT,MU=bayNorm_mean_N1$PRIORS$MME_prior$MME_MU,SIZE=bayNorm_mean_N1$PRIORS$MME_SIZE_adjust,BETA=bayNorm_mean_N1$BETA)
+
+
+SIM_TrueMU<-bayNorm_mean_N1$PRIORS$MME_prior$MME_MU
+#SIM_ESTMU<-rowMeans(SIM_TungN1$true.counts)
+SIM_ESTMU<-rowMeans(SIM_TungN1$downsample.counts)
+
+
+yy<-log2(SIM_ESTMU+1)-log2(SIM_TrueMU+1)
+xx<-(log2(SIM_ESTMU+1)+log2(SIM_TrueMU+1))/2
+
+plot(xx,yy,xlab='A=(log2(EST MU after Binomial)+log2(TRUE MU))/2',ylab='M=log2(EST MU after Binomial)-log2(TRUE MU)',pch=16,main='Tung2017_NA19098')
+abline(h = 0, col = 2, lwd = 3)
+smDat <- sm(x = xx, y = yy,n.bins =100)
+lines(smDat$x, smDat$y, lwd = 7, col = 4, lty=2)
