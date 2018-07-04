@@ -63,7 +63,8 @@
 #' @param verbose print out status messages. Default is TRUE.
 #' @return  List containing 3D arrays of normalized
 #' expression (if \code{mode_version}=FALSE) or 2D matrix
-#' of normalized expression (if \code{mode_version}=TRUE),
+#' of normalized expression (if \code{mode_version}=TRUE
+#' or \code{mean_version}=TRUE),
 #' estimated parameters and input \code{BETA_vec}.
 #'
 #' @details A wrapper function of prior estimation
@@ -450,7 +451,8 @@ bayNorm <- function(
 #' @param verbose print out status messages. Default is TRUE.
 #' @return  List containing 3D arrays of normalized
 #' expression (if \code{mode_version}=FALSE) or 2D matrix
-#' of normalized expression (if \code{mode_version}=TRUE),
+#' of normalized expression (if \code{mode_version}=TRUE
+#' or \code{mean_version}=TRUE),
 #' estimated parameters and input \code{BETA_vec}.
 #'
 #' @details If you have run bayNorm before and obtained a

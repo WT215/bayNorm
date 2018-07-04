@@ -11,8 +11,9 @@
 #' @param BB_SIZE size estimated from \code{BB_Fun}.
 #' @param  MME_MU mu estimated from EstPrior.
 #' @param  MME_SIZE size estimated from EstPrior.
-#' @return MME_SIZE_adjust A vector of estimated size.
-#' Adjusted MME_SIZE based on BB_size
+#' @return MME_SIZE_adjust: A vector of estimated size.
+#' Adjusted MME_SIZE based on BB_SIZE
+#' (size estimated by maximizing marginal distribution)
 #'
 #' @examples
 #' data('EXAMPLE_DATA_list')
@@ -33,15 +34,16 @@ AdjustSIZE_fun <- function(BB_SIZE, MME_MU, MME_SIZE) {
 #' @title Estimate capture efficiency for cells
 #'
 #' @description  This function aims to select of subset of genes
-#' for estimating capture efficiency: BETA_vec for bayNorm.
+#' for estimating capture efficiency: \code{BETA_vec} for bayNorm.
 #'
 #' @param Data A matrix of single-cell expression where rows
 #' are genes and columns are samples (cells). \code{Data}
 #' can be of class \code{SummarizedExperiment} or just matrix.
 #' @param MeanBETA Mean capture efficiency of the scRNAseq data.
 #'  This can be estimated via spike-ins or other methods.
-#' @return List containing: BETA a vector of capture efficiencies,
-#'  which is of length number of cells; Selected_genes a subset of
+#' @return List containing: \code{BETA}: a vector of capture efficiencies,
+#'  which is of length number of cells;
+#'  \code{Selected_genes}: a subset of
 #'   genes that are used for estimating BETA.
 #'
 #' @examples
@@ -399,8 +401,6 @@ This part may be time-consuming.")
 #'
 #' @description  Estimating size for each gene by maximizing
 #' marginal distribution: 1D (optimize with respect to size,
-#' assuming that mu estimated based on MME
-#' method is already good),
 #' 2D (optimize with respect to both mu and size)
 #'
 #' @param Data A matrix of single-cell expression where rows
@@ -430,8 +430,7 @@ This part may be time-consuming.")
 #' optimization. However since the gradient function itself is
 #' very complicated, it does not help too much in speeding up.
 #' Default is FALSE.
-#' @return  A vector of estimated size based on maximizing
-#' marginal distribution.
+#' @return  BB estimated size (1D optimization) or size and mu (2D optimization).
 #'
 #'
 #' @examples

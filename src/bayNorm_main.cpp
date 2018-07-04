@@ -128,7 +128,7 @@ NumericVector post_wrapper_norm(IntegerVector x,double m,double beta,int last, i
 
 //' @title Main_Bay
 //'
-//' @description bayNorm
+//' @description
 //' If the observed count is above 500,
 //' then we use normal distribution to
 //' approximate binomial distribution.
@@ -138,9 +138,9 @@ NumericVector post_wrapper_norm(IntegerVector x,double m,double beta,int last, i
 //' @param BETA_vec A vector of capture efficiencies of cells
 //' @param size A vector of size
 //' @param mu A vector of mu
-//' @param S number of samples that you want to
-//' generate for 3D array
-//' @param thres for observed count greater
+//' @param S Draw S samples from posterior
+//' distribution to form 3D array
+//' @param thres For observed count greater
 //' than \code{thres}, use uniform prior.
 //' @return bayNorm normalized data
 //'
@@ -660,7 +660,8 @@ NumericVector D_SIZE_MU_2D(NumericVector SIZE_MU, NumericVector m_observed,Numer
 
 //' @title GradientFun_2D
 //'
-//' @description GradientFun_2D
+//' @description First derivative of marginal distribution
+//' with respect to both size and mu.
 //'
 //' @param SIZE_MU a vector of two elements (size,mu)
 //' @param m_observed one observed count
@@ -689,7 +690,8 @@ NumericVector GradientFun_2D(NumericVector SIZE_MU,
 
 //' @title MarginalF_2D
 //'
-//' @description MarginalF_2D
+//' @description Mariginal distribution with
+//' respect to both size and mu.
 //'
 //' @param SIZE_MU a vector of two elements (size,mu)
 //' @param m_observed  m_observed
@@ -775,7 +777,8 @@ double D_SIZE_MU_1D(double SIZE,double MU, NumericVector m_observed,NumericVecto
 
 //' @title GradientFun_1D
 //'
-//' @description GradientFun_1D
+//' @description First derivative of marginal distribution
+//' with respect to size.
 //'
 //'
 //'
@@ -806,7 +809,7 @@ double GradientFun_1D(double SIZE,double MU,
 
 //' @title MarginalF_1D
 //'
-//' @description MarginalF_1D
+//' @description Mariginal distribution with respect to size.
 //'
 //' @param SIZE size
 //' @param MU mu
