@@ -19,7 +19,8 @@ GradientFun_1D(SIZE, MU, m_observed, BETA)
 GradientFun_1D
 }
 \description{
-GradientFun_1D
+First derivative of marginal distribution
+with respect to size.
 }
 \examples{
 data("EXAMPLE_DATA_list")

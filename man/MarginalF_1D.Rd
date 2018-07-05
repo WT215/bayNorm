@@ -19,7 +19,7 @@ MarginalF_1D(SIZE, MU, m_observed, BETA)
 Marginal likelihood
 }
 \description{
-MarginalF_1D
+Mariginal distribution with respect to size.
 }
 \examples{
 data("EXAMPLE_DATA_list")

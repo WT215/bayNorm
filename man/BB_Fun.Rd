@@ -50,14 +50,11 @@ very complicated, it does not help too much in speeding up.
 Default is FALSE.}
 }
 \value{
-A vector of estimated size based on maximizing
-marginal distribution.
+BB estimated size (1D optimization) or size and mu (2D optimization).
 }
 \description{
 Estimating size for each gene by maximizing
 marginal distribution: 1D (optimize with respect to size,
-assuming that mu estimated based on MME
-method is already good),
 2D (optimize with respect to both mu and size)
 }
 \examples{

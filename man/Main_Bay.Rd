@@ -15,17 +15,16 @@ Main_Bay(Data, BETA_vec, size, mu, S, thres)
 
 \item{mu}{A vector of mu}
 
-\item{S}{number of samples that you want to
-generate for 3D array}
+\item{S}{Draw S samples from posterior
+distribution to form 3D array}
 
-\item{thres}{for observed count greater
+\item{thres}{For observed count greater
 than \code{thres}, use uniform prior.}
 }
 \value{
 bayNorm normalized data
 }
 \description{
-bayNorm
 If the observed count is above 500,
 then we use normal distribution to
 approximate binomial distribution.

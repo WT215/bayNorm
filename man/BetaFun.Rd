@@ -15,13 +15,14 @@ can be of class \code{SummarizedExperiment} or just matrix.}
 This can be estimated via spike-ins or other methods.}
 }
 \value{
-List containing: BETA a vector of capture efficiencies,
- which is of length number of cells; Selected_genes a subset of
+List containing: \code{BETA}: a vector of capture efficiencies,
+ which is of length number of cells;
+ \code{Selected_genes}: a subset of
   genes that are used for estimating BETA.
 }
 \description{
 This function aims to select of subset of genes
-for estimating capture efficiency: BETA_vec for bayNorm.
+for estimating capture efficiency: \code{BETA_vec} for bayNorm.
 }
 \examples{
 data('EXAMPLE_DATA_list')
