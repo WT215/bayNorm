@@ -141,7 +141,13 @@ in assays(Data) to 'Counts'")
     message("Apply bayNorm on the synthetic control.")
 
     mu_c<-bayNorm_N_out$PRIORS$MME_prior$MME_MU
-    size_c<-bayNorm_N_out$PRIORS$MME_SIZE_adjust
+    if(BB_SIZE){
+        size_c<-bayNorm_N_out$PRIORS$MME_SIZE_adjust
+
+    }else if(!BB_SIZE){
+        size_c<-bayNorm_N_out$PRIORS$MME_prior$MME_SIZE
+    }
+
 
     if(!mode_version & !mean_version){
         bayNorm_C_array<-Main_Bay(
