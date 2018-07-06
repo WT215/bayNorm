@@ -143,20 +143,27 @@ in assays(Data) to 'Counts'")
     mu_c<-bayNorm_N_out$PRIORS$MME_prior$MME_MU
     size_c<-bayNorm_N_out$PRIORS$MME_SIZE_adjust
 
-    if(!mode_version){
+    if(!mode_version & !mean_version){
         bayNorm_C_array<-Main_Bay(
             Data=synthetic_out$N_c,
             BETA_vec=synthetic_out$beta_c,
             size=size_c,mu=mu_c,S=S,
             thres=max(synthetic_out$N_c)*2)
 
-    }else{
+    }else if(mode_version & !mean_version){
         bayNorm_C_array<-Main_mode_Bay(
             Data=synthetic_out$N_c,
             BETA_vec=synthetic_out$beta_c,size=size_c,
             mu=mu_c,S=S,
             thres=max(synthetic_out$N_c)*2)
+    }else if(!mode_version & mean_version){
+        bayNorm_C_array<-Main_mean_Bay(
+            Data=synthetic_out$N_c,
+            BETA_vec=synthetic_out$beta_c,size=size_c,
+            mu=mu_c,S=1000,
+            thres=max(synthetic_out$N_c)*2)
     }
+
 
 
     NOISE_out<-NOISY_FUN(
