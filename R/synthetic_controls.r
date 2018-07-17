@@ -52,7 +52,8 @@ SyntheticControl<-function(Data,BETA_vec){
     Mean_depth<-mean(colSums(Data)/beta_c)
     Data_norm<-t(t(Data)/colSums(Data))*Mean_depth
     MU<-rowMeans(Data_norm)
-    mu_mat<- MU%*%t(rep(1,length(MU)))
+    #mu_mat<- MU%*%t(rep(1,length(MU)))
+    mu_mat<- MU%*%t(rep(1,nCells))
 
     N_c <- matrix(rpois(nGenes * nCells, lambda =mu_mat ),nrow = nGenes, ncol = nCells,byrow=FALSE)
 
