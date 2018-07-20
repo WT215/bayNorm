@@ -902,3 +902,421 @@ NumericMatrix DownSampling(NumericMatrix Data ,
 
 }
 
+
+
+
+
+
+
+
+
+
+//' @title MarginalF_NB_1D
+//'
+//' @description Mariginal distribution with respect to size.
+//'
+//' @param SIZE size
+//' @param MU mu
+//' @param m_observed one observed count
+//' @param BETA The corresponding capture efficiency
+//' @return Marginal likelihood
+//' @examples
+//' data("EXAMPLE_DATA_list")
+//' #Should not run by the users.
+//' \dontrun{
+//' }
+//' @export
+// [[Rcpp::export]]
+double MarginalF_NB_1D(double SIZE,double MU,
+                    NumericVector m_observed,
+                    NumericVector BETA) {
+    NumericVector m=m_observed;
+    int nCells=m.size();
+    NumericVector temp_vec_2(nCells);
+
+    double MarginalVal;
+
+
+    for(int i=0;i<nCells;i++){
+        temp_vec_2(i)=R::dnbinom_mu(m_observed(i),SIZE,BETA(i)*MU,true);
+    }
+    MarginalVal=sum(temp_vec_2);
+    return MarginalVal;
+}
+
+
+//' @title MarginalF_NB_2D
+//'
+//' @description Mariginal distribution with
+//' respect to both size and mu.
+//'
+//' @param SIZE_MU a vector of two elements (size,mu)
+//' @param m_observed  m_observed
+//' @param BETA Corresponding capture efficiency
+//' @return Marginal likelihood
+//' @examples
+//' data("EXAMPLE_DATA_list")
+//' #Should not run by the users.
+//' \dontrun{
+//' }
+//' @export
+// [[Rcpp::export]]
+double MarginalF_NB_2D(NumericVector SIZE_MU,
+                    NumericVector m_observed,
+                    NumericVector BETA) {
+    NumericVector m=m_observed;
+    int nCells=m.size();
+    NumericVector temp_vec_2(nCells);
+
+
+    double MarginalVal;
+
+    for(int i=0;i<nCells;i++){
+
+        temp_vec_2(i)=R::dnbinom_mu(m_observed(i),SIZE_MU(0),SIZE_MU(1)*BETA(i),true);
+
+    }
+    MarginalVal=sum(temp_vec_2);
+    return MarginalVal;
+}
+
+
+
+
+//' @title GradientFun_NB_1D
+//'
+//' @description First derivative of marginal distribution
+//' with respect to size.
+//'
+//'
+//'
+//' @param SIZE size
+//' @param MU mu
+//' @param m_observed one observed count
+//' @param BETA The corresponding capture efficiency
+//' @return GradientFun_NB_1D
+//'
+//' @examples
+//' data("EXAMPLE_DATA_list")
+//' #Should not run by the users.
+//' \dontrun{
+//' }
+//' @export
+// [[Rcpp::export]]
+double GradientFun_NB_1D(double SIZE,double MU,
+                      NumericVector m_observed,
+                      NumericVector BETA){
+    NumericVector m=m_observed;
+    double Gradd;
+
+    int nCells=m.size();
+    NumericVector temp_vec_2_SIZE(nCells);
+
+    for(int i=0;i<nCells;i++){
+        temp_vec_2_SIZE(i)=R::digamma(m_observed(i)+SIZE)-R::digamma(SIZE)+log(SIZE/(SIZE+MU*BETA(i)))+(BETA(i)*MU-m_observed(i))/(BETA(i)*MU+SIZE);
+
+    }
+    Gradd=sum(temp_vec_2_SIZE);
+    return Gradd;
+}
+
+
+
+
+//' @title GradientFun_NB_2D
+//'
+//' @description First derivative of marginal distribution
+//' with respect to size.
+//'
+//'
+//'
+//' @param SIZE size
+//' @param MU mu
+//' @param m_observed one observed count
+//' @param BETA The corresponding capture efficiency
+//' @return GradientFun_NB_2D
+//'
+//' @examples
+//' data("EXAMPLE_DATA_list")
+//' #Should not run by the users.
+//' \dontrun{
+//' }
+//' @export
+// [[Rcpp::export]]
+NumericVector GradientFun_NB_2D(NumericVector SIZE_MU,
+                         NumericVector m_observed,
+                         NumericVector BETA){
+    NumericVector m=m_observed;
+    int nCells=m.size();
+    NumericVector temp_size(nCells);
+    NumericVector temp_mu(nCells);
+    NumericVector Gradd_vec(2);
+
+    for(int i=0;i<nCells;i++){
+        temp_mu(i)=(m_observed(i)*SIZE_MU(0)-SIZE_MU(1)*BETA(i)*SIZE_MU(0))/(SIZE_MU(1)*(SIZE_MU(1)*BETA(i)+SIZE_MU(0)));
+
+        temp_size(i)=R::digamma(m_observed(i)+SIZE_MU(0))-R::digamma(SIZE_MU(0))+log(SIZE_MU(0)/(SIZE_MU(0)+SIZE_MU(1)*BETA(i)))+(BETA(i)*SIZE_MU(1)-m_observed(i))/(BETA(i)*SIZE_MU(1)+SIZE_MU(0));
+
+    }
+    Gradd_vec(0)=sum(temp_size);
+    Gradd_vec(1)=sum(temp_mu);
+
+
+    return Gradd_vec;
+}
+
+
+
+
+//' @title GradientFun_NBmu_1D
+//'
+//' @description First derivative of marginal distribution
+//' with respect to size.
+//'
+//'
+//'
+//' @param SIZE size
+//' @param MU mu
+//' @param m_observed one observed count
+//' @param BETA The corresponding capture efficiency
+//' @return GradientFun_NB_1D
+//'
+//' @examples
+//' data("EXAMPLE_DATA_list")
+//' #Should not run by the users.
+//' \dontrun{
+//' }
+//' @export
+// [[Rcpp::export]]
+double GradientFun_NBmu_1D(double SIZE,double MU,
+                         NumericVector m_observed,
+                         NumericVector BETA){
+    NumericVector m=m_observed;
+    double Gradd;
+
+    int nCells=m.size();
+    NumericVector temp_mu(nCells);
+
+    for(int i=0;i<nCells;i++){
+
+        temp_mu(i)=(m_observed(i)*SIZE-MU*BETA(i)*SIZE)/(MU*(MU*BETA(i)+SIZE));
+
+    }
+    Gradd=sum(temp_mu);
+    return Gradd;
+}
+
+
+
+
+
+//' @title Main_NB_Bay
+//'
+//' @description
+//' If the observed count is above 500,
+//' then we use normal distribution to
+//' approximate binomial distribution.
+//'
+//'
+//' @param Data raw count Data
+//' @param BETA_vec A vector of capture efficiencies of cells
+//' @param size A vector of size
+//' @param mu A vector of mu
+//' @param S Draw S samples from posterior
+//' distribution to form 3D array
+//' @param thres useless parameter
+//' @return bayNorm normalized data
+//'
+//'
+//' @examples
+//' data("EXAMPLE_DATA_list")
+//' \dontrun{
+//' data("EXAMPLE_DATA_list")
+//' Norm_3D_array<-Main_Bay(Data=EXAMPLE_DATA_list$inputdata,
+//' BETA_vec = EXAMPLE_DATA_list$inputbeta,
+//' size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,
+//' S=20,thres=10000000)
+//' }
+//' @export
+// [[Rcpp::export]]
+NumericVector Main_NB_Bay(NumericMatrix Data,
+                       NumericVector BETA_vec,
+                       NumericVector size,
+                       Nullable<NumericVector> mu,
+                       int S,int thres)
+{
+
+
+
+    arma::mat M = Rcpp::as<arma::mat>(Data);
+
+    arma::vec Beta = Rcpp::as<arma::vec>(BETA_vec);
+    arma::vec M_ave;
+    arma::mat M_t;
+
+    int nrow=M.n_rows;
+    int ncol=M.n_cols;
+    int i;
+    int j;
+    int q;
+    double tempmu;
+    NumericVector S_temp;
+
+
+    IntegerVector x;
+    NumericVector y;
+
+    arma::cube Final_mat(nrow, ncol, S);
+
+
+    if (mu.isNotNull())
+    {
+
+        M_ave = Rcpp::as<arma::vec>(mu);
+    }
+
+
+    Progress p(ncol*nrow, true);
+
+    for( i=0;i<ncol;i++){
+        // Rcout << "The cell is \n" << i+1 << std::endl;
+
+        for( j=0;j<nrow;j++){
+
+            p.increment();
+
+            //if(debug)
+            //{Rcout << "The gene is \n" << j+1 << std::endl;}
+
+            if(M(j,i)==NA_INTEGER) {
+                for( q=0;q<S;q++){Final_mat(j,i,q)=NA_INTEGER;}
+            }
+
+            else{
+                tempmu=(M(j,i)+size(j))*(M_ave(j)-M_ave(j)*Beta(i))/(size(j)+M_ave(j)*Beta(i));
+                //Rcout << "The gene is \n" << j+1 << std::endl;
+
+                S_temp=Rcpp::rnbinom_mu(S,size(j)+M(j,i),tempmu)+M(j,i);
+                arma::vec S_input = Rcpp::as<arma::vec>(S_temp);
+                Final_mat.subcube(j,i,0,j,i,S-1)=S_input;
+
+
+            } //end of else
+
+
+        } //j
+
+    }  //i
+
+
+    NumericVector Final_mat2=Rcpp::wrap(Final_mat);
+    Rcpp::rownames(Final_mat2) = Rcpp::rownames(Data);
+    Rcpp::colnames(Final_mat2) = Rcpp::colnames(Data);
+
+    return(Rcpp::wrap(Final_mat2));
+}
+
+
+
+//' @title  Mean_NB_Bay
+//'
+//' @description bayNorm
+//' If the observed count is above 500,
+//' then we use normal distribution to
+//' approximate binomial distribution.
+//'
+//'
+//' @param Data raw count Data
+//' @param BETA_vec A vector of capture efficiencies of cells
+//' @param size A vector of size
+//' @param mu A vector of mu
+//' @param S number of samples that you want to generate
+//' @param thres useless parameter
+//' @return bayNorm normalized data
+//'
+//' @examples
+//' data("EXAMPLE_DATA_list")
+//' \dontrun{
+//' data("EXAMPLE_DATA_list")
+//' Norm_2D_matrix<-Main_mean_Bay(Data=EXAMPLE_DATA_list$inputdata,
+//' BETA_vec = EXAMPLE_DATA_list$inputbeta,
+//' size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,
+//' S=20,thres=10000000)
+//' }
+//' @export
+// [[Rcpp::export]]
+NumericMatrix Main_mean_NB_Bay(NumericMatrix Data,
+                            NumericVector BETA_vec,
+                            NumericVector size,
+                            Nullable<NumericVector> mu,
+                            int S,int thres)
+{
+
+
+
+    arma::mat M = Rcpp::as<arma::mat>(Data);
+
+    arma::vec Beta = Rcpp::as<arma::vec>(BETA_vec);
+    arma::vec M_ave;
+    arma::mat M_t;
+
+    int nrow=M.n_rows;
+    int ncol=M.n_cols;
+    int i;
+    int j;
+    int q;
+
+    IntegerVector x;
+    NumericVector y;
+
+    double tempmu;
+
+    arma::mat Final_mat(nrow, ncol);
+
+
+    if (mu.isNotNull())
+    {
+
+        M_ave = Rcpp::as<arma::vec>(mu);
+    }
+
+
+    Progress p(ncol*nrow, true);
+
+
+    for( i=0;i<ncol;i++){
+        //Rcout << "The cell is \n" << i+1 << std::endl;
+
+        for( j=0;j<nrow;j++){
+
+            p.increment();
+
+            if(M(j,i)==NA_INTEGER) {
+                for( q=0;q<S;q++){Final_mat(j,i)=NA_INTEGER;}
+            }
+
+            else{
+                tempmu=(M(j,i)+size(j))*(M_ave(j)-M_ave(j)*Beta(i))/(size(j)+M_ave(j)*Beta(i))+M(j,i);
+
+                Final_mat(j,i)=tempmu;
+
+                //Rcout << "The gene is \n" << j+1 << std::endl;
+
+
+                //Final_mat.subcube(j,i,0,j,i,S-1)=S_input;
+
+            } //end of else
+
+
+        } //j
+
+    }  //i
+
+
+
+    NumericVector Final_mat2=Rcpp::wrap(Final_mat);
+    Rcpp::rownames(Final_mat2) = Rcpp::rownames(Data);
+    Rcpp::colnames(Final_mat2) = Rcpp::colnames(Data);
+
+    return(Rcpp::wrap(Final_mat2));
+}

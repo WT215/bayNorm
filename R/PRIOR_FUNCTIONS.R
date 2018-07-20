@@ -522,7 +522,7 @@ BB_Fun <- function(
                     if (!GR) {
 
                         BB_opt <- BB::spg(
-                            par = size, fn = MarginalF_1D,
+                            par = size, fn = MarginalF_NB_1D,
                             MU = mu,m_observed = m_observed,
                             BETA = BETA_vec,
                             control = list(
@@ -533,8 +533,8 @@ BB_Fun <- function(
                             upper = upper_input)
                     } else {
                         BB_opt <- BB::spg(
-                            par = size, fn = MarginalF_1D,
-                            gr = GradientFun_1D,MU = mu,
+                            par = size, fn = MarginalF_NB_1D,
+                            gr = GradientFun_NB_1D,MU = mu,
                             m_observed = m_observed,
                             BETA = BETA_vec,
                             control = list(
@@ -574,7 +574,7 @@ BB_Fun <- function(
 
                     if (!GR) {
                         BB_opt <- BB::spg(
-                            par = size, fn = MarginalF_1D,
+                            par = size, fn = MarginalF_NB_1D,
                             MU = mu,m_observed = m_observed,
                             BETA = BETA_vec,
                             control = list(
@@ -585,8 +585,8 @@ BB_Fun <- function(
                             upper = SIZE_upper)
                     } else {
                         BB_opt <- BB::spg(
-                            par = size, fn = MarginalF_1D,
-                            gr = GradientFun_1D,MU = mu,
+                            par = size, fn = MarginalF_NB_1D,
+                            gr = GradientFun_NB_1D,MU = mu,
                             m_observed = m_observed,
                             BETA = BETA_vec,
                             control = list(
@@ -634,7 +634,7 @@ BB_Fun <- function(
                     if (!GR) {
                         BB_opt <- BB::spg(
                             par = c(size, mu),
-                            fn = MarginalF_2D,
+                            fn = MarginalF_NB_2D,
                             m_observed = m_observed,
                             BETA = BETA_vec,
                             control = list(
@@ -649,8 +649,8 @@ BB_Fun <- function(
 
                         BB_opt <- BB::spg(
                             par = c(size, mu),
-                            fn = MarginalF_2D,
-                            gr = GradientFun_2D,
+                            fn = MarginalF_NB_2D,
+                            gr = GradientFun_NB_2D,
                             m_observed = m_observed,
                             BETA = BETA_vec,
                             control = list(
@@ -687,7 +687,7 @@ BB_Fun <- function(
                     if (!GR) {
                         BB_opt <- BB::spg(
                             par = c(size, mu),
-                            fn = MarginalF_2D,
+                            fn = MarginalF_NB_2D,
                             m_observed = m_observed,
                             BETA = BETA_vec,
                             control = list(
@@ -704,8 +704,8 @@ BB_Fun <- function(
                     } else {
 
                         BB_opt <- BB::spg(
-                            par = c(size, mu), fn = MarginalF_2D,
-                            gr = GradientFun_2D,
+                            par = c(size, mu), fn = MarginalF_NB_2D,
+                            gr = GradientFun_NB_2D,
                             m_observed = m_observed,
                             BETA = BETA_vec,
                             control = list(

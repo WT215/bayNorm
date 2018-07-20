@@ -315,7 +315,7 @@ bayNorm <- function(
                 }
 
 
-                Bay_array_list[[i]] <- Main_Bay(
+                Bay_array_list[[i]] <- Main_NB_Bay(
                     Data = DataList_sr[[i]],
                     BETA_vec = BETAList[[i]],
                     size = SIZE_input,
@@ -373,7 +373,7 @@ bayNorm <- function(
                     SIZE_input = PRIORS_LIST[[i]]$MME_prior$MME_SIZE
                 }
 
-                Bay_mat_list[[i]] <- Main_mean_Bay(
+                Bay_mat_list[[i]] <- Main_mean_NB_Bay(
                     Data = DataList_sr[[i]],
                     BETA_vec = BETAList[[i]],
                     size = SIZE_input,
@@ -652,7 +652,7 @@ bayNorm_sup <- function(
                     SIZE_input = PRIORS_LIST[[i]]$MME_prior$MME_SIZE
 
                 }
-                Bay_array_list[[i]] <- Main_Bay(
+                Bay_array_list[[i]] <- Main_NB_Bay(
                     Data = DataList_sr[[i]],
                     BETA_vec = BETAList[[i]],
                     size = SIZE_input, mu = MU_input,
@@ -716,7 +716,7 @@ bayNorm_sup <- function(
                     SIZE_input = PRIORS_LIST[[i]]$MME_prior$MME_SIZE
                 }
 
-                Bay_mat_list[[i]] <- Main_mean_Bay(
+                Bay_mat_list[[i]] <- Main_mean_NB_Bay(
                     Data = DataList_sr[[i]],
                     BETA_vec = BETAList[[i]],
                     size = SIZE_input,
