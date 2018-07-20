@@ -176,7 +176,7 @@ bayNorm <- function(
         }
 
         if (!mode_version & !mean_version) {
-            Bay_array <- Main_Bay(
+            Bay_array <- Main_NB_Bay(
                 Data = Data_sr,
                 BETA_vec = BETA_vec,
                 size = SIZE_input,
@@ -204,7 +204,7 @@ bayNorm <- function(
                 BETA = BETA_vec))
         } else if(mean_version){
             # mean
-            Bay_mat <- Main_mean_Bay(
+            Bay_mat <- Main_mean_NB_Bay(
                 Data = Data_sr,
                 BETA_vec = BETA_vec,
                 size = SIZE_input,
@@ -550,7 +550,7 @@ bayNorm_sup <- function(
         }
 
         if (!mode_version & !mean_version) {
-            Bay_array <- Main_Bay(
+            Bay_array <- Main_NB_Bay(
                 Data = Data_sr,
                 BETA_vec = BETA_vec,
                 size = SIZE_input,
@@ -578,7 +578,7 @@ bayNorm_sup <- function(
                         BETA = BETA_vec))
         } else if(mean_version){
 
-            Bay_mat <- Main_mean_Bay(
+            Bay_mat <- Main_mean_NB_Bay(
                 Data = Data_sr,
                 BETA_vec = BETA_vec,
                 size = SIZE_input,
