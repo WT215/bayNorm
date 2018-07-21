@@ -1320,3 +1320,113 @@ NumericMatrix Main_mean_NB_Bay(NumericMatrix Data,
 
     return(Rcpp::wrap(Final_mat2));
 }
+
+
+
+
+//' @title  Mode_NB_Bay
+//'
+//' @description bayNorm
+//' If the observed count is above 500,
+//' then we use normal distribution to
+//' approximate binomial distribution.
+//'
+//'
+//' @param Data raw count Data
+//' @param BETA_vec A vector of capture efficiencies of cells
+//' @param size A vector of size
+//' @param mu A vector of mu
+//' @param S number of samples that you want to generate
+//' @param thres useless parameter
+//' @return bayNorm normalized data
+//'
+//' @examples
+//' data("EXAMPLE_DATA_list")
+//' \dontrun{
+//' data("EXAMPLE_DATA_list")
+//' Norm_2D_matrix<-Main_mean_Bay(Data=EXAMPLE_DATA_list$inputdata,
+//' BETA_vec = EXAMPLE_DATA_list$inputbeta,
+//' size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,
+//' S=20,thres=10000000)
+//' }
+//' @export
+// [[Rcpp::export]]
+NumericMatrix Main_mode_NB_Bay(NumericMatrix Data,
+                               NumericVector BETA_vec,
+                               NumericVector size,
+                               Nullable<NumericVector> mu,
+                               int S,int thres)
+{
+
+
+
+    arma::mat M = Rcpp::as<arma::mat>(Data);
+
+    arma::vec Beta = Rcpp::as<arma::vec>(BETA_vec);
+    arma::vec M_ave;
+    arma::mat M_t;
+
+    int nrow=M.n_rows;
+    int ncol=M.n_cols;
+    int i;
+    int j;
+    int q;
+    double modee;
+    double probb;
+
+    IntegerVector x;
+    NumericVector y;
+
+    double tempmu;
+
+    arma::mat Final_mat(nrow, ncol);
+
+
+    if (mu.isNotNull())
+    {
+
+        M_ave = Rcpp::as<arma::vec>(mu);
+    }
+
+
+    Progress p(ncol*nrow, true);
+
+
+    for( i=0;i<ncol;i++){
+        //Rcout << "The cell is \n" << i+1 << std::endl;
+
+        for( j=0;j<nrow;j++){
+
+            p.increment();
+
+            if(M(j,i)==NA_INTEGER) {
+                for( q=0;q<S;q++){Final_mat(j,i)=NA_INTEGER;}
+            }
+
+            else{
+
+                if(size(j)<=1){
+                    modee=0;
+                } else if(size(j)>1){
+                    probb=size(j)/(size(j)+M_ave(j));
+                    modee= floor((1-probb)*(size(j)-1)/probb)*size(j);
+
+                }
+                Final_mat(j,i)=modee;
+
+
+            } //end of else
+
+
+        } //j
+
+    }  //i
+
+
+
+    NumericVector Final_mat2=Rcpp::wrap(Final_mat);
+    Rcpp::rownames(Final_mat2) = Rcpp::rownames(Data);
+    Rcpp::colnames(Final_mat2) = Rcpp::colnames(Data);
+
+    return(Rcpp::wrap(Final_mat2));
+}

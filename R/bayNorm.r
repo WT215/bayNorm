@@ -190,7 +190,7 @@ bayNorm <- function(
                 BETA = BETA_vec))
         } else if(mode_version){
             # mode
-            Bay_mat <- Main_mode_Bay(
+            Bay_mat <- Main_mode_NB_Bay(
                 Data = Data_sr,
                 BETA_vec = BETA_vec,
                 size = SIZE_input,
@@ -344,7 +344,7 @@ bayNorm <- function(
                     SIZE_input = PRIORS_LIST[[i]]$MME_prior$MME_SIZE
                 }
 
-                Bay_mat_list[[i]] <- Main_mode_Bay(
+                Bay_mat_list[[i]] <- Main_mode_NB_Bay(
                     Data = DataList_sr[[i]],
                     BETA_vec = BETAList[[i]],
                     size = SIZE_input,
@@ -564,7 +564,7 @@ bayNorm_sup <- function(
         } else if(mode_version){
 
             # mode
-            Bay_mat <- Main_mode_Bay(
+            Bay_mat <- Main_mode_NB_Bay(
                 Data = Data_sr,
                 BETA_vec = BETA_vec,
                 size = SIZE_input,
@@ -684,7 +684,7 @@ bayNorm_sup <- function(
                     SIZE_input = PRIORS_LIST[[i]]$MME_prior$MME_SIZE
                 }
 
-                Bay_mat_list[[i]] <- Main_mode_Bay(
+                Bay_mat_list[[i]] <- Main_mode_NB_Bay(
                     Data = DataList_sr[[i]],
                     BETA_vec = BETAList[[i]],
                     size = SIZE_input,
@@ -732,10 +732,6 @@ bayNorm_sup <- function(
             return(list(Bay_mat_list = Bay_mat_list,
                         PRIORS_LIST = PRIORS_LIST,
                         BETA = BETAList))
-
-
-
-
         }
     }  # end for multiple groups
 
