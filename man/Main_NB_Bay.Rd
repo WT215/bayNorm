@@ -24,15 +24,12 @@ distribution to form 3D array}
 bayNorm normalized data
 }
 \description{
-If the observed count is above 500,
-then we use normal distribution to
-approximate binomial distribution.
+Main_NB_Bay
 }
 \examples{
 data("EXAMPLE_DATA_list")
 \dontrun{
-data("EXAMPLE_DATA_list")
-Norm_3D_array<-Main_Bay(Data=EXAMPLE_DATA_list$inputdata,
+Norm_3D_array<-Main_NB_Bay(Data=EXAMPLE_DATA_list$inputdata,
 BETA_vec = EXAMPLE_DATA_list$inputbeta,
 size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,
 S=20,thres=10000000)

@@ -12,7 +12,8 @@ set.seed(1258484)
 q1<- bayNorm(Data=EXAMPLE_DATA_list$inputdata[seq(1,10),],BETA_vec = EXAMPLE_DATA_list$inputbeta,parallel = F)
 set.seed(1258484)
 q2<- bayNorm(Data=EXAMPLE_DATA_list$inputdata[seq(1,10),],BETA_vec = EXAMPLE_DATA_list$inputbeta,parallel = F)
-expect_identical(q1, q2)}
+expect_identical(q1, q2)
+}
 )
 
 

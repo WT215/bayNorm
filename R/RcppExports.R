@@ -311,11 +311,7 @@ GradientFun_NBmu_1D <- function(SIZE, MU, m_observed, BETA) {
 
 #' @title Main_NB_Bay
 #'
-#' @description
-#' If the observed count is above 500,
-#' then we use normal distribution to
-#' approximate binomial distribution.
-#'
+#' @description Main_NB_Bay
 #'
 #' @param Data raw count Data
 #' @param BETA_vec A vector of capture efficiencies of cells
@@ -330,8 +326,7 @@ GradientFun_NBmu_1D <- function(SIZE, MU, m_observed, BETA) {
 #' @examples
 #' data("EXAMPLE_DATA_list")
 #' \dontrun{
-#' data("EXAMPLE_DATA_list")
-#' Norm_3D_array<-Main_Bay(Data=EXAMPLE_DATA_list$inputdata,
+#' Norm_3D_array<-Main_NB_Bay(Data=EXAMPLE_DATA_list$inputdata,
 #' BETA_vec = EXAMPLE_DATA_list$inputbeta,
 #' size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,
 #' S=20,thres=10000000)
@@ -344,10 +339,6 @@ Main_NB_Bay <- function(Data, BETA_vec, size, mu, S, thres) {
 #' @title  Mean_NB_Bay
 #'
 #' @description bayNorm
-#' If the observed count is above 500,
-#' then we use normal distribution to
-#' approximate binomial distribution.
-#'
 #'
 #' @param Data raw count Data
 #' @param BETA_vec A vector of capture efficiencies of cells
@@ -361,7 +352,7 @@ Main_NB_Bay <- function(Data, BETA_vec, size, mu, S, thres) {
 #' data("EXAMPLE_DATA_list")
 #' \dontrun{
 #' data("EXAMPLE_DATA_list")
-#' Norm_2D_matrix<-Main_mean_Bay(Data=EXAMPLE_DATA_list$inputdata,
+#' Norm_2D_matrix<-Main_mean_NB_Bay(Data=EXAMPLE_DATA_list$inputdata,
 #' BETA_vec = EXAMPLE_DATA_list$inputbeta,
 #' size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,
 #' S=20,thres=10000000)
@@ -373,10 +364,7 @@ Main_mean_NB_Bay <- function(Data, BETA_vec, size, mu, S, thres) {
 
 #' @title  Mode_NB_Bay
 #'
-#' @description bayNorm
-#' If the observed count is above 500,
-#' then we use normal distribution to
-#' approximate binomial distribution.
+#' @description Mode_NB_Bay
 #'
 #'
 #' @param Data raw count Data
@@ -384,14 +372,15 @@ Main_mean_NB_Bay <- function(Data, BETA_vec, size, mu, S, thres) {
 #' @param size A vector of size
 #' @param mu A vector of mu
 #' @param S number of samples that you want to generate
-#' @param thres useless parameter
+#' @param thres for observed count greater
+#' than \code{thres}, use uniform prior.
 #' @return bayNorm normalized data
 #'
 #' @examples
 #' data("EXAMPLE_DATA_list")
 #' \dontrun{
 #' data("EXAMPLE_DATA_list")
-#' Norm_2D_matrix<-Main_mean_Bay(Data=EXAMPLE_DATA_list$inputdata,
+#' Norm_2D_matrix<-Main_mode_NB_Bay(Data=EXAMPLE_DATA_list$inputdata,
 #' BETA_vec = EXAMPLE_DATA_list$inputbeta,
 #' size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,
 #' S=20,thres=10000000)

@@ -1112,11 +1112,7 @@ double GradientFun_NBmu_1D(double SIZE,double MU,
 
 //' @title Main_NB_Bay
 //'
-//' @description
-//' If the observed count is above 500,
-//' then we use normal distribution to
-//' approximate binomial distribution.
-//'
+//' @description Main_NB_Bay
 //'
 //' @param Data raw count Data
 //' @param BETA_vec A vector of capture efficiencies of cells
@@ -1131,8 +1127,7 @@ double GradientFun_NBmu_1D(double SIZE,double MU,
 //' @examples
 //' data("EXAMPLE_DATA_list")
 //' \dontrun{
-//' data("EXAMPLE_DATA_list")
-//' Norm_3D_array<-Main_Bay(Data=EXAMPLE_DATA_list$inputdata,
+//' Norm_3D_array<-Main_NB_Bay(Data=EXAMPLE_DATA_list$inputdata,
 //' BETA_vec = EXAMPLE_DATA_list$inputbeta,
 //' size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,
 //' S=20,thres=10000000)
@@ -1221,10 +1216,6 @@ NumericVector Main_NB_Bay(NumericMatrix Data,
 //' @title  Mean_NB_Bay
 //'
 //' @description bayNorm
-//' If the observed count is above 500,
-//' then we use normal distribution to
-//' approximate binomial distribution.
-//'
 //'
 //' @param Data raw count Data
 //' @param BETA_vec A vector of capture efficiencies of cells
@@ -1238,7 +1229,7 @@ NumericVector Main_NB_Bay(NumericMatrix Data,
 //' data("EXAMPLE_DATA_list")
 //' \dontrun{
 //' data("EXAMPLE_DATA_list")
-//' Norm_2D_matrix<-Main_mean_Bay(Data=EXAMPLE_DATA_list$inputdata,
+//' Norm_2D_matrix<-Main_mean_NB_Bay(Data=EXAMPLE_DATA_list$inputdata,
 //' BETA_vec = EXAMPLE_DATA_list$inputbeta,
 //' size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,
 //' S=20,thres=10000000)
@@ -1326,10 +1317,7 @@ NumericMatrix Main_mean_NB_Bay(NumericMatrix Data,
 
 //' @title  Mode_NB_Bay
 //'
-//' @description bayNorm
-//' If the observed count is above 500,
-//' then we use normal distribution to
-//' approximate binomial distribution.
+//' @description Mode_NB_Bay
 //'
 //'
 //' @param Data raw count Data
@@ -1337,14 +1325,15 @@ NumericMatrix Main_mean_NB_Bay(NumericMatrix Data,
 //' @param size A vector of size
 //' @param mu A vector of mu
 //' @param S number of samples that you want to generate
-//' @param thres useless parameter
+//' @param thres for observed count greater
+//' than \code{thres}, use uniform prior.
 //' @return bayNorm normalized data
 //'
 //' @examples
 //' data("EXAMPLE_DATA_list")
 //' \dontrun{
 //' data("EXAMPLE_DATA_list")
-//' Norm_2D_matrix<-Main_mean_Bay(Data=EXAMPLE_DATA_list$inputdata,
+//' Norm_2D_matrix<-Main_mode_NB_Bay(Data=EXAMPLE_DATA_list$inputdata,
 //' BETA_vec = EXAMPLE_DATA_list$inputbeta,
 //' size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,
 //' S=20,thres=10000000)
@@ -1352,10 +1341,10 @@ NumericMatrix Main_mean_NB_Bay(NumericMatrix Data,
 //' @export
 // [[Rcpp::export]]
 NumericMatrix Main_mode_NB_Bay(NumericMatrix Data,
-                               NumericVector BETA_vec,
-                               NumericVector size,
-                               Nullable<NumericVector> mu,
-                               int S,int thres)
+                            NumericVector BETA_vec,
+                            NumericVector size,
+                            Nullable<NumericVector> mu,
+                            int S,int thres)
 {
 
 
@@ -1371,13 +1360,9 @@ NumericMatrix Main_mode_NB_Bay(NumericMatrix Data,
     int i;
     int j;
     int q;
-    double modee;
     double probb;
+    double meann;
 
-    IntegerVector x;
-    NumericVector y;
-
-    double tempmu;
 
     arma::mat Final_mat(nrow, ncol);
 
@@ -1404,16 +1389,15 @@ NumericMatrix Main_mode_NB_Bay(NumericMatrix Data,
             }
 
             else{
-
-                if(size(j)<=1){
-                    modee=0;
-                } else if(size(j)>1){
-                    probb=size(j)/(size(j)+M_ave(j));
-                    modee= floor((1-probb)*(size(j)-1)/probb)*size(j);
+                if((size(j)+M(j,i))<=1){
+                    Final_mat(j,i)=0;
+                } else if((size(j)+M(j,i))>1){
+                    meann=(M(j,i)+size(j))*(M_ave(j)-M_ave(j)*Beta(i))/(size(j)+M_ave(j)*Beta(i));
+                    probb=(M_ave(j)*Beta(i)+size(j)+M(j,i))/(M(j,i)+size(j)+M(j,i));
+                    Final_mat(j,i)= floor((1-probb)*(size(j)+M(j,i)-1)/probb)+M(j,i);
+                    //Final_mat(j,i)= floor(meann/(size(j)+M(j,i))*(size(j)+M(j,i)-1))+M(j,i);
 
                 }
-                Final_mat(j,i)=modee;
-
 
             } //end of else
 
