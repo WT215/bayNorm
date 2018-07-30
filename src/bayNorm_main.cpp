@@ -126,7 +126,7 @@ NumericVector post_wrapper_norm(IntegerVector x,double m,double beta,int last, i
 }
 
 
-//' @title Main_Bay
+//' @title Main_Bay (1D grid approximation, slow)
 //'
 //' @description
 //' If the observed count is above 500,
@@ -268,7 +268,7 @@ return(Rcpp::wrap(Final_mat2));
 
 //' @title  Mode_Bay
 //'
-//' @description bayNorm
+//' @description bayNorm (1D grid approximation, slow)
 //' If the observed count is above 500,
 //' then we use normal distribution to
 //' approximate binomial distribution.
@@ -405,7 +405,7 @@ NumericMatrix Main_mode_Bay(NumericMatrix Data,
 
 //' @title  Mean_Bay
 //'
-//' @description bayNorm
+//' @description bayNorm (1D grid approximation, slow)
 //' If the observed count is above 500,
 //' then we use normal distribution to
 //' approximate binomial distribution.
@@ -1389,13 +1389,13 @@ NumericMatrix Main_mode_NB_Bay(NumericMatrix Data,
             }
 
             else{
-                if((size(j)+M(j,i))<=1){
+                if(((size(j)+M(j,i)))<=1){
                     Final_mat(j,i)=0;
                 } else if((size(j)+M(j,i))>1){
                     meann=(M(j,i)+size(j))*(M_ave(j)-M_ave(j)*Beta(i))/(size(j)+M_ave(j)*Beta(i));
                     probb=(M_ave(j)*Beta(i)+size(j)+M(j,i))/(M(j,i)+size(j)+M(j,i));
-                    Final_mat(j,i)= floor((1-probb)*(size(j)+M(j,i)-1)/probb)+M(j,i);
-                    //Final_mat(j,i)= floor(meann/(size(j)+M(j,i))*(size(j)+M(j,i)-1))+M(j,i);
+                    //Final_mat(j,i)= floor((1-probb)*(size(j)+M(j,i)-1)/probb)+M(j,i);
+                    Final_mat(j,i)= floor(meann/(size(j)+M(j,i))*((size(j)+M(j,i))-1))+M(j,i);
 
                 }
 

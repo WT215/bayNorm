@@ -215,6 +215,8 @@ EstPrior <- function(Data,parallel=FALSE,NCores=5, verbose = TRUE) {
     rownames(CoefDat) <- rownames(Data)
     M_ave_ori <- CoefDat[, 2]
     size_est <- CoefDat[, 1]
+    names(M_ave_ori)<-rownames(Data)
+    names(size_est)<-rownames(Data)
 
     if (verbose) {
         message("Priors estimation based on MME method has completed.")
