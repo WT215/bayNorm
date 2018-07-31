@@ -2,9 +2,11 @@
 #'
 #' @description  Adjust MME estimated size according to size
 #' estimated through maximizing marginal distirbution
-#' (\code{BB_SIZE}). By using maximizing marginal distribution,
+#' (\code{BB_SIZE}). By using maximizing marginal
+#' distribution,
 #' a log of estimated size cannot converge quickly.
-#' However according to our simulation, the trend of \code{BB_SIZE}
+#' However according to our simulation,
+#' the trend of \code{BB_SIZE}
 #' is very close to the true size. Hence it is better to use
 #' adjusted MME size in bayNorm.
 #'
@@ -33,12 +35,15 @@ AdjustSIZE_fun <- function(BB_SIZE, MME_MU, MME_SIZE) {
 
 #' @title Estimate capture efficiency for cells
 #'
-#' @description  This function aims to select of subset of genes
-#' for estimating capture efficiency: \code{BETA_vec} for bayNorm.
+#' @description  This function aims to select
+#' of subset of genes
+#' for estimating capture efficiency:
+#' \code{BETA_vec} for bayNorm.
 #'
 #' @param Data A matrix of single-cell expression where rows
 #' are genes and columns are samples (cells). \code{Data}
-#' can be of class \code{SummarizedExperiment} or just matrix.
+#' can be of class \code{SummarizedExperiment}
+#' or just matrix.
 #' @param MeanBETA Mean capture efficiency of the scRNAseq data.
 #'  This can be estimated via spike-ins or other methods.
 #' @return List containing: \code{BETA}: a vector of capture efficiencies,
@@ -105,27 +110,31 @@ BetaFun <- function(Data, MeanBETA) {
     return(list(BETA = BETA, Selected_genes = Selected_genes))
 }
 
-#' @title Estimate size and mu for NB distribution for each gene
-#' using MME method
+#' @title Estimate size and mu for NB distribution
+#' for each gene using MME method
 #'
-#' @description  Input raw data and return estimated size and mu
-#' for each gene.
+#' @description  Input raw data and return
+#' estimated size and mu for each gene.
 #' @param Data A matrix of single-cell expression where rows
 #' are genes and columns are samples (cells). \code{Data}
-#' can be of class \code{SummarizedExperiment} or just matrix.
+#' can be of class \code{SummarizedExperiment}
+#' or just matrix.
 #' @param  parallel If TRUE, 5 cores will be used for parallelization.
 #' Default is TRUE.
-#' @param  NCores number of cores to use, default is 5. This will
-#' be used to set up a parallel environment using either
-#' MulticoreParam (Linux, Mac) or SnowParam (Windows) with NCores
+#' @param  NCores number of cores to use, default is 5.
+#' This will be used to set up a parallel
+#' environment using either MulticoreParam (Linux, Mac)
+#' or SnowParam (Windows) with NCores
 #' using the package BiocParallel.
 #' @param verbose print out status messages. Default is TRUE.
 #'
 #' @details mu and size are two parameters that need to be specified
 #' in bayNorm. They are parameters of negative binomial distribution.
-#'  The variance is \eqn{mu + mu^2/size} in this parametrization.
+#'  The variance is \eqn{mu + mu^2/size} in this
+#'  parametrization.
 #'
-#' @return  List containing estimated mu and size for each gene.
+#' @return  List containing estimated mu and
+#' size for each gene.
 #'
 #' @examples
 #' data('EXAMPLE_DATA_list')

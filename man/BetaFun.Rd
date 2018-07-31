@@ -9,7 +9,8 @@ BetaFun(Data, MeanBETA)
 \arguments{
 \item{Data}{A matrix of single-cell expression where rows
 are genes and columns are samples (cells). \code{Data}
-can be of class \code{SummarizedExperiment} or just matrix.}
+can be of class \code{SummarizedExperiment}
+or just matrix.}
 
 \item{MeanBETA}{Mean capture efficiency of the scRNAseq data.
 This can be estimated via spike-ins or other methods.}
@@ -21,8 +22,10 @@ List containing: \code{BETA}: a vector of capture efficiencies,
   genes that are used for estimating BETA.
 }
 \description{
-This function aims to select of subset of genes
-for estimating capture efficiency: \code{BETA_vec} for bayNorm.
+This function aims to select
+of subset of genes
+for estimating capture efficiency:
+\code{BETA_vec} for bayNorm.
 }
 \examples{
 data('EXAMPLE_DATA_list')

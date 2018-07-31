@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{Main_Bay}
 \alias{Main_Bay}
-\title{Main_Bay}
+\title{Main_Bay (1D grid approximation, slow)}
 \usage{
 Main_Bay(Data, BETA_vec, size, mu, S, thres)
 }

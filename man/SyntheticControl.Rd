@@ -16,18 +16,22 @@ can be of class \code{SummarizedExperiment} or just matrix.}
 }
 \value{
 List containing 2D matrix of synthetic control,
-\code{BETA_vec} used and \code{lambda} used in \code{rpois}.
+\code{BETA_vec} used and \code{lambda} used
+in \code{rpois}.
 }
 \description{
-Input raw data and a vector of capture efficiencies of cells.
+Input raw data and a vector of capture
+efficiencies of cells.
 }
 \details{
-Simulate control data (based on Poisson distribution).
+Simulate control data (based on Poisson
+distribution).
 }
 \examples{
 data("EXAMPLE_DATA_list")
 \dontrun{
-SC_output<-SyntheticControl(Data=EXAMPLE_DATA_list$inputdata,
+SC_output<-SyntheticControl(Data=
+EXAMPLE_DATA_list$inputdata,
 BETA_vec = EXAMPLE_DATA_list$inputbeta)
 }
 

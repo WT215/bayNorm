@@ -2,7 +2,8 @@
 % Please edit documentation in R/noisygene_detection.r
 \name{noisy_gene_detection}
 \alias{noisy_gene_detection}
-\title{A wrapper function of synthetic control generation, bayNorm
+\title{A wrapper function of synthetic control
+generation, bayNorm
 on both real cell data and synthetic controls and noisy
 gene detection.}
 \usage{
@@ -56,9 +57,10 @@ the gradient function itself is very complicated,
 it does not help too much in speeding up.
 Default is FALSE.}
 
-\item{BB_SIZE}{If TRUE, estimate BB size, and then use it for
-adjusting MME SIZE. Use the adjusted MME size for bayNorm. Default
-is TRUE.}
+\item{BB_SIZE}{If TRUE, estimate BB size,
+and then use it for
+adjusting MME SIZE. Use the adjusted MME size
+for bayNorm. Default is TRUE.}
 
 \item{verbose}{Print out status messages.
 Default is TRUE.}
@@ -75,7 +77,8 @@ Default is NULL.}
 A list of objects.
 }
 \description{
-A wrapper function of synthetic control generation, bayNorm
+A wrapper function of synthetic control
+generation, bayNorm
 on both real cell data and synthetic controls and noisy
 gene detection.
 }
@@ -88,7 +91,8 @@ synthetic controls and noisy gene detection.
 \examples{
 data("EXAMPLE_DATA_list")
 \dontrun{
-noisy_out<-noisy_gene_detection(Data=EXAMPLE_DATA_list$inputdata,BETA_vec
+noisy_out<-noisy_gene_detection(Data=
+EXAMPLE_DATA_list$inputdata,BETA_vec
 =EXAMPLE_DATA_list$inputbeta, mode_version = FALSE,
 mean_version=FALSE,
 S = 20,parallel = TRUE, NCores = 5,

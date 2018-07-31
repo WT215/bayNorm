@@ -9,7 +9,7 @@ GradientFun_2D(SIZE_MU, m_observed, BETA)
 \arguments{
 \item{SIZE_MU}{a vector of two elements (size,mu)}
 
-\item{m_observed}{one observed count}
+\item{m_observed}{a vector of observed counts}
 
 \item{BETA}{The corresponding capture efficiency}
 }

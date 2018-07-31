@@ -664,7 +664,7 @@ NumericVector D_SIZE_MU_2D(NumericVector SIZE_MU, NumericVector m_observed,Numer
 //' with respect to both size and mu.
 //'
 //' @param SIZE_MU a vector of two elements (size,mu)
-//' @param m_observed one observed count
+//' @param m_observed a vector of observed counts
 //' @param BETA The corresponding capture efficiency
 //' @return GradientFun_2D
 //'
@@ -1030,9 +1030,8 @@ double GradientFun_NB_1D(double SIZE,double MU,
 //'
 //'
 //'
-//' @param SIZE size
-//' @param MU mu
-//' @param m_observed one observed count
+//' @param SIZE_MU a vector of two elements (size,mu)
+//' @param m_observed a vector of observed counts
 //' @param BETA The corresponding capture efficiency
 //' @return GradientFun_NB_2D
 //'
@@ -1221,14 +1220,13 @@ NumericVector Main_NB_Bay(NumericMatrix Data,
 //' @param BETA_vec A vector of capture efficiencies of cells
 //' @param size A vector of size
 //' @param mu A vector of mu
-//' @param S number of samples that you want to generate
+//' @param S number of samples that you want to generate (not needed)
 //' @param thres useless parameter
 //' @return bayNorm normalized data
 //'
 //' @examples
 //' data("EXAMPLE_DATA_list")
 //' \dontrun{
-//' data("EXAMPLE_DATA_list")
 //' Norm_2D_matrix<-Main_mean_NB_Bay(Data=EXAMPLE_DATA_list$inputdata,
 //' BETA_vec = EXAMPLE_DATA_list$inputbeta,
 //' size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,
@@ -1324,15 +1322,13 @@ NumericMatrix Main_mean_NB_Bay(NumericMatrix Data,
 //' @param BETA_vec A vector of capture efficiencies of cells
 //' @param size A vector of size
 //' @param mu A vector of mu
-//' @param S number of samples that you want to generate
-//' @param thres for observed count greater
-//' than \code{thres}, use uniform prior.
+//' @param S number of samples that you want to generate (not needed)
+//' @param thres useless parameter
 //' @return bayNorm normalized data
 //'
 //' @examples
 //' data("EXAMPLE_DATA_list")
 //' \dontrun{
-//' data("EXAMPLE_DATA_list")
 //' Norm_2D_matrix<-Main_mode_NB_Bay(Data=EXAMPLE_DATA_list$inputdata,
 //' BETA_vec = EXAMPLE_DATA_list$inputbeta,
 //' size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,

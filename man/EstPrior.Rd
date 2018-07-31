@@ -2,37 +2,41 @@
 % Please edit documentation in R/PRIOR_FUNCTIONS.r
 \name{EstPrior}
 \alias{EstPrior}
-\title{Estimate size and mu for NB distribution for each gene
-using MME method}
+\title{Estimate size and mu for NB distribution
+for each gene using MME method}
 \usage{
 EstPrior(Data, parallel = FALSE, NCores = 5, verbose = TRUE)
 }
 \arguments{
 \item{Data}{A matrix of single-cell expression where rows
 are genes and columns are samples (cells). \code{Data}
-can be of class \code{SummarizedExperiment} or just matrix.}
+can be of class \code{SummarizedExperiment}
+or just matrix.}
 
 \item{parallel}{If TRUE, 5 cores will be used for parallelization.
 Default is TRUE.}
 
-\item{NCores}{number of cores to use, default is 5. This will
-be used to set up a parallel environment using either
-MulticoreParam (Linux, Mac) or SnowParam (Windows) with NCores
+\item{NCores}{number of cores to use, default is 5.
+This will be used to set up a parallel
+environment using either MulticoreParam (Linux, Mac)
+or SnowParam (Windows) with NCores
 using the package BiocParallel.}
 
 \item{verbose}{print out status messages. Default is TRUE.}
 }
 \value{
-List containing estimated mu and size for each gene.
+List containing estimated mu and
+size for each gene.
 }
 \description{
-Input raw data and return estimated size and mu
-for each gene.
+Input raw data and return
+estimated size and mu for each gene.
 }
 \details{
 mu and size are two parameters that need to be specified
 in bayNorm. They are parameters of negative binomial distribution.
- The variance is \eqn{mu + mu^2/size} in this parametrization.
+ The variance is \eqn{mu + mu^2/size} in this
+ parametrization.
 }
 \examples{
 data('EXAMPLE_DATA_list')

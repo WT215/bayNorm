@@ -21,9 +21,11 @@ Adjusted MME_SIZE based on BB_SIZE
 \description{
 Adjust MME estimated size according to size
 estimated through maximizing marginal distirbution
-(\code{BB_SIZE}). By using maximizing marginal distribution,
+(\code{BB_SIZE}). By using maximizing marginal
+distribution,
 a log of estimated size cannot converge quickly.
-However according to our simulation, the trend of \code{BB_SIZE}
+However according to our simulation,
+the trend of \code{BB_SIZE}
 is very close to the true size. Hence it is better to use
 adjusted MME size in bayNorm.
 }

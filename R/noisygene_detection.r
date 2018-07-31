@@ -1,6 +1,5 @@
-
-
-#' A wrapper function of synthetic control generation, bayNorm
+#' A wrapper function of synthetic control
+#' generation, bayNorm
 #' on both real cell data and synthetic controls and noisy
 #' gene detection.
 #'
@@ -10,7 +9,7 @@
 #' just matrix.
 #' @param  BETA_vec A vector of capture efficiencies
 #' of cells.
-#' @param PRIORS	A list of estimated prior
+#' @param PRIORS A list of estimated prior
 #' parameters obtained from bayNorm.
 #' Default is NULL.
 #' @param  mode_version If TRUE, bayNorm return mode version
@@ -42,9 +41,10 @@
 #' the gradient function itself is very complicated,
 #' it does not help too much in speeding up.
 #' Default is FALSE.
-#' @param  BB_SIZE If TRUE, estimate BB size, and then use it for
-#' adjusting MME SIZE. Use the adjusted MME size for bayNorm. Default
-#' is TRUE.
+#' @param  BB_SIZE If TRUE, estimate BB size,
+#' and then use it for
+#' adjusting MME SIZE. Use the adjusted MME size
+#' for bayNorm. Default is TRUE.
 #' @param verbose Print out status messages.
 #' Default is TRUE.
 #' @param  plot.out If TRUE, show CV^2 vs Mean
@@ -59,7 +59,8 @@
 #' @examples
 #' data("EXAMPLE_DATA_list")
 #' \dontrun{
-#' noisy_out<-noisy_gene_detection(Data=EXAMPLE_DATA_list$inputdata,BETA_vec
+#' noisy_out<-noisy_gene_detection(Data=
+#' EXAMPLE_DATA_list$inputdata,BETA_vec
 #' =EXAMPLE_DATA_list$inputbeta, mode_version = FALSE,
 #' mean_version=FALSE,
 #' S = 20,parallel = TRUE, NCores = 5,
@@ -190,14 +191,14 @@ in assays(Data) to 'Counts'")
 
 #' Noisy gene detection
 #'
-#' Input raw data and a vector of capture efficiencies of cells.
-#' You can also specify the condition of cells.
+#' Input raw data and a vector of capture efficiencies
+#' of cells. You can also specify the condition of cells.
 #' @param bay_array_N A 2D matrix or 3D array of normalized
 #' data(real cells).
 #' @param  bay_array_C A 2D matrix or 3D array of normalized
 #' data(synthetic control).
-#' @param  plot.out If TRUE, show CV^2 vs Mean expression plot.
-#' Default is FALSE.
+#' @param  plot.out If TRUE, show CV^2 vs Mean
+#' expression plot. Default is FALSE.
 #' @return A vector of adjusted P-values.
 #' @details Noisy gene detection
 #'

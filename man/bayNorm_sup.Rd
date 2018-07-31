@@ -5,8 +5,9 @@
 \title{bayNorm with estimated parameters as input}
 \usage{
 bayNorm_sup(Data, BETA_vec, PRIORS = NULL, Conditions = NULL,
-  UMI_sffl = NULL, mode_version = FALSE, mean_version = FALSE, S = 20,
-  parallel = TRUE, NCores = 5, BB_SIZE = TRUE, verbose = TRUE)
+  UMI_sffl = NULL, mode_version = FALSE, mean_version = FALSE,
+  S = 20, parallel = TRUE, NCores = 5, BB_SIZE = TRUE,
+  verbose = TRUE)
 }
 \arguments{
 \item{Data}{A matrix of single-cell expression where rows
@@ -87,7 +88,8 @@ bayNorm_3D<-bayNorm(Data=EXAMPLE_DATA_list$inputdata,
 BETA_vec = EXAMPLE_DATA_list$inputbeta
 ,mode_version=F)
 
-#Now if you want to generate 2D matrix using the same prior
+#Now if you want to generate 2D matrix using
+the same prior
 #estimates as generated before:
 bayNorm_2D<-bayNorm_p(Data=EXAMPLE_DATA_list$inputdata
 ,BETA_vec= bayNorm_3D$BETA,PRIORS=bayNorm_3D$PRIORS_LIST

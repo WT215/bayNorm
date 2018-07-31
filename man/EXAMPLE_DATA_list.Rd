@@ -9,7 +9,8 @@ EXAMPLE_DATA_list[[2]]: inputbeta
 (a vector of probabilities with length equal
 to the number of cells), EXAMPLE_DATA_list[[3]]:
 mu (MME method estimated mean expression for each gene),
-EXAMPLE_DATA_list[[4]]: size (adjusted MME size for each gene).}
+EXAMPLE_DATA_list[[4]]: size (adjusted MME size
+for each gene).}
 \usage{
 EXAMPLE_DATA_list
 }

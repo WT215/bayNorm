@@ -68,29 +68,32 @@ The function `BetaFun` selects a subset of genes such that outlier genes and gen
 
 
 ## Run bayNorm
+`BETA_vec` can be set to be `NULL`, then the $\beta$ are estimated to be total counts normalized to 6\%.
 ```{r intro_bayNorm, echo=TRUE,eval=FALSE}
 data('EXAMPLE_DATA_list')
 #Return 3D array normalzied data, draw 20 samples from posterior distribution:
 bayNorm_3D<-bayNorm(
     Data=EXAMPLE_DATA_list$inputdata,
-    BETA_vec = EXAMPLE_DATA_list$inputbeta,
+    BETA_vec = NULL,
     mode_version=F,
     mean_version = F,S=20)
 
 #Return 2D matrix normalized data (MAP of posterior):
 bayNorm_2D<-bayNorm(
     Data=EXAMPLE_DATA_list$inputdata,
-    BETA_vec = EXAMPLE_DATA_list$inputbeta,
+    BETA_vec = NULL,
     mode_version=T,
     mean_version = F)
 
 #Return 2D matrix normalized data (mean of posterior):
 bayNorm_2D<-bayNorm(
     Data=EXAMPLE_DATA_list$inputdata,
-    BETA_vec = EXAMPLE_DATA_list$inputbeta,
+    BETA_vec = NULL,
     mode_version=F,
     mean_version = T)
 ```
+
+
 
 ## Non-UMI scRNAseq dataset
 bayNorm's mathematical model is suitable for UMI dataset. However it can be also applied on non-UMI dataset. In `bayNorm`, you need to specify the following parameter:
@@ -99,6 +102,7 @@ bayNorm's mathematical model is suitable for UMI dataset. However it can be also
 
 ## Generate 3D array or 2D matrix with existing estimated prior parameters.
 If you have run bayNorm on a dataset before but want to output another kind of data (3D array or 2D matrix), you can use the function `bayNorm_sup`. It is important to input the existing estimated parameters by specifying the following parameter in `bayNorm_sup`:
+
 * `BETA_vec`: If `Conditions` has been specified previously, then input `unlist(bayNorm_output$BETA)`
 * `PRIORS`: `input bayNorm_output$PRIORS_LIST`
 * `Conditions`: make sure to specify the same `Conditions` as before.

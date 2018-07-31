@@ -15,7 +15,7 @@ Main_mean_NB_Bay(Data, BETA_vec, size, mu, S, thres)
 
 \item{mu}{A vector of mu}
 
-\item{S}{number of samples that you want to generate}
+\item{S}{number of samples that you want to generate (not needed)}
 
 \item{thres}{useless parameter}
 }
@@ -28,7 +28,6 @@ bayNorm
 \examples{
 data("EXAMPLE_DATA_list")
 \dontrun{
-data("EXAMPLE_DATA_list")
 Norm_2D_matrix<-Main_mean_NB_Bay(Data=EXAMPLE_DATA_list$inputdata,
 BETA_vec = EXAMPLE_DATA_list$inputbeta,
 size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,

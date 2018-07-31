@@ -24,7 +24,7 @@ than \code{thres}, use uniform prior.}
 bayNorm normalized data
 }
 \description{
-bayNorm
+bayNorm (1D grid approximation, slow)
 If the observed count is above 500,
 then we use normal distribution to
 approximate binomial distribution.
