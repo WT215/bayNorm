@@ -151,20 +151,20 @@ in assays(Data) to 'Counts'")
 
 
     if(!mode_version & !mean_version){
-        bayNorm_C_array<-Main_Bay(
+        bayNorm_C_array<-Main_NB_Bay(
             Data=synthetic_out$N_c,
             BETA_vec=synthetic_out$beta_c,
             size=size_c,mu=mu_c,S=S,
             thres=max(synthetic_out$N_c)*2)
 
     }else if(mode_version & !mean_version){
-        bayNorm_C_array<-Main_mode_Bay(
+        bayNorm_C_array<-Main_mode_NB_Bay(
             Data=synthetic_out$N_c,
             BETA_vec=synthetic_out$beta_c,size=size_c,
             mu=mu_c,S=S,
             thres=max(synthetic_out$N_c)*2)
     }else if(!mode_version & mean_version){
-        bayNorm_C_array<-Main_mean_Bay(
+        bayNorm_C_array<-Main_mean_NB_Bay(
             Data=synthetic_out$N_c,
             BETA_vec=synthetic_out$beta_c,size=size_c,
             mu=mu_c,S=1000,
