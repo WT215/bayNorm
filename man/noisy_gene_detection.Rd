@@ -2,10 +2,9 @@
 % Please edit documentation in R/noisygene_detection.r
 \name{noisy_gene_detection}
 \alias{noisy_gene_detection}
-\title{A wrapper function of synthetic control
-generation, bayNorm
-on both real cell data and synthetic controls and noisy
-gene detection.}
+\title{A wrapper function for noisy gene detection from raw data.
+his produces synthetic control, performs bayNorm on both real
+cell data and synthetic controls and does noisy gene detection.}
 \usage{
 noisy_gene_detection(Data, BETA_vec, mode_version = FALSE,
   mean_version = FALSE, S = 20, parallel = TRUE, NCores = 5,
@@ -77,16 +76,13 @@ Default is NULL.}
 A list of objects.
 }
 \description{
-A wrapper function of synthetic control
-generation, bayNorm
-on both real cell data and synthetic controls and noisy
-gene detection.
+A wrapper function for noisy gene detection from raw data.
+his produces synthetic control, performs bayNorm on both real
+cell data and synthetic controls and does noisy gene detection.
 }
 \details{
-A wrapper function of synthetic
-control generation,
-bayNorm on both real cell data and
-synthetic controls and noisy gene detection.
+A wrapper function for noisy gene detection
+from raw scRNA-seq data.
 }
 \examples{
 data("EXAMPLE_DATA_list")

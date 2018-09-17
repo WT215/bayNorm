@@ -23,7 +23,9 @@ Main_mode_NB_Bay(Data, BETA_vec, size, mu, S, thres)
 bayNorm normalized data
 }
 \description{
-Mode_NB_Bay
+This function is used to take the mode of
+Negative Binomial distribution for each gene in each
+cell as normalized count.
 }
 \examples{
 data("EXAMPLE_DATA_list")

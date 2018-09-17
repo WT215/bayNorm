@@ -1,14 +1,12 @@
-#' @title Adjust MME size
+#' @title Adjust MME size estimate
 #'
-#' @description  Adjust MME estimated size according to size
-#' estimated through maximizing marginal distirbution
-#' (\code{BB_SIZE}). By using maximizing marginal
-#' distribution,
-#' a log of estimated size cannot converge quickly.
-#' However according to our simulation,
-#' the trend of \code{BB_SIZE}
-#' is very close to the true size. Hence it is better to use
-#' adjusted MME size in bayNorm.
+#' @description  This function adjusts MME estimated size parameter
+#' of prior, which is a negative binomial distribution,
+#' using estimates from maximizing marginal distirbution
+#' (\code{BB_SIZE}). Simulation studies has shown this hybrid
+#' method of using adjusted MME size estimates is the most
+#' robust (see bayNorm paper). Hence, this is the default
+#' option for estimating size in bayNorm.
 #'
 #' @param BB_SIZE size estimated from \code{BB_Fun}.
 #' @param  MME_MU mu estimated from EstPrior.
@@ -20,6 +18,10 @@
 #' @examples
 #' data('EXAMPLE_DATA_list')
 #' \dontrun{
+#' MME_MU<-rlnorm(100,meanlog=5,sdlog=1)
+#' MME_SIZE<-rlnorm(100,meanlog=1,sdlog=1)
+#' BB_SIZE<-rlnorm(100,meanlog=0.5,sdlog=1)
+#' adjustt<-AdjustSIZE_fun(BB_SIZE, MME_MU, MME_SIZE)
 #' }
 #' @import stats
 #'
@@ -35,10 +37,11 @@ AdjustSIZE_fun <- function(BB_SIZE, MME_MU, MME_SIZE) {
 
 #' @title Estimate capture efficiency for cells
 #'
-#' @description  This function aims to select
-#' of subset of genes
-#' for estimating capture efficiency:
-#' \code{BETA_vec} for bayNorm.
+#' @description  This function estimates cell specific
+#' capture efficiencies (\code{BETA_vec}) using mean raw counts of
+#' a subset of genes that is an input for bayNorm. A specific
+#' method is used to exclude genes with high expression or high
+#' drop-out are excluded.
 #'
 #' @param Data A matrix of single-cell expression where rows
 #' are genes and columns are samples (cells). \code{Data}
@@ -110,11 +113,11 @@ BetaFun <- function(Data, MeanBETA) {
     return(list(BETA = BETA, Selected_genes = Selected_genes))
 }
 
-#' @title Estimate size and mu for NB distribution
+#' @title Estimate size and mu for Negative Binomial distribution
 #' for each gene using MME method
 #'
 #' @description  Input raw data and return
-#' estimated size and mu for each gene.
+#' estimated size and mu for each gene using the MME method.
 #' @param Data A matrix of single-cell expression where rows
 #' are genes and columns are samples (cells). \code{Data}
 #' can be of class \code{SummarizedExperiment}
@@ -128,10 +131,10 @@ BetaFun <- function(Data, MeanBETA) {
 #' using the package BiocParallel.
 #' @param verbose print out status messages. Default is TRUE.
 #'
-#' @details mu and size are two parameters that need to be specified
-#' in bayNorm. They are parameters of negative binomial distribution.
-#'  The variance is \eqn{mu + mu^2/size} in this
-#'  parametrization.
+#' @details mu and size are two parameters of the prior that
+#' need to be specified for each gene in bayNorm.
+#' They are parameters of negative binomial distribution.
+#' The variance is \eqn{mu + mu^2/size} in this parametrization.
 #'
 #' @return  List containing estimated mu and
 #' size for each gene.
@@ -236,8 +239,10 @@ EstPrior <- function(Data,parallel=FALSE,NCores=5, verbose = TRUE) {
 #' @title   A wrapper function of \code{EstPrior}
 #' and \code{AdjustSIZE_fun}
 #'
-#' @description   Input raw data and a vector of
-#' capture efficiencies of cells.
+#' @description   A wrapper function for estimating the parameters
+#' of prior using the hybrid method adjusted MME estimates based
+#' on maximization of marginal likelihood. Input raw data and a
+#' vector of capture efficiencies of cells.
 #' @param Data A matrix of single-cell expression where rows
 #' are genes and columns are samples (cells). \code{Data}
 #' can be of class \code{SummarizedExperiment} or just matrix.
@@ -408,10 +413,11 @@ This part may be time-consuming.")
 
 
 #' @title Estimating size for each gene by
-#' either 1D or 2D optimization of marginal distribution
+#' either 1D or 2D maximization of marginal distribution
 #'
-#' @description  Estimating size for each gene by maximizing
-#' marginal distribution: 1D (optimize with respect to size,
+#' @description  Estimating parameters of the prior distribution
+#' for each gene by maximizing marginal distribution: 1D
+#' (optimize with respect to size using MME estimate of mu,
 #' 2D (optimize with respect to both mu and size)
 #'
 #' @param Data A matrix of single-cell expression where rows

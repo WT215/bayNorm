@@ -126,36 +126,40 @@ NumericVector post_wrapper_norm(IntegerVector x,double m,double beta,int last, i
 }
 
 
-//' @title Main_Bay (1D grid approximation, slow)
-//'
-//' @description
-//' If the observed count is above 500,
-//' then we use normal distribution to
-//' approximate binomial distribution.
-//'
-//'
-//' @param Data raw count Data
-//' @param BETA_vec A vector of capture efficiencies of cells
-//' @param size A vector of size
-//' @param mu A vector of mu
-//' @param S Draw S samples from posterior
-//' distribution to form 3D array
-//' @param thres For observed count greater
-//' than \code{thres}, use uniform prior.
-//' @return bayNorm normalized data
-//'
-//'
-//' @examples
-//' data("EXAMPLE_DATA_list")
-//' \dontrun{
-//' data("EXAMPLE_DATA_list")
-//' Norm_3D_array<-Main_Bay(Data=EXAMPLE_DATA_list$inputdata,
-//' BETA_vec = EXAMPLE_DATA_list$inputbeta,
-//' size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,
-//' S=20,thres=10000000)
-//' }
-//' @export
-// [[Rcpp::export]]
+// // ' @title Main_Bay (1D grid approximation, slow)
+// // '
+// // ' @description
+// // ' If the observed count is above 500,
+// // ' then we use normal distribution to
+// // ' approximate binomial distribution.
+// //'
+// //'
+// //' @param Data raw count Data
+// // //' @param BETA_vec A vector of capture efficiencies of cells
+// //' @param size A vector of size
+// //' @param mu A vector of mu
+// //' @param S Draw S samples from posterior
+// //' distribution to form 3D array
+// //' @param thres For observed count greater
+// //' than \code{thres}, use uniform prior.
+// //' @return bayNorm normalized data
+// //'
+// //'
+// //' @examples
+// //' data("EXAMPLE_DATA_list")
+// //' \dontrun{
+// //' data("EXAMPLE_DATA_list")
+// //' Norm_3D_array<-Main_Bay(Data=EXAMPLE_DATA_list$inputdata,
+// //' BETA_vec = EXAMPLE_DATA_list$inputbeta,
+// //' size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,
+// //' S=20,thres=10000000)
+// //' }
+// //' @export
+// // [[Rcpp::export]]
+
+
+
+
 NumericVector Main_Bay(NumericMatrix Data,
                        NumericVector BETA_vec,
                        NumericVector size,
@@ -266,34 +270,34 @@ return(Rcpp::wrap(Final_mat2));
 }
 
 
-//' @title  Mode_Bay
-//'
-//' @description bayNorm (1D grid approximation, slow)
-//' If the observed count is above 500,
-//' then we use normal distribution to
-//' approximate binomial distribution.
-//'
-//'
-//' @param Data raw count Data
-//' @param BETA_vec A vector of capture efficiencies of cells
-//' @param size A vector of size
-//' @param mu A vector of mu
-//' @param S number of samples that you want to generate
-//' @param thres for observed count greater
-//' than \code{thres}, use uniform prior.
-//' @return bayNorm normalized data
-//'
-//' @examples
-//' data("EXAMPLE_DATA_list")
-//' \dontrun{
-//' data("EXAMPLE_DATA_list")
-//' Norm_2D_matrix<-Main_mode_Bay(Data=EXAMPLE_DATA_list$inputdata,
-//' BETA_vec = EXAMPLE_DATA_list$inputbeta,
-//' size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,
-//' S=20,thres=10000000)
-//' }
-//' @export
-// [[Rcpp::export]]
+// //' @title  Mode_Bay
+// //'
+// //' @description bayNorm (1D grid approximation, slow)
+// //' If the observed count is above 500,
+// //' then we use normal distribution to
+// //' approximate binomial distribution.
+// //'
+// //'
+// //' @param Data raw count Data
+// //' @param BETA_vec A vector of capture efficiencies of cells
+// //' @param size A vector of size
+// //' @param mu A vector of mu
+// //' @param S number of samples that you want to generate
+// //' @param thres for observed count greater
+// //' than \code{thres}, use uniform prior.
+// //' @return bayNorm normalized data
+// //'
+// //' @examples
+// //' data("EXAMPLE_DATA_list")
+// //' \dontrun{
+// //' data("EXAMPLE_DATA_list")
+// //' Norm_2D_matrix<-Main_mode_Bay(Data=EXAMPLE_DATA_list$inputdata,
+// //' BETA_vec = EXAMPLE_DATA_list$inputbeta,
+// //' size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,
+// //' S=20,thres=10000000)
+// //' }
+// //' @export
+// // [[Rcpp::export]]
 NumericMatrix Main_mode_Bay(NumericMatrix Data,
                             NumericVector BETA_vec,
                             NumericVector size,
@@ -402,7 +406,7 @@ NumericMatrix Main_mode_Bay(NumericMatrix Data,
   return(Rcpp::wrap(Final_mat2));
 }
 
-
+/*
 //' @title  Mean_Bay
 //'
 //' @description bayNorm (1D grid approximation, slow)
@@ -431,6 +435,9 @@ NumericMatrix Main_mode_Bay(NumericMatrix Data,
 //' }
 //' @export
 // [[Rcpp::export]]
+*/
+
+
 NumericMatrix Main_mean_Bay(NumericMatrix Data,
                             NumericVector BETA_vec,
                             NumericVector size,
@@ -657,7 +664,7 @@ NumericVector D_SIZE_MU_2D(NumericVector SIZE_MU, NumericVector m_observed,Numer
 }
 
 
-
+/*
 //' @title GradientFun_2D
 //'
 //' @description First derivative of marginal distribution
@@ -677,6 +684,7 @@ NumericVector D_SIZE_MU_2D(NumericVector SIZE_MU, NumericVector m_observed,Numer
 //'
 //' @export
 // [[Rcpp::export]]
+*/
 NumericVector GradientFun_2D(NumericVector SIZE_MU,
                              NumericVector m_observed,
                              NumericVector BETA){
@@ -687,7 +695,7 @@ NumericVector GradientFun_2D(NumericVector SIZE_MU,
 }
 
 
-
+/*
 //' @title MarginalF_2D
 //'
 //' @description Mariginal distribution with
@@ -704,6 +712,7 @@ NumericVector GradientFun_2D(NumericVector SIZE_MU,
 //' }
 //' @export
 // [[Rcpp::export]]
+ */
 double MarginalF_2D(NumericVector SIZE_MU,
                     NumericVector m_observed,
                     NumericVector BETA) {
@@ -774,7 +783,7 @@ double D_SIZE_MU_1D(double SIZE,double MU, NumericVector m_observed,NumericVecto
 }
 
 
-
+/*
 //' @title GradientFun_1D
 //'
 //' @description First derivative of marginal distribution
@@ -795,6 +804,7 @@ double D_SIZE_MU_1D(double SIZE,double MU, NumericVector m_observed,NumericVecto
 //' }
 //' @export
 // [[Rcpp::export]]
+ */
 double GradientFun_1D(double SIZE,double MU,
                       NumericVector m_observed,
                       NumericVector BETA){
@@ -806,7 +816,7 @@ double GradientFun_1D(double SIZE,double MU,
 }
 
 
-
+/*
 //' @title MarginalF_1D
 //'
 //' @description Mariginal distribution with respect to size.
@@ -823,6 +833,7 @@ double GradientFun_1D(double SIZE,double MU,
 //' }
 //' @export
 // [[Rcpp::export]]
+ */
 double MarginalF_1D(double SIZE,double MU,
                     NumericVector m_observed,
                     NumericVector BETA) {
@@ -913,7 +924,7 @@ NumericMatrix DownSampling(NumericMatrix Data ,
 
 //' @title MarginalF_NB_1D
 //'
-//' @description Mariginal distribution with respect to size.
+//' @description Mariginal distribution as a function of size.
 //'
 //' @param SIZE size
 //' @param MU mu
@@ -947,8 +958,8 @@ double MarginalF_NB_1D(double SIZE,double MU,
 
 //' @title MarginalF_NB_2D
 //'
-//' @description Mariginal distribution with
-//' respect to both size and mu.
+//' @description Mariginal distribution as a function
+//' of both size and mu.
 //'
 //' @param SIZE_MU a vector of two elements (size,mu)
 //' @param m_observed  m_observed
@@ -1022,11 +1033,10 @@ double GradientFun_NB_1D(double SIZE,double MU,
 
 
 
-
 //' @title GradientFun_NB_2D
 //'
 //' @description First derivative of marginal distribution
-//' with respect to size.
+//' with respect to size and mu.
 //'
 //'
 //'
@@ -1111,7 +1121,8 @@ double GradientFun_NBmu_1D(double SIZE,double MU,
 
 //' @title Main_NB_Bay
 //'
-//' @description Main_NB_Bay
+//' @description This function is used to draw S samples from
+//' Negative Binomial distribution for each gene in each cell.
 //'
 //' @param Data raw count Data
 //' @param BETA_vec A vector of capture efficiencies of cells
@@ -1214,7 +1225,9 @@ NumericVector Main_NB_Bay(NumericMatrix Data,
 
 //' @title  Mean_NB_Bay
 //'
-//' @description bayNorm
+//' @description This function is used to take the mean of
+//' Negative Binomial distribution for each gene in each
+//' cell as normalized count.
 //'
 //' @param Data raw count Data
 //' @param BETA_vec A vector of capture efficiencies of cells
@@ -1315,7 +1328,9 @@ NumericMatrix Main_mean_NB_Bay(NumericMatrix Data,
 
 //' @title  Mode_NB_Bay
 //'
-//' @description Mode_NB_Bay
+//' @description This function is used to take the mode of
+//' Negative Binomial distribution for each gene in each
+//' cell as normalized count.
 //'
 //'
 //' @param Data raw count Data

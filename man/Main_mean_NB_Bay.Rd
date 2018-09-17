@@ -23,7 +23,9 @@ Main_mean_NB_Bay(Data, BETA_vec, size, mu, S, thres)
 bayNorm normalized data
 }
 \description{
-bayNorm
+This function is used to take the mean of
+Negative Binomial distribution for each gene in each
+cell as normalized count.
 }
 \examples{
 data("EXAMPLE_DATA_list")

@@ -68,10 +68,10 @@ or \code{mean_version}=TRUE),
 estimated parameters and input \code{BETA_vec}.
 }
 \description{
-This is a supplementary function for
-\code{bayNorm}. It is useful if you have already
-run \code{bayNorm} before and try to simulate 3D
-or 3D matrix using the same prior estimates.
+This is a supplementary wrapper function
+for bayNorm. It is useful if one has already estimated
+prior parameters and wants to simulate 2D or 3D
+normalized output using the same prior estimates.
 }
 \details{
 If you have run bayNorm before and obtained a

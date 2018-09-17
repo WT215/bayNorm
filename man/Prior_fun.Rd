@@ -44,8 +44,10 @@ expression of genes
 and size of each gene.
 }
 \description{
-Input raw data and a vector of
-capture efficiencies of cells.
+A wrapper function for estimating the parameters
+of prior using the hybrid method adjusted MME estimates based
+on maximization of marginal likelihood. Input raw data and a
+vector of capture efficiencies of cells.
 }
 \details{
 By Default, this function will estimate mu and

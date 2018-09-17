@@ -2,7 +2,7 @@
 % Please edit documentation in R/PRIOR_FUNCTIONS.r
 \name{AdjustSIZE_fun}
 \alias{AdjustSIZE_fun}
-\title{Adjust MME size}
+\title{Adjust MME size estimate}
 \usage{
 AdjustSIZE_fun(BB_SIZE, MME_MU, MME_SIZE)
 }
@@ -19,18 +19,20 @@ Adjusted MME_SIZE based on BB_SIZE
 (size estimated by maximizing marginal distribution)
 }
 \description{
-Adjust MME estimated size according to size
-estimated through maximizing marginal distirbution
-(\code{BB_SIZE}). By using maximizing marginal
-distribution,
-a log of estimated size cannot converge quickly.
-However according to our simulation,
-the trend of \code{BB_SIZE}
-is very close to the true size. Hence it is better to use
-adjusted MME size in bayNorm.
+This function adjusts MME estimated size parameter
+of prior, which is a negative binomial distribution,
+using estimates from maximizing marginal distirbution
+(\code{BB_SIZE}). Simulation studies has shown this hybrid
+method of using adjusted MME size estimates is the most
+robust (see bayNorm paper). Hence, this is the default
+option for estimating size in bayNorm.
 }
 \examples{
 data('EXAMPLE_DATA_list')
 \dontrun{
+MME_MU<-rlnorm(100,meanlog=5,sdlog=1)
+MME_SIZE<-rlnorm(100,meanlog=1,sdlog=1)
+BB_SIZE<-rlnorm(100,meanlog=0.5,sdlog=1)
+adjustt<-AdjustSIZE_fun(BB_SIZE, MME_MU, MME_SIZE)
 }
 }

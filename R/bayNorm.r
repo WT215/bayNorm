@@ -1,65 +1,72 @@
 #' @title  A wrapper function of prior estimation and bayNorm function
 #'
-#' @description   Input raw data and a vector of capture
-#' efficiencies of cells. You can also specify the condition
-#' of cells for normalizing multiple groups of cells separately.
+#' @description   This is the main wrapper function for bayNorm.
+#' The input is a matrix of raw scRNA-seq data and a vector of
+#' capture efficiencies of cells. You can also specify the
+#' condition of cells for normalizing multiple groups
+#' of cells separately.
 #' @param Data A matrix of single-cell expression where rows
 #' are genes and columns are samples (cells). \code{Data}
-#' can be of class \code{SummarizedExperiment} or just matrix.
+#' can be of class \code{SummarizedExperiment} or just a matrix.
 #' @param  BETA_vec A vector of capture efficiencies
 #' (probabilities) of cells.
-#' If it is null, library size normalized to 0.06 will be used
-#' as the input BETA_vec. BETA_vec less and equal to 0 or
-#' greater and equal to 1 will be replaced by the minimum
-#' and maximum of the BETA_vec which range between (0,1)
-#' respectively.
+#' If it is null, library size (total count) normalized to 0.06 will be used
+#' as the input \code{BETA_vec}. \code{BETA_vec} less and
+#' equal to 0 or greater and equal to 1 will be replaced
+#' by the minimum and maximum of the BETA_vec which
+#' range between (0,1) respectively.
 #' @param  Conditions vector of condition labels,
 #' this should correspond to the columns of the Data. D
 #' efault is NULL, which assumes that all cells
 #' belong to the same group.
-#' @param UMI_sffl (scaling factors for non UMI based data:
-#' divide Data by UMI_sffl) Only needed when the input data
-#' is non UMI based. If non-null and Conditions is non-null,
-#' then UMI_sffl should be a vector of length equal to the
-#' number of groups. Default is set to be NULL.
-#' @param  Prior_type Default is NULL. If \code{Conditions}
-#' is NULL, priors are estimated based on all cells. If
-#' \code{Conditions} is not NULL: if \code{Prior_type}
-#' is \code{LL}, priors are estimated within
-#' each group respectively.
-#' If \code{Prior_type} is \code{GG}, priors are estimated
-#' based on cells from all groups. Basically, \code{LL} is
-#' suitable for DE detection. \code{GG} is prefered if there is
-#' a prior knowledge about the data such that there should
-#' not exist biological variation between groups.
-#' @param  mode_version If TRUE, bayNorm return mode version
-#' normalized data which is of 2D matrix instead of 3D array.
+#' @param UMI_sffl Scaling factors are required only for
+#' non-UMI based data for which \code{Data} is devided by \code{UMI_sffl}. If non-null and \code{Conditions} is non-null,
+#' then UMI_sffl should be a vector of length equal
+#' to the number of groups. Default is \code{NULL}.
+#' @param  Prior_type Determines what groups of cells is used
+#' in estimating prior using \code{Conditions}.
+#' Default is \code{NULL}.
+#' If \code{Conditions} is \code{NULL},
+#' priors are estimated based on all cells.
+#' If \code{Conditions} is not \code{NULL} and
+#' if \code{Prior_type} is LL,
+#' priors are estimated within each group respectively.
+#' If \code{Prior_type} is GG, priors are estimated based on cells
+#' from all groups. LL is suitable for DE detection.
+#' GG is preferred if reduction of batch effect between
+#' samples are desired for example for technical replicates
+#' (see bayNorm paper).
+#' @param  mode_version If TRUE, bayNorm return modes of
+#' posterior estimates as normalized data which is a 2D matrix
+#' rather than samples from posterior which is a 3D array.
 #' Default is FALSE.
-#' @param  mean_version If TRUE, bayNorm return mean version
-#' normalized data which is of 2D matrix instead of 3D array.
+#' @param  mean_version If TRUE, bayNorm return means of
+#' posterior estimates as normalized data, which is a 2D matrix
+#' rather than samples from posterior which is a 3D array.
 #' Default is FALSE.
 #' @param S The number of samples you would like to
 #' generate from estimated posterior distribution
 #' (The third dimension of 3D array). Default is 20.
 #'  S needs to be specified if \code{mode_version}=FALSE.
-#' @param  parallel If TRUE, 5 cores will be used
+#' @param  parallel If TRUE, multiple cores will be used
 #' for parallelization.
 #' @param  NCores number of cores to use, default is 5.
 #' This will be used to set up a parallel environment
 #' using either MulticoreParam (Linux, Mac) or
 #' SnowParam (Windows) with NCores using
 #' the package BiocParallel.
-#' @param  FIX_MU Whether fix mu when estimating
-#' parameters by maximizing marginal distribution.
-#' If TRUE, then 1D optimization, otherwise 2D
-#' optimization (slow).
+#' @param  FIX_MU Whether fix mu (the mean parameter of prior
+#' distribution) to its MME estimate, when estimating prior
+#' parameters by maximizing marginal distribution. If TRUE,
+#' then 1D optimization is used, otherwise 2D optimization
+#' for both mu and size is used (slow). Default is TRUE.
 #' @param  GR If TRUE, the gradient function will be used
 #' in optimization. However since the gradient function
 #' itself is very complicated, it does not help too much
 #' in speeding up. Default is FALSE.
-#' @param  BB_SIZE If TRUE, estimate BB size, and then use
-#' it for adjusting MME SIZE. Use the adjusted MME size
-#' for bayNorm. Default is TRUE.
+#' @param  BB_SIZE If TRUE, estimate size parameter of
+#' prior using maximization of marginal likelihood,
+#' and then use it for adjusting MME estimate of SIZE Default is TRUE.
 #' @param verbose print out status messages. Default is TRUE.
 #' @return  List containing 3D arrays of normalized
 #' expression (if \code{mode_version}=FALSE) or 2D matrix
@@ -407,10 +414,10 @@ bayNorm <- function(
 
 #' @title bayNorm with estimated parameters as input
 #'
-#' @description This is a supplementary function for
-#' \code{bayNorm}. It is useful if you have already
-#' run \code{bayNorm} before and try to simulate 3D
-#' or 3D matrix using the same prior estimates.
+#' @description This is a supplementary wrapper function
+#' for bayNorm. It is useful if one has already estimated
+#' prior parameters and wants to simulate 2D or 3D
+#' normalized output using the same prior estimates.
 #' @param Data A matrix of single-cell expression where rows
 #' are genes and columns are samples (cells). \code{Data}
 #' can be of class \code{SummarizedExperiment} or just matrix.

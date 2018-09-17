@@ -1,7 +1,6 @@
-#' A wrapper function of synthetic control
-#' generation, bayNorm
-#' on both real cell data and synthetic controls and noisy
-#' gene detection.
+#' A wrapper function for noisy gene detection from raw data.
+#' his produces synthetic control, performs bayNorm on both real
+#' cell data and synthetic controls and does noisy gene detection.
 #'
 #' @param Data A matrix of single-cell expression where rows
 #' are genes and columns are samples (cells). \code{Data}
@@ -51,10 +50,8 @@
 #' expression plot.
 #' Default is FALSE.
 #' @return A list of objects.
-#' @details A wrapper function of synthetic
-#' control generation,
-#' bayNorm on both real cell data and
-#' synthetic controls and noisy gene detection.
+#' @details A wrapper function for noisy gene detection
+#' from raw scRNA-seq data.
 #'
 #' @examples
 #' data("EXAMPLE_DATA_list")
@@ -191,8 +188,10 @@ in assays(Data) to 'Counts'")
 
 #' Noisy gene detection
 #'
-#' Input raw data and a vector of capture efficiencies
-#' of cells. You can also specify the condition of cells.
+#' This function detects noisy genes using trends observed
+#' in a set of synthetic controls. Input bayNorm normalized data
+#' of real data (\code{bay_array_N}) and synthetic control
+#' (\code{bay_array_C}) respectively.
 #' @param bay_array_N A 2D matrix or 3D array of normalized
 #' data(real cells).
 #' @param  bay_array_C A 2D matrix or 3D array of normalized
@@ -200,7 +199,8 @@ in assays(Data) to 'Counts'")
 #' @param  plot.out If TRUE, show CV^2 vs Mean
 #' expression plot. Default is FALSE.
 #' @return A vector of adjusted P-values.
-#' @details Noisy gene detection
+#' @details \code{bay_array_N} and \code{bay_array_C}
+#' should be of the same dimension.
 #'
 #' @examples
 #' bay_array_N<-array(rpois(1000*50*2,17),dim=c(1000,50,2))

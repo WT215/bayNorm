@@ -2,7 +2,7 @@
 % Please edit documentation in R/PRIOR_FUNCTIONS.r
 \name{EstPrior}
 \alias{EstPrior}
-\title{Estimate size and mu for NB distribution
+\title{Estimate size and mu for Negative Binomial distribution
 for each gene using MME method}
 \usage{
 EstPrior(Data, parallel = FALSE, NCores = 5, verbose = TRUE)
@@ -30,13 +30,13 @@ size for each gene.
 }
 \description{
 Input raw data and return
-estimated size and mu for each gene.
+estimated size and mu for each gene using the MME method.
 }
 \details{
-mu and size are two parameters that need to be specified
-in bayNorm. They are parameters of negative binomial distribution.
- The variance is \eqn{mu + mu^2/size} in this
- parametrization.
+mu and size are two parameters of the prior that
+need to be specified for each gene in bayNorm.
+They are parameters of negative binomial distribution.
+The variance is \eqn{mu + mu^2/size} in this parametrization.
 }
 \examples{
 data('EXAMPLE_DATA_list')

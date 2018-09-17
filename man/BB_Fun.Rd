@@ -3,7 +3,7 @@
 \name{BB_Fun}
 \alias{BB_Fun}
 \title{Estimating size for each gene by
-either 1D or 2D optimization of marginal distribution}
+either 1D or 2D maximization of marginal distribution}
 \usage{
 BB_Fun(Data, BETA_vec, INITIAL_MU_vec, INITIAL_SIZE_vec, MU_lower = 0.01,
   MU_upper = 500, SIZE_lower = 0.01, SIZE_upper = 30,
@@ -53,8 +53,9 @@ Default is FALSE.}
 BB estimated size (1D optimization) or size and mu (2D optimization).
 }
 \description{
-Estimating size for each gene by maximizing
-marginal distribution: 1D (optimize with respect to size,
+Estimating parameters of the prior distribution
+for each gene by maximizing marginal distribution: 1D
+(optimize with respect to size using MME estimate of mu,
 2D (optimize with respect to both mu and size)
 }
 \examples{

@@ -18,7 +18,7 @@ GradientFun_NB_2D
 }
 \description{
 First derivative of marginal distribution
-with respect to size.
+with respect to size and mu.
 }
 \examples{
 data("EXAMPLE_DATA_list")

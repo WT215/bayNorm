@@ -22,10 +22,11 @@ List containing: \code{BETA}: a vector of capture efficiencies,
   genes that are used for estimating BETA.
 }
 \description{
-This function aims to select
-of subset of genes
-for estimating capture efficiency:
-\code{BETA_vec} for bayNorm.
+This function estimates cell specific
+capture efficiencies (\code{BETA_vec}) using mean raw counts of
+a subset of genes that is an input for bayNorm. A specific
+method is used to exclude genes with high expression or high
+drop-out are excluded.
 }
 \examples{
 data('EXAMPLE_DATA_list')

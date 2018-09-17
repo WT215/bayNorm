@@ -24,7 +24,8 @@ distribution to form 3D array}
 bayNorm normalized data
 }
 \description{
-Main_NB_Bay
+This function is used to draw S samples from
+Negative Binomial distribution for each gene in each cell.
 }
 \examples{
 data("EXAMPLE_DATA_list")

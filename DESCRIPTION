@@ -5,6 +5,7 @@ Version: 0.99.0
 Authors@R: c(person("Wenhao", "Tang", role=c("aut", "cre"),
         email="wt215@ic.ac.uk"), 
         person("Fran<U+00E7>ois", "Bertaux", role=c("aut")),
+        person("Philipp", "Thomas", role=c("aut")),
         person("Claire", "Stefanelli", role=c("aut")),
         person("Malika", "Saint", role=c("aut")),
         person("Samuel", "Marguerat", role=c("aut")),

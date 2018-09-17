@@ -17,8 +17,8 @@ MarginalF_NB_2D(SIZE_MU, m_observed, BETA)
 Marginal likelihood
 }
 \description{
-Mariginal distribution with
-respect to both size and mu.
+Mariginal distribution as a function
+of both size and mu.
 }
 \examples{
 data("EXAMPLE_DATA_list")

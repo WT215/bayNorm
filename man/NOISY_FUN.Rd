@@ -20,11 +20,14 @@ expression plot. Default is FALSE.}
 A vector of adjusted P-values.
 }
 \description{
-Input raw data and a vector of capture efficiencies
-of cells. You can also specify the condition of cells.
+This function detects noisy genes using trends observed
+in a set of synthetic controls. Input bayNorm normalized data
+of real data (\code{bay_array_N}) and synthetic control
+(\code{bay_array_C}) respectively.
 }
 \details{
-Noisy gene detection
+\code{bay_array_N} and \code{bay_array_C}
+should be of the same dimension.
 }
 \examples{
 bay_array_N<-array(rpois(1000*50*2,17),dim=c(1000,50,2))
