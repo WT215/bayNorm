@@ -63,11 +63,11 @@ bayNorm's mathematical model is suitable for UMI dataset. However it can be also
 ## Output 3D array or 2D array with existing estimated prior parameters.
 If you have run bayNorm on a dataset to estimate prior parameters, but want to output new posterior estimates (3D or 2D array), you can use the function `bayNorm_sup`. It is important to input the existing estimated parameters by specifying the following parameter in `bayNorm_sup`:
 * `BETA_vec`: If `Conditions` has been specified previously, then input `unlist(bayNorm_output$BETA)`
-* `PRIORS`: `input bayNorm_output$PRIORS_LIST`
-* `Conditions`: make sure to specify the same `Conditions` as before.
-You can find these two objects from the previous output of bayNorm function, which is a list.
+* `PRIORS`: input `bayNorm_output$PRIORS`
+* `input_params`: input `bayNorm_output$input_params`
 
 ```R
+data('EXAMPLE_DATA_list')
 #Return 3D array normalzied data:
 bayNorm_3D<-bayNorm(
     Data=EXAMPLE_DATA_list$inputdata,
@@ -77,20 +77,20 @@ bayNorm_3D<-bayNorm(
 
 #Now if you want to generate 2D matrix (MAP) using the same prior
 #estimates as generated before:
-bayNorm_2D<-bayNorm_p(
+bayNorm_2D<-bayNorm_sup(
     Data=EXAMPLE_DATA_list$inputdata,
-    BETA_vec= bayNorm_3D$BETA,
-    PRIORS=bayNorm_3D$PRIORS_LIST,
+    PRIORS=bayNorm_3D$PRIORS,
+    input_params=bayNorm_3D$input_params,
     mode_version=T,
     mean_version = F)
 
 #Or you may want to generate 2D matrix 
 #(mean of posterior) using the same prior
 #estimates as generated before:
-bayNorm_2D<-bayNorm_p(
+bayNorm_2D<-bayNorm_sup(
     Data=EXAMPLE_DATA_list$inputdata,
-    BETA_vec= bayNorm_3D$BETA,
-    PRIORS=bayNorm_3D$PRIORS_LIST,
+    PRIORS=bayNorm_3D$PRIORS,
+    input_params=bayNorm_3D$input_params,
     mode_version=F,
     mean_version = T)
 ```
