@@ -23,7 +23,7 @@ test_that("bayNorm_sup runs properly",
             q1<- bayNorm(Data=EXAMPLE_DATA_list$inputdata[seq(1,10),],BETA_vec = EXAMPLE_DATA_list$inputbeta,parallel = F)
 
             set.seed(1258484)
-            q2<- bayNorm_sup(Data=EXAMPLE_DATA_list$inputdata[seq(1,10),],BETA_vec = EXAMPLE_DATA_list$inputbeta,PRIORS=q1$PRIORS,parallel = F)
+            q2<- bayNorm_sup(Data=EXAMPLE_DATA_list$inputdata[seq(1,10),],PRIORS=q1$PRIORS,input_params = q1$input_params,parallel = F)
             expect_identical(q1$PRIORS, q2$PRIORS)
             }
 )

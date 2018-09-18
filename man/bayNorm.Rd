@@ -92,7 +92,11 @@ List containing 3D arrays of normalized
 expression (if \code{mode_version}=FALSE) or 2D matrix
 of normalized expression (if \code{mode_version}=TRUE
 or \code{mean_version}=TRUE),
-estimated parameters and input \code{BETA_vec}.
+a list contains estimated priors and a list contains
+input parameters used: \code{BETA_vec},
+\code{Conditions} (if specified),
+\code{UMI_sffl} (if specified), \code{Prior_type},
+\code{FIX_MU}, \code{BB_SIZE} and \code{GR}.
 }
 \description{
 This is the main wrapper function for bayNorm.

@@ -4,31 +4,22 @@
 \alias{bayNorm_sup}
 \title{bayNorm with estimated parameters as input}
 \usage{
-bayNorm_sup(Data, BETA_vec, PRIORS = NULL, Conditions = NULL,
-  UMI_sffl = NULL, mode_version = FALSE, mean_version = FALSE,
-  S = 20, parallel = TRUE, NCores = 5, BB_SIZE = TRUE,
-  verbose = TRUE)
+bayNorm_sup(Data, PRIORS = NULL, input_params = NULL,
+  mode_version = FALSE, mean_version = FALSE, S = 20,
+  parallel = TRUE, NCores = 5, BB_SIZE = TRUE, verbose = TRUE)
 }
 \arguments{
 \item{Data}{A matrix of single-cell expression where rows
 are genes and columns are samples (cells). \code{Data}
 can be of class \code{SummarizedExperiment} or just matrix.}
 
-\item{BETA_vec}{A vector of capture efficiencies
-(probabilities) of cells.}
+\item{PRIORS}{A list of estimated prior parameters
+obtained from bayNorm.}
 
-\item{PRIORS}{A list of estimated prior parameters obtained from bayNorm.}
-
-\item{Conditions}{vector of condition labels,
-this should correspond to the columns of the Data.
-Default is NULL, which assumes that all cells belong
-to the same group.}
-
-\item{UMI_sffl}{(scaling factors for non UMI based data:
-divide Data by UMI_sffl) Only needed when the input data is
-non UMI based. If non-null and Conditions is non-null, then
-UMI_sffl should be a vector of length equal to the number of
-groups. Default is set to be NULL.}
+\item{input_params}{A list of input parameters
+which have been used: \code{BETA_vec}, \code{Conditions},
+\code{UMI_sffl}, \code{Prior_type},
+\code{FIX_MU}, \code{BB_SIZE} and \code{GR}.}
 
 \item{mode_version}{If TRUE, bayNorm return mode
 version normalized data which is of 2D matrix
@@ -52,11 +43,11 @@ using either MulticoreParam (Linux, Mac) or
 SnowParam (Windows) with NCores using the package
 BiocParallel.}
 
-\item{BB_SIZE}{If TRUE, use adjusted size for
+\item{BB_SIZE}{If TRUE (default), use adjusted size for
 normalization. The adjusted size is obtained by adjusting
 MME estimated size by a factor. The factor is
 calculated based on both MME estimated size and BB
-estimated size.}
+estimated size. If FALSE, use MME estimated SIZE.}
 
 \item{verbose}{print out status messages. Default is TRUE.}
 }
@@ -65,7 +56,11 @@ List containing 3D arrays of normalized
 expression (if \code{mode_version}=FALSE) or 2D matrix
 of normalized expression (if \code{mode_version}=TRUE
 or \code{mean_version}=TRUE),
-estimated parameters and input \code{BETA_vec}.
+a list contains estimated priors and a list contains
+input parameters used: \code{BETA_vec},
+\code{Conditions} (if specified),
+\code{UMI_sffl} (if specified), \code{Prior_type},
+\code{FIX_MU}, \code{BB_SIZE} and \code{GR}.
 }
 \description{
 This is a supplementary wrapper function
@@ -91,16 +86,15 @@ BETA_vec = EXAMPLE_DATA_list$inputbeta
 #Now if you want to generate 2D matrix using
 the same prior
 #estimates as generated before:
-bayNorm_2D<-bayNorm_p(Data=EXAMPLE_DATA_list$inputdata
-,BETA_vec= bayNorm_3D$BETA,PRIORS=bayNorm_3D$PRIORS_LIST
+bayNorm_2D<-bayNorm_sup(Data=EXAMPLE_DATA_list$inputdata
+,PRIORS=bayNorm_3D$PRIORS_LIST
 ,mode_version=T)
 
 #If previous bayNorm was applied for normalizing multiple
 #groups of cells (is.null(Origin_Conditions)=T), then:
 inputbeta2<-unlist(bayNorm_3D$BETA)
-bayNorm_2D<-bayNorm_p(Data=inputdata,BETA_vec = inputbeta2
-,PRIORS=bayNorm_3D$PRIORS_LIST,mode_version=T,Conditions
-=Origin_Conditions)
+bayNorm_2D<-bayNorm_sup(Data=inputdata
+,PRIORS=bayNorm_3D$PRIORS_LIST,mode_version=T)
 
 #You can also generate 3D array using the same prior
 estimates

@@ -8,9 +8,16 @@
 #' just matrix.
 #' @param  BETA_vec A vector of capture efficiencies
 #' of cells.
-#' @param PRIORS A list of estimated prior
-#' parameters obtained from bayNorm.
-#' Default is NULL.
+#' @param PRIORS (Need to be specified for efficiency
+#' if \code{bayNorm} has already been applied)
+#' A list of estimated prior
+#' parameters obtained from bayNorm. Default is NULL.
+#' @param  input_params (Need to be specified for efficiency
+#' if \code{bayNorm} has already been applied)
+#' A list of input parameters which have been used:
+#' \code{BETA_vec}, \code{Conditions},
+#' \code{UMI_sffl}, \code{Prior_type},
+#' \code{FIX_MU}, \code{BB_SIZE} and \code{GR}.
 #' @param  mode_version If TRUE, bayNorm return mode version
 #' normalized data which is of 2D matrix instead of 3D array.
 #' Default is FALSE.
@@ -83,7 +90,9 @@ noisy_gene_detection<-function(
     parallel=TRUE,NCores=5,
     FIX_MU=TRUE,GR=FALSE,
     BB_SIZE=TRUE,verbose=TRUE,
-    plot.out=FALSE,PRIORS=NULL){
+    plot.out=FALSE,
+    PRIORS=NULL,
+    input_params=NULL){
 
     if(methods::is(Data, "SummarizedExperiment")){
 
@@ -120,11 +129,11 @@ in assays(Data) to 'Counts'")
             BB_SIZE=BB_SIZE,verbose=verbose)
 
 
-    } else if(!is.null(PRIORS)){
+    } else if(!is.null(PRIORS) & !is.null(input_params)){
         bayNorm_N_out<-bayNorm_sup(
-            Data=Data,BETA_vec=BETA_vec,
+            Data=Data,
             PRIORS=PRIORS,
-            Conditions=NULL,UMI_sffl=NULL,
+            input_params = input_params,
             S=S,
             mode_version=mode_version,
             mean_version=mean_version,

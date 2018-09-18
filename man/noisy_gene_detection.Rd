@@ -9,7 +9,7 @@ cell data and synthetic controls and does noisy gene detection.}
 noisy_gene_detection(Data, BETA_vec, mode_version = FALSE,
   mean_version = FALSE, S = 20, parallel = TRUE, NCores = 5,
   FIX_MU = TRUE, GR = FALSE, BB_SIZE = TRUE, verbose = TRUE,
-  plot.out = FALSE, PRIORS = NULL)
+  plot.out = FALSE, PRIORS = NULL, input_params = NULL)
 }
 \arguments{
 \item{Data}{A matrix of single-cell expression where rows
@@ -68,9 +68,17 @@ Default is TRUE.}
 expression plot.
 Default is FALSE.}
 
-\item{PRIORS}{A list of estimated prior
-parameters obtained from bayNorm.
-Default is NULL.}
+\item{PRIORS}{(Need to be specified for efficiency
+if \code{bayNorm} has already been applied)
+A list of estimated prior
+parameters obtained from bayNorm. Default is NULL.}
+
+\item{input_params}{(Need to be specified for efficiency
+if \code{bayNorm} has already been applied)
+A list of input parameters which have been used:
+\code{BETA_vec}, \code{Conditions},
+\code{UMI_sffl}, \code{Prior_type},
+\code{FIX_MU}, \code{BB_SIZE} and \code{GR}.}
 }
 \value{
 A list of objects.

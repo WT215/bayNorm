@@ -72,7 +72,11 @@
 #' expression (if \code{mode_version}=FALSE) or 2D matrix
 #' of normalized expression (if \code{mode_version}=TRUE
 #' or \code{mean_version}=TRUE),
-#' estimated parameters and input \code{BETA_vec}.
+#' a list contains estimated priors and a list contains
+#' input parameters used: \code{BETA_vec},
+#' \code{Conditions} (if specified),
+#' \code{UMI_sffl} (if specified), \code{Prior_type},
+#' \code{FIX_MU}, \code{BB_SIZE} and \code{GR}.
 #'
 #' @details A wrapper function of prior estimation
 #' and bayNorm function.
@@ -107,6 +111,15 @@ bayNorm <- function(
     parallel = TRUE,NCores = 5,
     FIX_MU = TRUE, GR = FALSE,
     BB_SIZE = TRUE, verbose = TRUE) {
+
+    input_params<-list(BETA_vec=BETA_vec,
+                       Conditions=Conditions,
+                       UMI_sffl=UMI_sffl,
+                       Prior_type=Prior_type,
+                       FIX_MU=FIX_MU,
+                       BB_SIZE=BB_SIZE,
+                       GR=GR)
+
     # Adapted from SCnorm
     if (methods::is(Data, "SummarizedExperiment")) {
         if (is.null(SummarizedExperiment::assayNames(Data))
@@ -191,10 +204,13 @@ bayNorm <- function(
                 thres = max(Data_sr)*2)
             rownames(Bay_array) <- rownames(Data)
             colnames(Bay_array) <- colnames(Data)
+
+
+
             return(list(
                 Bay_array = Bay_array,
                 PRIORS = PRIORS,
-                BETA = BETA_vec))
+                input_params=input_params))
         } else if(mode_version){
             # mode
             Bay_mat <- Main_mode_NB_Bay(
@@ -205,10 +221,14 @@ bayNorm <- function(
                 thres = max(Data_sr) *2)
             rownames(Bay_mat) <- rownames(Data)
             colnames(Bay_mat) <- colnames(Data)
+
+
+
             return(list(
                 Bay_mat = Bay_mat,
                 PRIORS = PRIORS,
-                BETA = BETA_vec))
+                input_params=input_params))
+
         } else if(mean_version){
             # mean
             Bay_mat <- Main_mean_NB_Bay(
@@ -219,10 +239,12 @@ bayNorm <- function(
                 thres = max(Data_sr) *2)
             rownames(Bay_mat) <- rownames(Data)
             colnames(Bay_mat) <- colnames(Data)
+
+
             return(list(
                 Bay_mat = Bay_mat,
                 PRIORS = PRIORS,
-                BETA = BETA_vec))
+                input_params=input_params))
 
 
 
@@ -334,9 +356,10 @@ bayNorm <- function(
                 colnames(Bay_array_list[[i]]) <- colnames(DataList[[i]])
             }
             names(Bay_array_list) <- paste("Group", Levels)
+
             return(list(Bay_array_list = Bay_array_list,
                         PRIORS_LIST = PRIORS_LIST,
-                        BETA = BETAList))
+                        input_params=input_params))
         } else if(mode_version){
             # mode
 
@@ -364,9 +387,10 @@ bayNorm <- function(
             names(Bay_mat_list) <- paste("Group", Levels)
             names(BETAList)<-paste("Group", Levels)
 
+
             return(list(Bay_mat_list = Bay_mat_list,
                         PRIORS_LIST = PRIORS_LIST,
-                        BETA = BETAList))
+                        input_params=input_params))
             #end of mode for multiple groups
         }else if(mean_version){
             Bay_mat_list <- list()
@@ -393,9 +417,10 @@ bayNorm <- function(
             names(Bay_mat_list) <- paste("Group", Levels)
             names(BETAList)<-paste("Group", Levels)
 
+
             return(list(Bay_mat_list = Bay_mat_list,
                         PRIORS_LIST = PRIORS_LIST,
-                        BETA = BETAList))
+                        input_params=input_params))
 
 
             #end of mean for multiple groups
@@ -421,18 +446,12 @@ bayNorm <- function(
 #' @param Data A matrix of single-cell expression where rows
 #' are genes and columns are samples (cells). \code{Data}
 #' can be of class \code{SummarizedExperiment} or just matrix.
-#' @param  BETA_vec A vector of capture efficiencies
-#' (probabilities) of cells.
-#' @param  PRIORS A list of estimated prior parameters obtained from bayNorm.
-#' @param  Conditions vector of condition labels,
-#' this should correspond to the columns of the Data.
-#' Default is NULL, which assumes that all cells belong
-#' to the same group.
-#' @param UMI_sffl (scaling factors for non UMI based data:
-#' divide Data by UMI_sffl) Only needed when the input data is
-#' non UMI based. If non-null and Conditions is non-null, then
-#' UMI_sffl should be a vector of length equal to the number of
-#' groups. Default is set to be NULL.
+#' @param  PRIORS A list of estimated prior parameters
+#' obtained from bayNorm.
+#' @param  input_params A list of input parameters
+#' which have been used: \code{BETA_vec}, \code{Conditions},
+#' \code{UMI_sffl}, \code{Prior_type},
+#' \code{FIX_MU}, \code{BB_SIZE} and \code{GR}.
 #' @param  mode_version If TRUE, bayNorm return mode
 #' version normalized data which is of 2D matrix
 #' instead of 3D array. Default is FALSE.
@@ -450,17 +469,21 @@ bayNorm <- function(
 #' using either MulticoreParam (Linux, Mac) or
 #' SnowParam (Windows) with NCores using the package
 #' BiocParallel.
-#' @param  BB_SIZE If TRUE, use adjusted size for
+#' @param  BB_SIZE If TRUE (default), use adjusted size for
 #' normalization. The adjusted size is obtained by adjusting
 #' MME estimated size by a factor. The factor is
 #' calculated based on both MME estimated size and BB
-#' estimated size.
+#' estimated size. If FALSE, use MME estimated SIZE.
 #' @param verbose print out status messages. Default is TRUE.
 #' @return  List containing 3D arrays of normalized
 #' expression (if \code{mode_version}=FALSE) or 2D matrix
 #' of normalized expression (if \code{mode_version}=TRUE
 #' or \code{mean_version}=TRUE),
-#' estimated parameters and input \code{BETA_vec}.
+#' a list contains estimated priors and a list contains
+#' input parameters used: \code{BETA_vec},
+#' \code{Conditions} (if specified),
+#' \code{UMI_sffl} (if specified), \code{Prior_type},
+#' \code{FIX_MU}, \code{BB_SIZE} and \code{GR}.
 #'
 #' @details If you have run bayNorm before and obtained a
 #' list of estimated prior parameters, then you may not want
@@ -479,16 +502,15 @@ bayNorm <- function(
 #' #Now if you want to generate 2D matrix using
 #' the same prior
 #' #estimates as generated before:
-#' bayNorm_2D<-bayNorm_p(Data=EXAMPLE_DATA_list$inputdata
-#' ,BETA_vec= bayNorm_3D$BETA,PRIORS=bayNorm_3D$PRIORS_LIST
+#' bayNorm_2D<-bayNorm_sup(Data=EXAMPLE_DATA_list$inputdata
+#' ,PRIORS=bayNorm_3D$PRIORS_LIST
 #' ,mode_version=T)
 #'
 #' #If previous bayNorm was applied for normalizing multiple
 #' #groups of cells (is.null(Origin_Conditions)=T), then:
 #' inputbeta2<-unlist(bayNorm_3D$BETA)
-#' bayNorm_2D<-bayNorm_p(Data=inputdata,BETA_vec = inputbeta2
-#' ,PRIORS=bayNorm_3D$PRIORS_LIST,mode_version=T,Conditions
-#' =Origin_Conditions)
+#' bayNorm_2D<-bayNorm_sup(Data=inputdata
+#' ,PRIORS=bayNorm_3D$PRIORS_LIST,mode_version=T)
 #'
 #' #You can also generate 3D array using the same prior
 #' estimates
@@ -505,13 +527,26 @@ bayNorm <- function(
 #' @export
 #'
 bayNorm_sup <- function(
-    Data, BETA_vec, PRIORS = NULL,
-    Conditions = NULL, UMI_sffl = NULL,
+    Data,
+    PRIORS = NULL,
+    input_params=NULL,
     mode_version = FALSE,
     mean_version=FALSE,
     S = 20,
     parallel = TRUE, NCores = 5,
     BB_SIZE = TRUE, verbose = TRUE) {
+
+
+    Conditions=input_params$Conditions
+    UMI_sffl=input_params$UMI_sffl
+    BETA_vec=input_params$BETA_vec
+
+    if(!input_params$BB_SIZE & BB_SIZE){
+        stop("Previous priors does not contain Adjusted MME size.
+             Try to run bayNorm with BB_SIZE=TRUE.")
+    }
+
+
 
     if (methods::is(Data, "SummarizedExperiment")) {
 
@@ -543,6 +578,8 @@ bayNorm_sup <- function(
 
 
     if (is.null(Conditions)) {
+
+
         if (is.null(UMI_sffl)) {
             # Data_s<-Data
             Data_sr <- Data
@@ -568,7 +605,7 @@ bayNorm_sup <- function(
             colnames(Bay_array) <- colnames(Data)
             return(list(Bay_array = Bay_array,
                         PRIORS = PRIORS,
-                        BETA = BETA_vec))
+                        input_params=input_params))
         } else if(mode_version){
 
             # mode
@@ -583,7 +620,7 @@ bayNorm_sup <- function(
 
             return(list(Bay_mat = Bay_mat,
                         PRIORS = PRIORS,
-                        BETA = BETA_vec))
+                        input_params=input_params))
         } else if(mean_version){
 
             Bay_mat <- Main_mean_NB_Bay(
@@ -597,7 +634,7 @@ bayNorm_sup <- function(
 
             return(list(Bay_mat = Bay_mat,
                         PRIORS = PRIORS,
-                        BETA = BETA_vec))
+                        input_params=input_params))
 
         }
 
@@ -675,7 +712,7 @@ bayNorm_sup <- function(
             return(list(
                 Bay_array_list = Bay_array_list,
                 PRIORS_LIST = PRIORS_LIST,
-                BETA = BETAList))
+                input_params=input_params))
         } else if(mode_version){
             # mode
 
@@ -707,7 +744,7 @@ bayNorm_sup <- function(
 
             return(list(Bay_mat_list = Bay_mat_list,
                         PRIORS_LIST = PRIORS_LIST,
-                        BETA = BETAList))
+                        input_params=input_params))
             #end of mode for multiple groups
 
         }else if(mean_version){
@@ -739,7 +776,7 @@ bayNorm_sup <- function(
 
             return(list(Bay_mat_list = Bay_mat_list,
                         PRIORS_LIST = PRIORS_LIST,
-                        BETA = BETAList))
+                        input_params=input_params))
         }
     }  # end for multiple groups
 
