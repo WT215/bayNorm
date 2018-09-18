@@ -72,20 +72,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// GradientFun_NBmu_1D
-double GradientFun_NBmu_1D(double SIZE, double MU, NumericVector m_observed, NumericVector BETA);
-RcppExport SEXP _bayNorm_GradientFun_NBmu_1D(SEXP SIZESEXP, SEXP MUSEXP, SEXP m_observedSEXP, SEXP BETASEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double >::type SIZE(SIZESEXP);
-    Rcpp::traits::input_parameter< double >::type MU(MUSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type m_observed(m_observedSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type BETA(BETASEXP);
-    rcpp_result_gen = Rcpp::wrap(GradientFun_NBmu_1D(SIZE, MU, m_observed, BETA));
-    return rcpp_result_gen;
-END_RCPP
-}
 // Main_NB_Bay
 NumericVector Main_NB_Bay(NumericMatrix Data, NumericVector BETA_vec, NumericVector size, Nullable<NumericVector> mu, int S, int thres);
 RcppExport SEXP _bayNorm_Main_NB_Bay(SEXP DataSEXP, SEXP BETA_vecSEXP, SEXP sizeSEXP, SEXP muSEXP, SEXP SSEXP, SEXP thresSEXP) {
@@ -141,7 +127,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_bayNorm_MarginalF_NB_2D", (DL_FUNC) &_bayNorm_MarginalF_NB_2D, 3},
     {"_bayNorm_GradientFun_NB_1D", (DL_FUNC) &_bayNorm_GradientFun_NB_1D, 4},
     {"_bayNorm_GradientFun_NB_2D", (DL_FUNC) &_bayNorm_GradientFun_NB_2D, 3},
-    {"_bayNorm_GradientFun_NBmu_1D", (DL_FUNC) &_bayNorm_GradientFun_NBmu_1D, 4},
     {"_bayNorm_Main_NB_Bay", (DL_FUNC) &_bayNorm_Main_NB_Bay, 6},
     {"_bayNorm_Main_mean_NB_Bay", (DL_FUNC) &_bayNorm_Main_mean_NB_Bay, 6},
     {"_bayNorm_Main_mode_NB_Bay", (DL_FUNC) &_bayNorm_Main_mode_NB_Bay, 6},

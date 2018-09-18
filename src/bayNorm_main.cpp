@@ -1076,7 +1076,7 @@ NumericVector GradientFun_NB_2D(NumericVector SIZE_MU,
 
 
 
-
+/*
 //' @title GradientFun_NBmu_1D
 //'
 //' @description First derivative of marginal distribution
@@ -1097,6 +1097,7 @@ NumericVector GradientFun_NB_2D(NumericVector SIZE_MU,
 //' }
 //' @export
 // [[Rcpp::export]]
+*/
 double GradientFun_NBmu_1D(double SIZE,double MU,
                          NumericVector m_observed,
                          NumericVector BETA){

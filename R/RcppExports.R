@@ -107,29 +107,6 @@ GradientFun_NB_2D <- function(SIZE_MU, m_observed, BETA) {
     .Call('_bayNorm_GradientFun_NB_2D', PACKAGE = 'bayNorm', SIZE_MU, m_observed, BETA)
 }
 
-#' @title GradientFun_NBmu_1D
-#'
-#' @description First derivative of marginal distribution
-#' with respect to size.
-#'
-#'
-#'
-#' @param SIZE size
-#' @param MU mu
-#' @param m_observed one observed count
-#' @param BETA The corresponding capture efficiency
-#' @return GradientFun_NB_1D
-#'
-#' @examples
-#' data("EXAMPLE_DATA_list")
-#' #Should not run by the users.
-#' \dontrun{
-#' }
-#' @export
-GradientFun_NBmu_1D <- function(SIZE, MU, m_observed, BETA) {
-    .Call('_bayNorm_GradientFun_NBmu_1D', PACKAGE = 'bayNorm', SIZE, MU, m_observed, BETA)
-}
-
 #' @title Main_NB_Bay
 #'
 #' @description This function is used to draw S samples from
