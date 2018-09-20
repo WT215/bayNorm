@@ -12,3 +12,10 @@
    \item Submit to Bioconductor.}}
 }
 
+\section{Version 0.99.1}{
+\itemize{
+\item Fix two warnings reported by Bioconductor
+\itemize{
+   \item WARNING: Use TRUE/FALSE instead of T/F, Found in files: tests/testthat/test-bayNorm.r
+   \item WARNING: Avoid class()== or class()!= ; use is() or !is() Found in files: R/bayNorm.r (line 153)}}
+}

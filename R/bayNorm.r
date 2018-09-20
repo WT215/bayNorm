@@ -150,7 +150,8 @@ bayNorm <- function(
     }
 
     # Some pre-checkings:
-    if (class(Data) != "matrix") {
+    #if (class(Data) != "matrix") {
+    if (!is(Data,"matrix")) {
         stop("Input data should be of class matrix")
     }
     if (sum(duplicated(rownames(Data))) > 0) {
