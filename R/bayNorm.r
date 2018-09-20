@@ -150,7 +150,6 @@ bayNorm <- function(
     }
 
     # Some pre-checkings:
-    #if (class(Data) != "matrix") {
     if (!is(Data,"matrix")) {
         stop("Input data should be of class matrix")
     }
