@@ -1372,7 +1372,7 @@ NumericMatrix Main_mode_NB_Bay(NumericMatrix Data,
     int i;
     int j;
     int q;
-    double probb;
+    // double probb;
     double meann;
 
 
@@ -1405,7 +1405,7 @@ NumericMatrix Main_mode_NB_Bay(NumericMatrix Data,
                     Final_mat(j,i)=0;
                 } else if((size(j)+M(j,i))>1){
                     meann=(M(j,i)+size(j))*(M_ave(j)-M_ave(j)*Beta(i))/(size(j)+M_ave(j)*Beta(i));
-                    probb=(M_ave(j)*Beta(i)+size(j)+M(j,i))/(M(j,i)+size(j)+M(j,i));
+                    //probb=(M_ave(j)*Beta(i)+size(j)+M(j,i))/(M(j,i)+size(j)+M(j,i));
                     //Final_mat(j,i)= floor((1-probb)*(size(j)+M(j,i)-1)/probb)+M(j,i);
                     Final_mat(j,i)= floor(meann/(size(j)+M(j,i))*((size(j)+M(j,i))-1))+M(j,i);
 

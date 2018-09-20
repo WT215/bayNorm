@@ -18,4 +18,6 @@
 \itemize{
    \item WARNING: Use TRUE/FALSE instead of T/F, Found in files: tests/testthat/test-bayNorm.r
    \item WARNING: Use is() or !is()
+        }
+    }
 }
