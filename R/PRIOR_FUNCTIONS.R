@@ -355,19 +355,22 @@ Prior_fun <- function(
             message("Start optimization using spg from BB package.
 This part may be time-consuming.")
         }
+        BB_size <- BB_Fun(
+            Data, BETA_vec,
+            INITIAL_MU_vec = MME_prior$MME_MU,
+            INITIAL_SIZE_vec = MME_prior$MME_SIZE,
+            MU_lower = min(MME_prior$MME_MU),
+            MU_upper = max(MME_prior$MME_MU),
+            SIZE_lower = min(MME_prior$MME_SIZE),
+            SIZE_upper = ceiling(
+                max(MME_prior$MME_SIZE)),
+            parallel = parallel,
+            NCores = NCores,
+            FIX_MU = FIX_MU,
+            GR = GR)
 
         if (FIX_MU) {
 
-            BB_size <- BB_Fun(
-                Data, BETA_vec,
-                INITIAL_MU_vec = MME_prior$MME_MU,
-                INITIAL_SIZE_vec = MME_prior$MME_SIZE,
-                MU_lower = min(MME_prior$MME_MU),
-                MU_upper = max(MME_prior$MME_MU),
-                SIZE_lower = min(MME_prior$MME_SIZE),
-                SIZE_upper = ceiling(max(MME_prior$MME_SIZE)),
-                parallel = parallel,
-                NCores = NCores, FIX_MU = FIX_MU, GR = GR)
             BB_prior <- cbind(MME_prior$MME_MU, BB_size)
             rownames(BB_prior) <- rownames(Data)
             colnames(BB_prior) <- c("MME_MU", "BB_SIZE")
@@ -377,20 +380,6 @@ This part may be time-consuming.")
                 MME_prior$MME_MU,
                 MME_prior$MME_SIZE)
         } else {
-
-            BB_size <- BB_Fun(
-                Data, BETA_vec,
-                INITIAL_MU_vec = MME_prior$MME_MU,
-                INITIAL_SIZE_vec = MME_prior$MME_SIZE,
-                MU_lower = min(MME_prior$MME_MU),
-                MU_upper = max(MME_prior$MME_MU),
-                SIZE_lower = min(MME_prior$MME_SIZE),
-                SIZE_upper = ceiling(
-                    max(MME_prior$MME_SIZE)),
-                parallel = parallel,
-                NCores = NCores,
-                FIX_MU = FIX_MU,
-                GR = GR)
             BB_prior <- BB_size
             rownames(BB_prior) <- rownames(Data)
             colnames(BB_prior) <- c("BB_SIZE", "BB_MU")
@@ -516,6 +505,18 @@ BB_Fun <- function(
 
     Geneind <- NULL
 
+    if(!GR){
+        GR_pass<-NULL
+    } else if(GR){
+        if(FIX_MU){
+            GR_pass<-GradientFun_NB_1D
+        } else{
+            GR_pass<-GradientFun_NB_2D
+        }
+
+
+    }
+
 
     if (FIX_MU) {
         # 1D
@@ -542,22 +543,9 @@ BB_Fun <- function(
                     size <- INITIAL_SIZE_vec[Geneind]
                     m_observed = Data[Geneind, ]
 
-                    if (!GR) {
-
-                        BB_opt <- BB::spg(
+                    BB_opt <- BB::spg(
                             par = size, fn = MarginalF_NB_1D,
-                            MU = mu,m_observed = m_observed,
-                            BETA = BETA_vec,
-                            control = list(
-                                maximize = TRUE,
-                                trace = FALSE,
-                                maxfeval = 500),
-                            lower = lower_input,
-                            upper = upper_input)
-                    } else {
-                        BB_opt <- BB::spg(
-                            par = size, fn = MarginalF_NB_1D,
-                            gr = GradientFun_NB_1D,MU = mu,
+                            gr = GR_pass,MU = mu,
                             m_observed = m_observed,
                             BETA = BETA_vec,
                             control = list(
@@ -566,7 +554,7 @@ BB_Fun <- function(
                                 maxfeval = 500),
                             lower = lower_input,
                             upper = upper_input)
-                    }
+
 
                     optimal_par <- BB_opt$par
                     return(optimal_par)
@@ -595,21 +583,9 @@ BB_Fun <- function(
                     size <- INITIAL_SIZE_vec[Geneind]
                     m_observed = Data[Geneind, ]
 
-                    if (!GR) {
-                        BB_opt <- BB::spg(
+                    BB_opt <- BB::spg(
                             par = size, fn = MarginalF_NB_1D,
-                            MU = mu,m_observed = m_observed,
-                            BETA = BETA_vec,
-                            control = list(
-                                maximize = TRUE,
-                                trace = FALSE,
-                                maxfeval = 500),
-                            lower = SIZE_lower,
-                            upper = SIZE_upper)
-                    } else {
-                        BB_opt <- BB::spg(
-                            par = size, fn = MarginalF_NB_1D,
-                            gr = GradientFun_NB_1D,MU = mu,
+                            gr = GR_pass,MU = mu,
                             m_observed = m_observed,
                             BETA = BETA_vec,
                             control = list(
@@ -619,7 +595,7 @@ BB_Fun <- function(
                             lower = SIZE_lower,
                             upper = SIZE_upper)
 
-                    }
+
                     #
                     optimal_par <- BB_opt$par
                     return(optimal_par)
@@ -648,32 +624,18 @@ BB_Fun <- function(
 
             BB_parmat <- foreach(
                 Geneind = seq_len(dim(Data)[1]),
-                .combine = rbind) %dopar%
+                .combine = rbind,
+                .options.snow = opts) %dopar%
                 {
 
                     mu <- INITIAL_MU_vec[Geneind]
                     size <- INITIAL_SIZE_vec[Geneind]
                     m_observed = Data[Geneind, ]
-                    if (!GR) {
-                        BB_opt <- BB::spg(
+
+                    BB_opt <- BB::spg(
                             par = c(size, mu),
                             fn = MarginalF_NB_2D,
-                            m_observed = m_observed,
-                            BETA = BETA_vec,
-                            control = list(
-                                maximize = TRUE,
-                                trace = FALSE,
-                                ftol = 0.001,
-                                maxfeval = 500),
-                            lower = lower_input,
-                            upper = upper_input)
-
-                    } else {
-
-                        BB_opt <- BB::spg(
-                            par = c(size, mu),
-                            fn = MarginalF_NB_2D,
-                            gr = GradientFun_NB_2D,
+                            gr = GR_pass,
                             m_observed = m_observed,
                             BETA = BETA_vec,
                             control = list(
@@ -682,7 +644,7 @@ BB_Fun <- function(
                                 maxfeval = 500),
                             lower = lower_input,
                             upper = upper_input)
-                    }
+
 
                     optimal_par <- BB_opt$par
                     return(optimal_par)
@@ -707,28 +669,10 @@ BB_Fun <- function(
                     mu <- INITIAL_MU_vec[Geneind]
                     size <- INITIAL_SIZE_vec[Geneind]
                     m_observed = Data[Geneind, ]
-                    if (!GR) {
-                        BB_opt <- BB::spg(
-                            par = c(size, mu),
-                            fn = MarginalF_NB_2D,
-                            m_observed = m_observed,
-                            BETA = BETA_vec,
-                            control = list(
-                                maximize = TRUE,
-                                trace = FALSE,
-                                ftol = 0.001,
-                                maxfeval = 500),
-                            lower = c(
-                                SIZE_lower,
-                                MU_lower),
-                            upper = c(
-                                SIZE_upper,
-                                MU_upper))
-                    } else {
 
-                        BB_opt <- BB::spg(
+                    BB_opt <- BB::spg(
                             par = c(size, mu), fn = MarginalF_NB_2D,
-                            gr = GradientFun_NB_2D,
+                            gr = GR_pass,
                             m_observed = m_observed,
                             BETA = BETA_vec,
                             control = list(
@@ -737,7 +681,7 @@ BB_Fun <- function(
                                 maxfeval = 500),
                             lower = c(SIZE_lower, MU_lower),
                             upper = c(SIZE_upper, MU_upper))
-                    }
+
                     optimal_par <- BB_opt$par
                     return(optimal_par)
                 }
