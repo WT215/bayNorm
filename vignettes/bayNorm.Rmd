@@ -5,6 +5,16 @@ package: "`r BiocStyle::pkg_ver('bayNorm')`"
 author: 
 - name: Wenhao Tang
   email: wt215@ic.ac.uk
+- name: Fran<U+00E7>ois Bertaux
+  email: f.bertaux@imperial.ac.uk
+- name: Philipp Thomas
+  email: p.thomas@imperial.ac.uk
+- name: Claire Stefanelli
+  email: c.stefanelli.v@gmail.com
+- name: Malika Saint
+  email: malikasaint@gmail.com
+- name: Samuel Marguerat
+  email: samuel.marguerat@lms.mrc.ac.uk
 - name: Vahid Shahrezaei
   email: v.shahrezaei@imperial.ac.uk
   
@@ -30,9 +40,19 @@ knitr::opts_chunk$set(dev="png",fig.align="center")
 ```{r library, echo=FALSE}
 library(bayNorm)
 library(BiocStyle)
+library(SummarizedExperiment)
 ```
 
 # Installation
+
+
+bayNorm has been submitted to Bioconductor, once it is accepted, it can be installed via:
+```{r install_Bioconductor, eval=FALSE}
+source("https://bioconductor.org/biocLite.R")
+biocLite("bayNorm")
+```
+
+Currently bayNorm can be installed via github:
 ```{r install, eval=FALSE}
 library(devtools)
 devtools::install_github("WT215/bayNorm")
@@ -63,7 +83,10 @@ The input parameters `BETA_vec`, `Conditions` (if specified), `UMI_sffl` (if spe
 Apart from the raw data, another parameter which user may need to provide is the mean capture efficiency $<\beta>$ and hence $\beta$ can be further calculated using scaling factors estimated from any other methods. The default $\beta$ is calculated to be total counts normalized to 6\%. Or you can use `BetaFun` in bayNorm to estimate $\beta$:
 ```{r beta, echo=TRUE,eval=TRUE}
 data('EXAMPLE_DATA_list')
-BETA_est<-BetaFun(Data=EXAMPLE_DATA_list$inputdata,MeanBETA=0.06)
+#Suppose the input data is a SummarizedExperiment object:
+rse <- SummarizedExperiment(assays=SimpleList(counts=EXAMPLE_DATA_list$inputdata))
+
+BETA_est<-BetaFun(Data=rse,MeanBETA=0.06)
 summary(BETA_est$BETA)
 ```
 The function `BetaFun` selects a subset of genes such that outlier genes and genes with high proportion of zeros across cells are excluded. Then the total counts of the subset of genes in each cell are normalized to $<\beta>$. Another way is to normalize scaling factors estimated from the R package `scran` to $<\beta>$.
@@ -72,28 +95,30 @@ The function `BetaFun` selects a subset of genes such that outlier genes and gen
 
 ## Run bayNorm
 `BETA_vec` can be set to be `NULL`, then the $\beta$ are estimated to be total counts normalized to 6\%.
-```{r intro_bayNorm, echo=TRUE,eval=FALSE}
-data('EXAMPLE_DATA_list')
+```{r intro_bayNorm, echo=FALSE,eval=TRUE}
 #Return 3D array normalzied data, draw 20 samples from posterior distribution:
 bayNorm_3D<-bayNorm(
-    Data=EXAMPLE_DATA_list$inputdata,
+    Data=rse,
     BETA_vec = NULL,
-    mode_version=F,
-    mean_version = F,S=20)
+    mode_version=FALSE,
+    mean_version = FALSE,S=20
+    ,verbose =FALSE)
 
 #Return 2D matrix normalized data (MAP of posterior):
 bayNorm_2D<-bayNorm(
-    Data=EXAMPLE_DATA_list$inputdata,
+    Data=rse,
     BETA_vec = NULL,
-    mode_version=T,
-    mean_version = F)
+    mode_version=TRUE,
+    mean_version = FALSE
+    ,verbose =FALSE)
 
 #Return 2D matrix normalized data (mean of posterior):
 bayNorm_2D<-bayNorm(
-    Data=EXAMPLE_DATA_list$inputdata,
+    Data=rse,
     BETA_vec = NULL,
-    mode_version=F,
-    mean_version = T)
+    mode_version=FALSE,
+    mean_version = TRUE
+    ,verbose =FALSE)
 ```
 
 
@@ -111,33 +136,38 @@ If you have run bayNorm on a dataset before but want to output another kind of d
 * `Conditions`: make sure to specify the same `Conditions` as before.
 You can find these two objects from the previous output of bayNorm function, which is a list.
 
-```{r intro_bayNorm_sup, echo=TRUE,eval=FALSE}
+```{r intro_bayNorm_sup, echo=FALSE,eval=TRUE}
 data('EXAMPLE_DATA_list')
+
+
 #Return 3D array normalzied data:
 bayNorm_3D<-bayNorm(
-    Data=EXAMPLE_DATA_list$inputdata,
+    Data=rse,
     BETA_vec = EXAMPLE_DATA_list$inputbeta,
-    mode_version=F,
-    mean_version = F)
+    mode_version=FALSE,
+    mean_version = FALSE,
+    verbose =FALSE)
 
 #Now if you want to generate 2D matrix (MAP) using the same prior
 #estimates as generated before:
 bayNorm_2D<-bayNorm_sup(
-    Data=EXAMPLE_DATA_list$inputdata,
+    Data=rse,
     PRIORS=bayNorm_3D$PRIORS,
     input_params=bayNorm_3D$input_params,
-    mode_version=T,
-    mean_version = F)
+    mode_version=TRUE,
+    mean_version = FALSE,
+    verbose =FALSE)
 
 #Or you may want to generate 2D matrix 
 #(mean of posterior) using the same prior
 #estimates as generated before:
 bayNorm_2D<-bayNorm_sup(
-    Data=EXAMPLE_DATA_list$inputdata,
+    Data=rse,
     PRIORS=bayNorm_3D$PRIORS,
     input_params=bayNorm_3D$input_params,
-    mode_version=F,
-    mean_version = T)
+    mode_version=FALSE,
+    mean_version = TRUE,
+    verbose =FALSE)
 ```
 
 

@@ -45,8 +45,9 @@ AdjustSIZE_fun <- function(BB_SIZE, MME_MU, MME_SIZE) {
 #'
 #' @param Data A matrix of single-cell expression where rows
 #' are genes and columns are samples (cells). \code{Data}
-#' can be of class \code{SummarizedExperiment}
-#' or just matrix.
+#' can be of class \code{SummarizedExperiment} (the
+#' assays slot contains the expression matrix and
+#' is named "Counts") or just matrix.
 #' @param MeanBETA Mean capture efficiency of the scRNAseq data.
 #'  This can be estimated via spike-ins or other methods.
 #' @return List containing: \code{BETA}: a vector of capture efficiencies,
@@ -120,8 +121,9 @@ BetaFun <- function(Data, MeanBETA) {
 #' estimated size and mu for each gene using the MME method.
 #' @param Data A matrix of single-cell expression where rows
 #' are genes and columns are samples (cells). \code{Data}
-#' can be of class \code{SummarizedExperiment}
-#' or just matrix.
+#' can be of class \code{SummarizedExperiment} (the
+#' assays slot contains the expression matrix and
+#' is named "Counts") or just matrix.
 #' @param  parallel If TRUE, 5 cores will be used for parallelization.
 #' Default is TRUE.
 #' @param  NCores number of cores to use, default is 5.
@@ -189,7 +191,7 @@ EstPrior <- function(Data,parallel=FALSE,NCores=5, verbose = TRUE) {
         opts <- list(progress = progress)
 
         CoefDat <- foreach(
-            i = 1:nrow(Data),
+            i = seq_len(nrow(Data)),
             .combine = rbind,
             .options.snow = opts) %dopar% {
 
@@ -209,7 +211,7 @@ EstPrior <- function(Data,parallel=FALSE,NCores=5, verbose = TRUE) {
         opts <- list(progress = progress)
 
         CoefDat <- foreach(
-            i = 1:nrow(Data),
+            i = seq_len(nrow(Data)),
             .combine = rbind,
             .options.snow = opts) %do% {
                 setTxtProgressBar(pb, i)
@@ -245,7 +247,9 @@ EstPrior <- function(Data,parallel=FALSE,NCores=5, verbose = TRUE) {
 #' vector of capture efficiencies of cells.
 #' @param Data A matrix of single-cell expression where rows
 #' are genes and columns are samples (cells). \code{Data}
-#' can be of class \code{SummarizedExperiment} or just matrix.
+#' can be of class \code{SummarizedExperiment} (the
+#' assays slot contains the expression matrix and
+#' is named "Counts") or just matrix.
 #' @param  BETA_vec A vector of capture efficiencies of cells.
 #' @param  parallel If TRUE, 5 cores will be used for
 #' parallelization. Default is TRUE.
@@ -422,7 +426,9 @@ This part may be time-consuming.")
 #'
 #' @param Data A matrix of single-cell expression where rows
 #' are genes and columns are samples (cells). \code{Data}
-#' can be of class \code{SummarizedExperiment} or just matrix.
+#' can be of class \code{SummarizedExperiment} (the
+#' assays slot contains the expression matrix and
+#' is named "Counts") or just matrix.
 #' @param  BETA_vec A vector of capture efficiencies
 #' (probabilities) of cells.
 #' @param  INITIAL_MU_vec Mean expression of genes,
@@ -528,7 +534,7 @@ BB_Fun <- function(
             opts <- list(progress = progress)
 
             BB_parmat <- foreach(
-                Geneind = 1:dim(Data)[1],
+                Geneind = seq_len(dim(Data)[1]),
                 .combine = c,
                 .options.snow = opts) %dopar% {
                     # print(Geneind)
@@ -579,7 +585,7 @@ BB_Fun <- function(
 
 
             BB_parmat <- foreach(
-                Geneind = 1:dim(Data)[1],
+                Geneind = seq_len(dim(Data)[1]),
                 .combine = c,.options.snow = opts) %do% {
 
                     # print(Geneind)
@@ -641,7 +647,7 @@ BB_Fun <- function(
 
 
             BB_parmat <- foreach(
-                Geneind = 1:dim(Data)[1],
+                Geneind = seq_len(dim(Data)[1]),
                 .combine = rbind) %dopar%
                 {
 
@@ -693,7 +699,7 @@ BB_Fun <- function(
             progress <- function(n) setTxtProgressBar(pb, n)
             opts <- list(progress = progress)
             BB_parmat <- foreach(
-                Geneind = 1:dim(Data)[1],
+                Geneind = seq_len(dim(Data)[1]),
                 .combine = rbind) %do%
 
                 {

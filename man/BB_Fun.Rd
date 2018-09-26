@@ -12,7 +12,9 @@ BB_Fun(Data, BETA_vec, INITIAL_MU_vec, INITIAL_SIZE_vec, MU_lower = 0.01,
 \arguments{
 \item{Data}{A matrix of single-cell expression where rows
 are genes and columns are samples (cells). \code{Data}
-can be of class \code{SummarizedExperiment} or just matrix.}
+can be of class \code{SummarizedExperiment} (the
+assays slot contains the expression matrix and
+is named "Counts") or just matrix.}
 
 \item{BETA_vec}{A vector of capture efficiencies
 (probabilities) of cells.}

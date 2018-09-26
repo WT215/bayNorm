@@ -1384,16 +1384,15 @@ NumericMatrix Main_mode_NB_Bay(NumericMatrix Data,
 
         M_ave = Rcpp::as<arma::vec>(mu);
     }
-
-
     Progress p(ncol*nrow, true);
+
+
 
 
     for( i=0;i<ncol;i++){
         //Rcout << "The cell is \n" << i+1 << std::endl;
 
         for( j=0;j<nrow;j++){
-
             p.increment();
 
             if(M(j,i)==NA_INTEGER) {

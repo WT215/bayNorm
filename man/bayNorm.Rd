@@ -12,11 +12,14 @@ bayNorm(Data, BETA_vec, Conditions = NULL, UMI_sffl = NULL,
 \arguments{
 \item{Data}{A matrix of single-cell expression where rows
 are genes and columns are samples (cells). \code{Data}
-can be of class \code{SummarizedExperiment} or just a matrix.}
+can be of class \code{SummarizedExperiment} (the
+assays slot contains the expression matrix and
+is named "Counts") or just matrix.}
 
 \item{BETA_vec}{A vector of capture efficiencies
 (probabilities) of cells.
-If it is null, library size (total count) normalized to 0.06 will be used
+If it is null, library size (total count) normalized to
+0.06 will be used
 as the input \code{BETA_vec}. \code{BETA_vec} less and
 equal to 0 or greater and equal to 1 will be replaced
 by the minimum and maximum of the BETA_vec which
@@ -28,7 +31,8 @@ efault is NULL, which assumes that all cells
 belong to the same group.}
 
 \item{UMI_sffl}{Scaling factors are required only for
-non-UMI based data for which \code{Data} is devided by \code{UMI_sffl}. If non-null and \code{Conditions} is non-null,
+non-UMI based data for which \code{Data} is devided by
+\code{UMI_sffl}. If non-null and \code{Conditions} is non-null,
 then UMI_sffl should be a vector of length equal
 to the number of groups. Default is \code{NULL}.}
 
@@ -111,15 +115,12 @@ and bayNorm function.
 }
 \examples{
 data('EXAMPLE_DATA_list')
-\dontrun{
 #Return 3D array normalzied data:
 bayNorm_3D<-bayNorm(Data=EXAMPLE_DATA_list$inputdata,
-BETA_vec = EXAMPLE_DATA_list$inputbeta,mode_version=F)
+BETA_vec = EXAMPLE_DATA_list$inputbeta,mode_version=FALSE)
 
 #Return 2D matrix normalized data:
 bayNorm_2D<-bayNorm(Data=EXAMPLE_DATA_list$inputdata,
 BETA_vec = EXAMPLE_DATA_list$inputbeta
-,mode_version=T)
-
-}
+,mode_version=TRUE)
 }

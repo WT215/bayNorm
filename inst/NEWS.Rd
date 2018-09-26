@@ -21,3 +21,11 @@
         }
     }
 }
+
+
+
+\section{Version 0.99.4}{
+\itemize{
+\item Apply corrections proposed by the reviewer, for more details please see \url{https://github.com/Bioconductor/Contributions/issues/878}
+    }
+}

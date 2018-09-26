@@ -4,8 +4,9 @@
 #'
 #' @param Data A matrix of single-cell expression where rows
 #' are genes and columns are samples (cells). \code{Data}
-#' can be of class \code{SummarizedExperiment} or
-#' just matrix.
+#' can be of class \code{SummarizedExperiment} (the
+#' assays slot contains the expression matrix and
+#' is named "Counts") or just matrix.
 #' @param  BETA_vec A vector of capture efficiencies
 #' of cells.
 #' @param PRIORS (Need to be specified for efficiency
@@ -94,6 +95,23 @@ noisy_gene_detection<-function(
     PRIORS=NULL,
     input_params=NULL){
 
+    if(mode_version & mean_version){
+        stop("Only one of mode_version and mean_version
+             should be specified to be TRUE, otherwise both
+             should be set to FALSE so that 3D array
+             normalized data will be returned.")
+    }
+
+    if(!mode_version & !mean_version){
+        myFunc <- Main_NB_Bay
+    }else if(mode_version & !mean_version){
+        myFunc <- Main_mode_NB_Bay
+    }else if(!mode_version & mean_version){
+        myFunc <-  Main_mean_NB_Bay
+    }
+
+
+
     if(methods::is(Data, "SummarizedExperiment")){
 
         if (is.null(  SummarizedExperiment::assayNames(Data))
@@ -156,26 +174,10 @@ in assays(Data) to 'Counts'")
     }
 
 
-    if(!mode_version & !mean_version){
-        bayNorm_C_array<-Main_NB_Bay(
-            Data=synthetic_out$N_c,
-            BETA_vec=synthetic_out$beta_c,
-            size=size_c,mu=mu_c,S=S,
-            thres=max(synthetic_out$N_c)*2)
-
-    }else if(mode_version & !mean_version){
-        bayNorm_C_array<-Main_mode_NB_Bay(
-            Data=synthetic_out$N_c,
-            BETA_vec=synthetic_out$beta_c,size=size_c,
-            mu=mu_c,S=S,
-            thres=max(synthetic_out$N_c)*2)
-    }else if(!mode_version & mean_version){
-        bayNorm_C_array<-Main_mean_NB_Bay(
-            Data=synthetic_out$N_c,
-            BETA_vec=synthetic_out$beta_c,size=size_c,
-            mu=mu_c,S=1000,
-            thres=max(synthetic_out$N_c)*2)
-    }
+    bayNorm_C_array<-myFunc(Data=synthetic_out$N_c,
+                            BETA_vec=synthetic_out$beta_c,size=size_c,
+                            mu=mu_c,S=1000,
+                            thres=max(synthetic_out$N_c)*2)
 
 
 

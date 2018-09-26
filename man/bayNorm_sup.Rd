@@ -11,7 +11,9 @@ bayNorm_sup(Data, PRIORS = NULL, input_params = NULL,
 \arguments{
 \item{Data}{A matrix of single-cell expression where rows
 are genes and columns are samples (cells). \code{Data}
-can be of class \code{SummarizedExperiment} or just matrix.}
+can be of class \code{SummarizedExperiment} (the
+assays slot contains the expression matrix and
+is named "Counts") or just matrix.}
 
 \item{PRIORS}{A list of estimated prior parameters
 obtained from bayNorm.}
@@ -77,29 +79,16 @@ previous estimated parameters for obtaining 3D or
 }
 \examples{
 data('EXAMPLE_DATA_list')
-\dontrun{
 #Return 3D array normalzied data:
 bayNorm_3D<-bayNorm(Data=EXAMPLE_DATA_list$inputdata,
 BETA_vec = EXAMPLE_DATA_list$inputbeta
-,mode_version=F)
+,mode_version=FALSE)
 
-#Now if you want to generate 2D matrix using
-the same prior
+#Now if you want to generate 2D matrix using the same prior
 #estimates as generated before:
 bayNorm_2D<-bayNorm_sup(Data=EXAMPLE_DATA_list$inputdata
-,PRIORS=bayNorm_3D$PRIORS_LIST
-,mode_version=T)
-
-#If previous bayNorm was applied for normalizing multiple
-#groups of cells (is.null(Origin_Conditions)=T), then:
-inputbeta2<-unlist(bayNorm_3D$BETA)
-bayNorm_2D<-bayNorm_sup(Data=inputdata
-,PRIORS=bayNorm_3D$PRIORS_LIST,mode_version=T)
-
-#You can also generate 3D array using the same prior
-estimates
-#as generated before.
-}
-
+,PRIORS=bayNorm_3D$PRIORS,
+input_params = bayNorm_3D$input_params
+,mode_version=TRUE)
 
 }

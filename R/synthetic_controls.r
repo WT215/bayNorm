@@ -4,7 +4,9 @@
 #' efficiencies of cells.
 #' @param Data A matrix of single-cell expression where rows
 #' are genes and columns are samples (cells). \code{Data}
-#' can be of class \code{SummarizedExperiment} or just matrix.
+#' can be of class \code{SummarizedExperiment} (the
+#' assays slot contains the expression matrix and
+#' is named "Counts") or just matrix.
 #' @param  BETA_vec A vector of capture efficiencies
 #' (probabilities) of cells.
 #' @return  List containing 2D matrix of synthetic control,

@@ -1,7 +1,7 @@
 Package: bayNorm
 Type: Package
 Title: Single-cell RNA sequencing data normalization
-Version: 0.99.3
+Version: 0.99.4
 Authors@R: c(person("Wenhao", "Tang", role=c("aut", "cre"),
         email="wt215@ic.ac.uk"), 
         person("Fran<U+00E7>ois", "Bertaux", role=c("aut")),
@@ -10,37 +10,35 @@ Authors@R: c(person("Wenhao", "Tang", role=c("aut", "cre"),
         person("Malika", "Saint", role=c("aut")),
         person("Samuel", "Marguerat", role=c("aut")),
         person("Vahid", "Shahrezaei", role=c("aut")))
-Maintainer: Wenhao Tang <wt215@ic.ac.uk>
 Description: bayNorm is used for normalizing single-cell RNA-seq data.
 License: GPL (>= 2)
 Encoding: UTF-8
-LazyData: true
 RoxygenNote: 6.1.0
 Depends:
 	R (>= 3.5),
 Imports:
-          Rcpp (>= 0.12.12), 
-          BB,
-          foreach, 
-          iterators,
-          doSNOW,
-          parallel,
-          MASS,
-          locfit,
-          fitdistrplus,
-          stats,
-	        methods,
-	        graphics,
-	        grDevices,
-	        SummarizedExperiment,
-	        utils
+    Rcpp (>= 0.12.12), 
+    BB,
+    foreach, 
+    iterators,
+    doSNOW,
+    parallel,
+    MASS,
+    locfit,
+    fitdistrplus,
+    stats,
+    methods,
+    graphics,
+    grDevices,
+    SummarizedExperiment,
+    utils
 LinkingTo: Rcpp, RcppArmadillo,RcppProgress
-Suggests: 
-          knitr,
-          rmarkdown,
-	        BiocStyle,
-	        devtools,
-	        testthat
+Suggests:
+        knitr,
+        rmarkdown,
+        BiocStyle,
+        devtools,
+        testthat
 VignetteBuilder: knitr
 biocViews: Normalization, RNASeq, SingleCell,Sequencing
 URL: https://github.com/WT215/bayNorm

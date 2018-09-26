@@ -15,6 +15,12 @@ library(devtools)
 devtools::install_github("WT215/bayNorm")
 ```
 
+bayNorm has been submitted to Bioconductor, once it is accepted, it can be installed via:
+```R
+source("https://bioconductor.org/biocLite.R")
+biocLite("bayNorm")
+```
+
 
 # Quick start: for either single or groups of cells
 The main function is `bayNorm`, which is a wrapper function for  gene specific prior parameter estimation and normalization. The input is a matrix of scRNA-seq data with rows different genes and coloums different cells. The output is either point estimates from posterior (2D array) or samples from posterior (3D array). 
