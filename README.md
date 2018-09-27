@@ -17,8 +17,8 @@ devtools::install_github("WT215/bayNorm")
 
 bayNorm has been submitted to Bioconductor, once it is accepted, it can be installed via:
 ```R
-source("https://bioconductor.org/biocLite.R")
-biocLite("bayNorm")
+library(BiocManager)
+BiocManager::install("bayNorm")
 ```
 
 

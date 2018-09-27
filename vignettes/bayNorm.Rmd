@@ -48,8 +48,8 @@ library(SummarizedExperiment)
 
 bayNorm has been submitted to Bioconductor, once it is accepted, it can be installed via:
 ```{r install_Bioconductor, eval=FALSE}
-source("https://bioconductor.org/biocLite.R")
-biocLite("bayNorm")
+library(BiocManager)
+BiocManager::install("bayNorm")
 ```
 
 Currently bayNorm can be installed via github:
