@@ -1,7 +1,7 @@
 Package: bayNorm
 Type: Package
 Title: Single-cell RNA sequencing data normalization
-Version: 0.99.6
+Version: 0.99.7
 Authors@R: c(person("Wenhao", "Tang", role=c("aut", "cre"),
         email="wt215@ic.ac.uk"), 
         person("Fran<U+00E7>ois", "Bertaux", role=c("aut")),
