@@ -176,7 +176,7 @@ in assays(Data) to 'Counts'")
 
     bayNorm_C_array<-myFunc(Data=synthetic_out$N_c,
                             BETA_vec=synthetic_out$beta_c,size=size_c,
-                            mu=mu_c,S=1000,
+                            mu=mu_c,S=S,
                             thres=max(synthetic_out$N_c)*2)
 
 

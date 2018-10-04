@@ -1295,7 +1295,7 @@ NumericMatrix Main_mean_NB_Bay(NumericMatrix Data,
             p.increment();
 
             if(M(j,i)==NA_INTEGER) {
-                for( q=0;q<S;q++){Final_mat(j,i)=NA_INTEGER;}
+                Final_mat(j,i)=NA_INTEGER;
             }
 
             else{
@@ -1396,7 +1396,7 @@ NumericMatrix Main_mode_NB_Bay(NumericMatrix Data,
             p.increment();
 
             if(M(j,i)==NA_INTEGER) {
-                for( q=0;q<S;q++){Final_mat(j,i)=NA_INTEGER;}
+                Final_mat(j,i)=NA_INTEGER;
             }
 
             else{

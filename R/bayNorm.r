@@ -115,9 +115,9 @@ bayNorm <- function(
 
     if(mode_version & mean_version){
         stop("Only one of mode_version and mean_version
-             should be specified to be TRUE, otherwise both
-             should be set to FALSE so that 3D array
-             normalized data will be returned.")
+        should be specified to be TRUE, otherwise both
+        should be set to FALSE so that 3D array
+        normalized data will be returned.")
     }
 
 
