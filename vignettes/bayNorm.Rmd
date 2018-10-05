@@ -41,6 +41,7 @@ knitr::opts_chunk$set(dev="png",fig.align="center")
 library(bayNorm)
 library(BiocStyle)
 library(SummarizedExperiment)
+library(SingleCellExperiment)
 ```
 
 # Installation
@@ -77,6 +78,13 @@ Essential parameters for running `bayNorm` are:
 
 The input parameters `BETA_vec`, `Conditions` (if specified), `UMI_sffl` (if specified), `Prior_type`, `FIX_MU`, `BB_SIZE` and `GR` are stored in the list `input_params` which should be output from `bayNorm`. Objects `PRIORS` together with `input_params` output from `bayNorm` should be input in `bayNorm_sup` for transforming between 3D array, mode or mean version's output of normalized count matricies.
 
+
+## Output of bayNorm
+![Output of bayNorm](E:/RNAseqProject/bayNorm_dev/bayNorm/vignettes/bayNorm_output.png)
+
+bayNorm allows for three different types of normalized data as output. For more details, see [1](https://github.com/WT215/bayNorm_papercode)
+
+
 ***
 
 ## Estimation of capture efficiencies
@@ -84,7 +92,9 @@ Apart from the raw data, another parameter which user may need to provide is the
 ```{r beta, echo=TRUE,eval=TRUE}
 data('EXAMPLE_DATA_list')
 #Suppose the input data is a SummarizedExperiment object:
-rse <- SummarizedExperiment(assays=SimpleList(counts=EXAMPLE_DATA_list$inputdata))
+rse <- SummarizedExperiment::SummarizedExperiment(assays=SimpleList(counts=EXAMPLE_DATA_list$inputdata))
+#SingleCellExperiment object can also be input in bayNorm:
+#rse <- SingleCellExperiment::SingleCellExperiment(assays=list(counts=EXAMPLE_DATA_list$inputdata))
 
 BETA_est<-BetaFun(Data=rse,MeanBETA=0.06)
 summary(BETA_est$BETA)
@@ -188,4 +198,4 @@ sessionInfo()
 
 # References
 
-
+- [1] <a href="https://www.biorxiv.org/content/early/2018/08/03/384586">Tang <em>et al.</em> (2018). bioRxiv. </a>

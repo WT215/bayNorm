@@ -22,7 +22,7 @@ of both size and mu.
 }
 \examples{
 data("EXAMPLE_DATA_list")
-#Should not run by the users.
+#Should not run by the users, it is used in prior estimation.
 \dontrun{
 }
 }

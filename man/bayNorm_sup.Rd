@@ -92,3 +92,11 @@ input_params = bayNorm_3D$input_params
 ,mode_version=TRUE)
 
 }
+\references{
+Wenhao Tang, Francois Bertaux, Philipp Thomas,
+Claire Stefanelli, Malika Saint, Samuel
+Blaise Marguerat, Vahid Shahrezaei
+bayNorm: Bayesian gene expression recovery,
+imputation and normalisation for single cell RNA-sequencing data
+bioRxiv 384586; doi: https://doi.org/10.1101/384586
+}

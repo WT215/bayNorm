@@ -881,11 +881,8 @@ double MarginalF_1D(double SIZE,double MU,
 //'
 //' @examples
 //' data("EXAMPLE_DATA_list")
-//' \dontrun{
-//'
 //' Downsample_data<-DownSampling(Data=EXAMPLE_DATA_list$inputdata
 //' ,BETA_vec = EXAMPLE_DATA_list$inputbeta)
-//'}
 //' @export
 // [[Rcpp::export]]
 NumericMatrix DownSampling(NumericMatrix Data ,
@@ -933,7 +930,7 @@ NumericMatrix DownSampling(NumericMatrix Data ,
 //' @return Marginal likelihood
 //' @examples
 //' data("EXAMPLE_DATA_list")
-//' #Should not run by the users.
+//' #Should not run by the users, it is used in prior estimation.
 //' \dontrun{
 //' }
 //' @export
@@ -967,7 +964,7 @@ double MarginalF_NB_1D(double SIZE,double MU,
 //' @return Marginal likelihood
 //' @examples
 //' data("EXAMPLE_DATA_list")
-//' #Should not run by the users.
+//' #Should not run by the users, it is used in prior estimation.
 //' \dontrun{
 //' }
 //' @export
@@ -1009,7 +1006,7 @@ double MarginalF_NB_2D(NumericVector SIZE_MU,
 //'
 //' @examples
 //' data("EXAMPLE_DATA_list")
-//' #Should not run by the users.
+//' #Should not run by the users, it is used in prior estimation.
 //' \dontrun{
 //' }
 //' @export
@@ -1047,7 +1044,7 @@ double GradientFun_NB_1D(double SIZE,double MU,
 //'
 //' @examples
 //' data("EXAMPLE_DATA_list")
-//' #Should not run by the users.
+//' #Should not run by the users, it is used in prior estimation.
 //' \dontrun{
 //' }
 //' @export
@@ -1092,7 +1089,7 @@ NumericVector GradientFun_NB_2D(NumericVector SIZE_MU,
 //'
 //' @examples
 //' data("EXAMPLE_DATA_list")
-//' #Should not run by the users.
+//' #Should not run by the users, it is used in prior estimation.
 //' \dontrun{
 //' }
 //' @export
@@ -1137,12 +1134,10 @@ double GradientFun_NBmu_1D(double SIZE,double MU,
 //'
 //' @examples
 //' data("EXAMPLE_DATA_list")
-//' \dontrun{
 //' Norm_3D_array<-Main_NB_Bay(Data=EXAMPLE_DATA_list$inputdata,
 //' BETA_vec = EXAMPLE_DATA_list$inputbeta,
 //' size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,
 //' S=20,thres=10000000)
-//' }
 //' @export
 // [[Rcpp::export]]
 NumericVector Main_NB_Bay(NumericMatrix Data,
@@ -1240,12 +1235,10 @@ NumericVector Main_NB_Bay(NumericMatrix Data,
 //'
 //' @examples
 //' data("EXAMPLE_DATA_list")
-//' \dontrun{
 //' Norm_2D_matrix<-Main_mean_NB_Bay(Data=EXAMPLE_DATA_list$inputdata,
 //' BETA_vec = EXAMPLE_DATA_list$inputbeta,
 //' size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,
 //' S=20,thres=10000000)
-//' }
 //' @export
 // [[Rcpp::export]]
 NumericMatrix Main_mean_NB_Bay(NumericMatrix Data,
@@ -1344,12 +1337,10 @@ NumericMatrix Main_mean_NB_Bay(NumericMatrix Data,
 //'
 //' @examples
 //' data("EXAMPLE_DATA_list")
-//' \dontrun{
 //' Norm_2D_matrix<-Main_mode_NB_Bay(Data=EXAMPLE_DATA_list$inputdata,
 //' BETA_vec = EXAMPLE_DATA_list$inputbeta,
 //' size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,
 //' S=20,thres=10000000)
-//' }
 //' @export
 // [[Rcpp::export]]
 NumericMatrix Main_mode_NB_Bay(NumericMatrix Data,

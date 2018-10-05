@@ -14,11 +14,8 @@
 #'
 #' @examples
 #' data("EXAMPLE_DATA_list")
-#' \dontrun{
-#'
 #' Downsample_data<-DownSampling(Data=EXAMPLE_DATA_list$inputdata
 #' ,BETA_vec = EXAMPLE_DATA_list$inputbeta)
-#'}
 #' @export
 DownSampling <- function(Data, BETA_vec) {
     .Call('_bayNorm_DownSampling', PACKAGE = 'bayNorm', Data, BETA_vec)
@@ -35,7 +32,7 @@ DownSampling <- function(Data, BETA_vec) {
 #' @return Marginal likelihood
 #' @examples
 #' data("EXAMPLE_DATA_list")
-#' #Should not run by the users.
+#' #Should not run by the users, it is used in prior estimation.
 #' \dontrun{
 #' }
 #' @export
@@ -54,7 +51,7 @@ MarginalF_NB_1D <- function(SIZE, MU, m_observed, BETA) {
 #' @return Marginal likelihood
 #' @examples
 #' data("EXAMPLE_DATA_list")
-#' #Should not run by the users.
+#' #Should not run by the users, it is used in prior estimation.
 #' \dontrun{
 #' }
 #' @export
@@ -77,7 +74,7 @@ MarginalF_NB_2D <- function(SIZE_MU, m_observed, BETA) {
 #'
 #' @examples
 #' data("EXAMPLE_DATA_list")
-#' #Should not run by the users.
+#' #Should not run by the users, it is used in prior estimation.
 #' \dontrun{
 #' }
 #' @export
@@ -99,7 +96,7 @@ GradientFun_NB_1D <- function(SIZE, MU, m_observed, BETA) {
 #'
 #' @examples
 #' data("EXAMPLE_DATA_list")
-#' #Should not run by the users.
+#' #Should not run by the users, it is used in prior estimation.
 #' \dontrun{
 #' }
 #' @export
@@ -124,12 +121,10 @@ GradientFun_NB_2D <- function(SIZE_MU, m_observed, BETA) {
 #'
 #' @examples
 #' data("EXAMPLE_DATA_list")
-#' \dontrun{
 #' Norm_3D_array<-Main_NB_Bay(Data=EXAMPLE_DATA_list$inputdata,
 #' BETA_vec = EXAMPLE_DATA_list$inputbeta,
 #' size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,
 #' S=20,thres=10000000)
-#' }
 #' @export
 Main_NB_Bay <- function(Data, BETA_vec, size, mu, S, thres) {
     .Call('_bayNorm_Main_NB_Bay', PACKAGE = 'bayNorm', Data, BETA_vec, size, mu, S, thres)
@@ -151,12 +146,10 @@ Main_NB_Bay <- function(Data, BETA_vec, size, mu, S, thres) {
 #'
 #' @examples
 #' data("EXAMPLE_DATA_list")
-#' \dontrun{
 #' Norm_2D_matrix<-Main_mean_NB_Bay(Data=EXAMPLE_DATA_list$inputdata,
 #' BETA_vec = EXAMPLE_DATA_list$inputbeta,
 #' size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,
 #' S=20,thres=10000000)
-#' }
 #' @export
 Main_mean_NB_Bay <- function(Data, BETA_vec, size, mu, S, thres) {
     .Call('_bayNorm_Main_mean_NB_Bay', PACKAGE = 'bayNorm', Data, BETA_vec, size, mu, S, thres)
@@ -179,12 +172,10 @@ Main_mean_NB_Bay <- function(Data, BETA_vec, size, mu, S, thres) {
 #'
 #' @examples
 #' data("EXAMPLE_DATA_list")
-#' \dontrun{
 #' Norm_2D_matrix<-Main_mode_NB_Bay(Data=EXAMPLE_DATA_list$inputdata,
 #' BETA_vec = EXAMPLE_DATA_list$inputbeta,
 #' size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,
 #' S=20,thres=10000000)
-#' }
 #' @export
 Main_mode_NB_Bay <- function(Data, BETA_vec, size, mu, S, thres) {
     .Call('_bayNorm_Main_mode_NB_Bay', PACKAGE = 'bayNorm', Data, BETA_vec, size, mu, S, thres)

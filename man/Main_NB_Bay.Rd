@@ -29,10 +29,8 @@ Negative Binomial distribution for each gene in each cell.
 }
 \examples{
 data("EXAMPLE_DATA_list")
-\dontrun{
 Norm_3D_array<-Main_NB_Bay(Data=EXAMPLE_DATA_list$inputdata,
 BETA_vec = EXAMPLE_DATA_list$inputbeta,
 size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,
 S=20,thres=10000000)
-}
 }

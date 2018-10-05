@@ -17,38 +17,42 @@
 #' distribution).
 #' @examples
 #' data("EXAMPLE_DATA_list")
-#' \dontrun{
 #' SC_output<-SyntheticControl(Data=
 #' EXAMPLE_DATA_list$inputdata,
 #' BETA_vec = EXAMPLE_DATA_list$inputbeta)
-#' }
-#'
+#' @import SingleCellExperiment
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' assayNames assays colData
 #' @export
 #'
 SyntheticControl<-function(Data,BETA_vec){
 
-    if(methods::is(Data, "SummarizedExperiment")){
+    if (methods::is(Data, "SummarizedExperiment")
+        | methods::is(Data, "SingleCellExperiment")) {
+        Data <- methods::as(Data, "SummarizedExperiment")
 
         if (
             is.null(
-                SummarizedExperiment::assayNames(Data)) ||
-            SummarizedExperiment::assayNames(Data)[1] != "Counts") {
-            message("Renaming the first element in assays(Data) to 'Counts'")
+                SummarizedExperiment::assayNames(Data)
+            )
+            || SummarizedExperiment::assayNames(Data)[1] !=
+            "Counts") {
+            message("Renaming the
+                    firstelement in
+                    assays(Data) to 'Counts'")
             SummarizedExperiment::assayNames(Data)[1] <- "Counts"
 
-            if (
-                is.null(
-                    colnames(SummarizedExperiment::assays(Data)[["Counts"]]))) {
+            if (is.null(colnames(
+                SummarizedExperiment::assays(Data)[["Counts"]]))) {
                 stop("Must supply sample/cell names!")
-                }
+            }
 
         }
-        Data<-SummarizedExperiment::assays(Data)[["Counts"]]
+        Data <- SummarizedExperiment::assays(Data)[["Counts"]]
     }
 
-    if (!(methods::is(Data, "SummarizedExperiment"))) {
+    if (!(methods::is(Data, "SummarizedExperiment"))
+        & !(methods::is(Data, "SingleCellExperiment"))) {
         Data <- data.matrix(Data)
     }
 

@@ -31,9 +31,7 @@ drop-out are excluded.
 }
 \examples{
 data('EXAMPLE_DATA_list')
-\dontrun{
 BETA_out<-BetaFun(Data=EXAMPLE_DATA_list$inputdata,
 MeanBETA=0.06)
-}
 
 }

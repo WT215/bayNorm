@@ -42,8 +42,6 @@ The variance is \eqn{mu + mu^2/size} in this parametrization.
 \examples{
 data('EXAMPLE_DATA_list')
 #Return estimated mu and size for each gene using MME method.
-\dontrun{
 MME_est<-EstPrior(Data=EXAMPLE_DATA_list$inputdata,
 verbose=TRUE)
-}
 }

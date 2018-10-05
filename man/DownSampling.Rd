@@ -21,9 +21,6 @@ probability equal to the specific capture efficiency.
 }
 \examples{
 data("EXAMPLE_DATA_list")
-\dontrun{
-
 Downsample_data<-DownSampling(Data=EXAMPLE_DATA_list$inputdata
 ,BETA_vec = EXAMPLE_DATA_list$inputbeta)
-}
 }

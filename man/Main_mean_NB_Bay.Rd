@@ -29,10 +29,8 @@ cell as normalized count.
 }
 \examples{
 data("EXAMPLE_DATA_list")
-\dontrun{
 Norm_2D_matrix<-Main_mean_NB_Bay(Data=EXAMPLE_DATA_list$inputdata,
 BETA_vec = EXAMPLE_DATA_list$inputbeta,
 size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,
 S=20,thres=10000000)
-}
 }

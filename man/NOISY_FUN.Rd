@@ -32,8 +32,6 @@ should be of the same dimension.
 \examples{
 bay_array_N<-array(rpois(1000*50*2,17),dim=c(1000,50,2))
 bay_array_C<-array(rpois(1000*50*2,58),dim=c(1000,50,2))
-\dontrun{
 noisy_output<-NOISY_FUN(bay_array_N,bay_array_C)
-}
 
 }

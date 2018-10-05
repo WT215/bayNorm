@@ -29,10 +29,8 @@ option for estimating size in bayNorm.
 }
 \examples{
 data('EXAMPLE_DATA_list')
-\dontrun{
 MME_MU<-rlnorm(100,meanlog=5,sdlog=1)
 MME_SIZE<-rlnorm(100,meanlog=1,sdlog=1)
 BB_SIZE<-rlnorm(100,meanlog=0.5,sdlog=1)
 adjustt<-AdjustSIZE_fun(BB_SIZE, MME_MU, MME_SIZE)
-}
 }

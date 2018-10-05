@@ -31,10 +31,7 @@ distribution).
 }
 \examples{
 data("EXAMPLE_DATA_list")
-\dontrun{
 SC_output<-SyntheticControl(Data=
 EXAMPLE_DATA_list$inputdata,
 BETA_vec = EXAMPLE_DATA_list$inputbeta)
-}
-
 }

@@ -95,9 +95,21 @@
 #' bayNorm_2D<-bayNorm(Data=EXAMPLE_DATA_list$inputdata,
 #' BETA_vec = EXAMPLE_DATA_list$inputbeta
 #' ,mode_version=TRUE)
+#'
+#' @references
+#' Wenhao Tang, Francois Bertaux, Philipp Thomas,
+#' Claire Stefanelli, Malika Saint, Samuel
+#' Blaise Marguerat, Vahid Shahrezaei
+#' bayNorm: Bayesian gene expression recovery,
+#' imputation and normalisation for single cell RNA-sequencing data
+#' bioRxiv 384586; doi: https://doi.org/10.1101/384586
+#'
+#'
+#'
 #' @import parallel
 #' @import foreach
 #' @import doSNOW
+#' @import SingleCellExperiment
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' assayNames assays colData
 #'
@@ -139,7 +151,8 @@ bayNorm <- function(
                        GR=GR)
 
     # Adapted from SCnorm
-    if (methods::is(Data, "SummarizedExperiment")) {
+    if (methods::is(Data, "SummarizedExperiment") | methods::is(Data, "SingleCellExperiment")) {
+        Data <- methods::as(Data, "SummarizedExperiment")
         if (is.null(SummarizedExperiment::assayNames(Data))
             || SummarizedExperiment::assayNames(Data)[1] !=
             "Counts") {
@@ -153,9 +166,12 @@ bayNorm <- function(
         }
         Data <- SummarizedExperiment::assays(Data)[["Counts"]]
     }
-    if (!(methods::is(Data, "SummarizedExperiment"))) {
+    if (!(methods::is(Data, "SummarizedExperiment")) &
+        !(methods::is(Data, "SingleCellExperiment"))) {
         Data <- data.matrix(Data)
     }
+
+
 
     if (is.null(BETA_vec)) {
         BETA_vec <- colSums(Data)/mean(colSums(Data)) * 0.06
@@ -415,8 +431,17 @@ bayNorm <- function(
 #' input_params = bayNorm_3D$input_params
 #' ,mode_version=TRUE)
 #'
+#' @references
+#' Wenhao Tang, Francois Bertaux, Philipp Thomas,
+#' Claire Stefanelli, Malika Saint, Samuel
+#' Blaise Marguerat, Vahid Shahrezaei
+#' bayNorm: Bayesian gene expression recovery,
+#' imputation and normalisation for single cell RNA-sequencing data
+#' bioRxiv 384586; doi: https://doi.org/10.1101/384586
+#'
 #' @import parallel
 #' @import foreach
+#' @import SingleCellExperiment
 #' @import doSNOW
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' assayNames assays colData
@@ -461,7 +486,9 @@ bayNorm_sup <- function(
 
 
 
-    if (methods::is(Data, "SummarizedExperiment")) {
+    if (methods::is(Data, "SummarizedExperiment")
+        | methods::is(Data, "SingleCellExperiment")) {
+        Data <- methods::as(Data, "SummarizedExperiment")
 
         if (
             is.null(
@@ -483,7 +510,8 @@ bayNorm_sup <- function(
         Data <- SummarizedExperiment::assays(Data)[["Counts"]]
     }
 
-    if (!(methods::is(Data, "SummarizedExperiment"))) {
+    if (!(methods::is(Data, "SummarizedExperiment"))
+        & !(methods::is(Data, "SingleCellExperiment"))) {
         Data <- data.matrix(Data)
     }
 

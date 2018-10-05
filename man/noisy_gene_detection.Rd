@@ -95,7 +95,6 @@ from raw scRNA-seq data.
 }
 \examples{
 data("EXAMPLE_DATA_list")
-\dontrun{
 noisy_out<-noisy_gene_detection(Data=
 EXAMPLE_DATA_list$inputdata,BETA_vec
 =EXAMPLE_DATA_list$inputbeta, mode_version = FALSE,
@@ -105,6 +104,5 @@ FIX_MU = TRUE, GR = FALSE,
 PRIORS=NULL,
 BB_SIZE = TRUE,
 verbose = TRUE, plot.out = TRUE)
-}
 
 }

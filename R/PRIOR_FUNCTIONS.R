@@ -17,12 +17,10 @@
 #'
 #' @examples
 #' data('EXAMPLE_DATA_list')
-#' \dontrun{
 #' MME_MU<-rlnorm(100,meanlog=5,sdlog=1)
 #' MME_SIZE<-rlnorm(100,meanlog=1,sdlog=1)
 #' BB_SIZE<-rlnorm(100,meanlog=0.5,sdlog=1)
 #' adjustt<-AdjustSIZE_fun(BB_SIZE, MME_MU, MME_SIZE)
-#' }
 #' @import stats
 #'
 #' @export
@@ -57,27 +55,32 @@ AdjustSIZE_fun <- function(BB_SIZE, MME_MU, MME_SIZE) {
 #'
 #' @examples
 #' data('EXAMPLE_DATA_list')
-#' \dontrun{
 #' BETA_out<-BetaFun(Data=EXAMPLE_DATA_list$inputdata,
 #' MeanBETA=0.06)
-#' }
 #'
+#' @import SingleCellExperiment
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' assayNames assays colData
 #' @export
 BetaFun <- function(Data, MeanBETA) {
 
-    if (methods::is(Data, "SummarizedExperiment")) {
+    if (methods::is(Data, "SummarizedExperiment")
+        | methods::is(Data, "SingleCellExperiment")) {
+        Data <- methods::as(Data, "SummarizedExperiment")
 
         if (
-            is.null(SummarizedExperiment::assayNames(Data)) ||
-            SummarizedExperiment::assayNames(Data)[1] !="Counts") {
-            message("Renaming the first element in assays(Data) to 'Counts'")
+            is.null(
+                SummarizedExperiment::assayNames(Data)
+            )
+            || SummarizedExperiment::assayNames(Data)[1] !=
+            "Counts") {
+            message("Renaming the
+                    firstelement in
+                    assays(Data) to 'Counts'")
             SummarizedExperiment::assayNames(Data)[1] <- "Counts"
 
-            if (
-                is.null(
-                    colnames(SummarizedExperiment::assays(Data)[["Counts"]]))) {
+            if (is.null(colnames(
+                SummarizedExperiment::assays(Data)[["Counts"]]))) {
                 stop("Must supply sample/cell names!")
             }
 
@@ -85,7 +88,8 @@ BetaFun <- function(Data, MeanBETA) {
         Data <- SummarizedExperiment::assays(Data)[["Counts"]]
     }
 
-    if (!(methods::is(Data, "SummarizedExperiment"))) {
+    if (!(methods::is(Data, "SummarizedExperiment"))
+        & !(methods::is(Data, "SingleCellExperiment"))) {
         Data <- data.matrix(Data)
     }
 
@@ -144,29 +148,32 @@ BetaFun <- function(Data, MeanBETA) {
 #' @examples
 #' data('EXAMPLE_DATA_list')
 #' #Return estimated mu and size for each gene using MME method.
-#' \dontrun{
 #' MME_est<-EstPrior(Data=EXAMPLE_DATA_list$inputdata,
 #' verbose=TRUE)
-#' }
 #' @import  fitdistrplus
+#' @import SingleCellExperiment
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' assayNames assays colData
 #' @export
 EstPrior <- function(Data,parallel=FALSE,NCores=5, verbose = TRUE) {
 
-    if (methods::is(Data, "SummarizedExperiment")) {
+    if (methods::is(Data, "SummarizedExperiment")
+        | methods::is(Data, "SingleCellExperiment")) {
+        Data <- methods::as(Data, "SummarizedExperiment")
 
         if (
             is.null(
-                SummarizedExperiment::assayNames(Data)) ||
-            SummarizedExperiment::assayNames(Data)[1] !=
+                SummarizedExperiment::assayNames(Data)
+            )
+            || SummarizedExperiment::assayNames(Data)[1] !=
             "Counts") {
-            message("Renaming the first element in assays(Data) to 'Counts'")
+            message("Renaming the
+                    firstelement in
+                    assays(Data) to 'Counts'")
             SummarizedExperiment::assayNames(Data)[1] <- "Counts"
 
-            if (
-                is.null(
-                    colnames(SummarizedExperiment::assays(Data)[["Counts"]]))) {
+            if (is.null(colnames(
+                SummarizedExperiment::assays(Data)[["Counts"]]))) {
                 stop("Must supply sample/cell names!")
             }
 
@@ -174,7 +181,8 @@ EstPrior <- function(Data,parallel=FALSE,NCores=5, verbose = TRUE) {
         Data <- SummarizedExperiment::assays(Data)[["Counts"]]
     }
 
-    if (!(methods::is(Data, "SummarizedExperiment"))) {
+    if (!(methods::is(Data, "SummarizedExperiment"))
+        & !(methods::is(Data, "SingleCellExperiment"))) {
         Data <- data.matrix(Data)
     }
 
@@ -283,13 +291,6 @@ EstPrior <- function(Data,parallel=FALSE,NCores=5, verbose = TRUE) {
 #' reasonable relationship with either MME estimated mu or
 #' BB estimated mu.
 #'
-#' @examples
-#' data('EXAMPLE_DATA_list')
-#' \dontrun{
-#' PRIOR_RESULT<-Prior_fun(Data=EXAMPLE_DATA_list$inputdata,
-#' BETA_vec = EXAMPLE_DATA_list$inputbeta,parallel=T,
-#' NCores=5,FIX_MU=T,GR=F,BB_SIZE=T,verbose=T)
-#' }
 #'
 #' @return  List of estimated parameters: mean
 #' expression of genes
@@ -297,15 +298,13 @@ EstPrior <- function(Data,parallel=FALSE,NCores=5, verbose = TRUE) {
 #'
 #' @examples
 #' data('EXAMPLE_DATA_list')
-#' \dontrun{
 #'PRIOR_RESULT<-Prior_fun(Data=EXAMPLE_DATA_list$inputdata,
 #' BETA_vec = EXAMPLE_DATA_list$inputbeta,parallel=TRUE,
 #' NCores=5,FIX_MU=TRUE,GR=FALSE,BB_SIZE=TRUE,verbose=TRUE)
 #'
-#' }
-#'
 #' @import parallel
 #' @import foreach
+#' @import SingleCellExperiment
 #' @import doSNOW
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' assayNames assays colData
@@ -316,26 +315,32 @@ Prior_fun <- function(
     NCores = 5, FIX_MU = TRUE,GR = FALSE,
     BB_SIZE = TRUE, verbose = TRUE) {
 
-    if (methods::is(Data, "SummarizedExperiment")) {
+    if (methods::is(Data, "SummarizedExperiment")
+        | methods::is(Data, "SingleCellExperiment")) {
+        Data <- methods::as(Data, "SummarizedExperiment")
 
-        if (is.null(
-            SummarizedExperiment::assayNames(Data))
-            || SummarizedExperiment::assayNames(Data)[1] !="Counts") {
-            message("Renaming the first element in assays(Data) to 'Counts'")
+        if (
+            is.null(
+                SummarizedExperiment::assayNames(Data)
+            )
+            || SummarizedExperiment::assayNames(Data)[1] !=
+            "Counts") {
+            message("Renaming the
+                    firstelement in
+                    assays(Data) to 'Counts'")
             SummarizedExperiment::assayNames(Data)[1] <- "Counts"
 
-            if (
-                is.null(
-                    colnames(SummarizedExperiment::assays(Data)[["Counts"]]))) {
+            if (is.null(colnames(
+                SummarizedExperiment::assays(Data)[["Counts"]]))) {
                 stop("Must supply sample/cell names!")
             }
 
         }
-
         Data <- SummarizedExperiment::assays(Data)[["Counts"]]
     }
 
-    if (!(methods::is(Data, "SummarizedExperiment"))) {
+    if (!(methods::is(Data, "SummarizedExperiment"))
+        & !(methods::is(Data, "SingleCellExperiment"))) {
         Data <- data.matrix(Data)
     }
 
@@ -447,15 +452,12 @@ This part may be time-consuming.")
 #'
 #' @examples
 #' data('EXAMPLE_DATA_list')
-#' \dontrun{
-#'
-#'BB_RESULT<-BB_Fun(Data=EXAMPLE_DATA_list$inputdata,
+#' BB_RESULT<-BB_Fun(Data=EXAMPLE_DATA_list$inputdata,
 #' BETA_vec = EXAMPLE_DATA_list$inputbeta,INITIAL_MU_vec=
 #' EXAMPLE_DATA_list$mu,
 #' INITIAL_SIZE_vec=EXAMPLE_DATA_list$size,
 #' MU_lower=0.01,MU_upper=500,SIZE_lower=0.01,
 #' SIZE_upper=30,parallel=FALSE,NCores=5,FIX_MU=TRUE,GR=FALSE)
-#' }
 #'
 #'
 #' @import parallel
@@ -464,6 +466,7 @@ This part may be time-consuming.")
 #' @import utils
 #' @import iterators
 #' @import methods
+#' @import SingleCellExperiment
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' assayNames assays colData
 #' @useDynLib bayNorm
@@ -478,19 +481,23 @@ BB_Fun <- function(
     SIZE_upper = 30,parallel = FALSE, NCores = 5,
     FIX_MU = TRUE, GR = FALSE) {
 
-    if (methods::is(Data, "SummarizedExperiment")) {
+    if (methods::is(Data, "SummarizedExperiment")
+        | methods::is(Data, "SingleCellExperiment")) {
+        Data <- methods::as(Data, "SummarizedExperiment")
 
         if (
-            is.null(SummarizedExperiment::assayNames(Data))
+            is.null(
+                SummarizedExperiment::assayNames(Data)
+            )
             || SummarizedExperiment::assayNames(Data)[1] !=
             "Counts") {
-            message("Renaming the first element in assays(Data) to 'Counts'")
+            message("Renaming the
+                    firstelement in
+                    assays(Data) to 'Counts'")
             SummarizedExperiment::assayNames(Data)[1] <- "Counts"
 
-            if (
-                is.null(
-                    colnames(SummarizedExperiment::assays(
-                        Data)[["Counts"]]))) {
+            if (is.null(colnames(
+                SummarizedExperiment::assays(Data)[["Counts"]]))) {
                 stop("Must supply sample/cell names!")
             }
 
@@ -498,7 +505,8 @@ BB_Fun <- function(
         Data <- SummarizedExperiment::assays(Data)[["Counts"]]
     }
 
-    if (!(methods::is(Data, "SummarizedExperiment"))) {
+    if (!(methods::is(Data, "SummarizedExperiment"))
+        & !(methods::is(Data, "SingleCellExperiment"))) {
         Data <- data.matrix(Data)
     }
 

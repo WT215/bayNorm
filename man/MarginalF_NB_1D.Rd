@@ -23,7 +23,7 @@ Mariginal distribution as a function of size.
 }
 \examples{
 data("EXAMPLE_DATA_list")
-#Should not run by the users.
+#Should not run by the users, it is used in prior estimation.
 \dontrun{
 }
 }

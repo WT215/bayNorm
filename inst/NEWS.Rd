@@ -35,3 +35,9 @@
 \item Fix some errors.
     }
 }
+
+\section{Version 0.99.9}{
+\itemize{
+\item Let more examples to be runnable; Updated vignette; Including SingleCellExperiment Class.
+    }
+}

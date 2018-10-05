@@ -68,18 +68,8 @@ BB estimated mu.
 }
 \examples{
 data('EXAMPLE_DATA_list')
-\dontrun{
-PRIOR_RESULT<-Prior_fun(Data=EXAMPLE_DATA_list$inputdata,
-BETA_vec = EXAMPLE_DATA_list$inputbeta,parallel=T,
-NCores=5,FIX_MU=T,GR=F,BB_SIZE=T,verbose=T)
-}
-
-data('EXAMPLE_DATA_list')
-\dontrun{
 PRIOR_RESULT<-Prior_fun(Data=EXAMPLE_DATA_list$inputdata,
 BETA_vec = EXAMPLE_DATA_list$inputbeta,parallel=TRUE,
 NCores=5,FIX_MU=TRUE,GR=FALSE,BB_SIZE=TRUE,verbose=TRUE)
-
-}
 
 }

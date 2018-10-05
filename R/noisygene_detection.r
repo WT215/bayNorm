@@ -63,7 +63,6 @@
 #'
 #' @examples
 #' data("EXAMPLE_DATA_list")
-#' \dontrun{
 #' noisy_out<-noisy_gene_detection(Data=
 #' EXAMPLE_DATA_list$inputdata,BETA_vec
 #' =EXAMPLE_DATA_list$inputbeta, mode_version = FALSE,
@@ -73,11 +72,11 @@
 #' PRIORS=NULL,
 #' BB_SIZE = TRUE,
 #' verbose = TRUE, plot.out = TRUE)
-#' }
 #'
 #' @import parallel
 #' @import foreach
 #' @import doSNOW
+#' @import SingleCellExperiment
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' assayNames assays colData
 #' @export
@@ -112,23 +111,32 @@ noisy_gene_detection<-function(
 
 
 
-    if(methods::is(Data, "SummarizedExperiment")){
+    if (methods::is(Data, "SummarizedExperiment")
+        | methods::is(Data, "SingleCellExperiment")) {
+        Data <- methods::as(Data, "SummarizedExperiment")
 
-        if (is.null(  SummarizedExperiment::assayNames(Data))
-            || SummarizedExperiment::assayNames(Data)[1] != "Counts") {
-            message("Renaming the first element
-in assays(Data) to 'Counts'")
+        if (
+            is.null(
+                SummarizedExperiment::assayNames(Data)
+            )
+            || SummarizedExperiment::assayNames(Data)[1] !=
+            "Counts") {
+            message("Renaming the
+                    firstelement in
+                    assays(Data) to 'Counts'")
             SummarizedExperiment::assayNames(Data)[1] <- "Counts"
 
-            if (is.null(
-                colnames(SummarizedExperiment::assays(Data)[["Counts"]]))) {
-                stop("Must supply sample/cell names!")}
+            if (is.null(colnames(
+                SummarizedExperiment::assays(Data)[["Counts"]]))) {
+                stop("Must supply sample/cell names!")
+            }
 
         }
-        Data<-SummarizedExperiment::assays(Data)[["Counts"]]
+        Data <- SummarizedExperiment::assays(Data)[["Counts"]]
     }
 
-    if (!(methods::is(Data, "SummarizedExperiment"))) {
+    if (!(methods::is(Data, "SummarizedExperiment"))
+        & !(methods::is(Data, "SingleCellExperiment"))) {
         Data <- data.matrix(Data)
     }
 
@@ -179,8 +187,6 @@ in assays(Data) to 'Counts'")
                             mu=mu_c,S=S,
                             thres=max(synthetic_out$N_c)*2)
 
-
-
     NOISE_out<-NOISY_FUN(
         bayNorm_N_out[[1]],
         bayNorm_C_array,plot.out=plot.out)
@@ -216,9 +222,7 @@ in assays(Data) to 'Counts'")
 #' @examples
 #' bay_array_N<-array(rpois(1000*50*2,17),dim=c(1000,50,2))
 #' bay_array_C<-array(rpois(1000*50*2,58),dim=c(1000,50,2))
-#' \dontrun{
 #' noisy_output<-NOISY_FUN(bay_array_N,bay_array_C)
-#' }
 #'
 #' @import foreach
 #' @import MASS
