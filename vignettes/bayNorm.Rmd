@@ -79,10 +79,8 @@ Essential parameters for running `bayNorm` are:
 The input parameters `BETA_vec`, `Conditions` (if specified), `UMI_sffl` (if specified), `Prior_type`, `FIX_MU`, `BB_SIZE` and `GR` are stored in the list `input_params` which should be output from `bayNorm`. Objects `PRIORS` together with `input_params` output from `bayNorm` should be input in `bayNorm_sup` for transforming between 3D array, mode or mean version's output of normalized count matricies.
 
 
-## Output of bayNorm
-![Output of bayNorm](E:/RNAseqProject/bayNorm_dev/bayNorm/vignettes/bayNorm_output.png)
-
-bayNorm allows for three different types of normalized data as output. For more details, see [1](https://github.com/WT215/bayNorm_papercode)
+## Rationale of bayNorm
+For more details about the rationale of bayNorm, please see [1](https://github.com/WT215/bayNorm_papercode).
 
 
 ***
