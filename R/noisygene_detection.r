@@ -156,6 +156,9 @@ noisy_gene_detection<-function(
 
 
     } else if(!is.null(PRIORS) & !is.null(input_params)){
+
+        BETA_vec<-PRIORS$BETA_vec
+
         bayNorm_N_out<-bayNorm_sup(
             Data=Data,
             PRIORS=PRIORS,
