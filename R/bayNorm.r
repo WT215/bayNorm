@@ -295,7 +295,7 @@ bayNorm <- function(
 
         if (Prior_type == "LL") {
             PRIORS_LIST <- list()
-            for (i in seq_len(Levels)) {
+            for (i in seq_len(length(Levels))) {
                 PRIORS_LIST[[i]] <- Prior_fun(
                     Data = DataList_sr[[i]],
                     BETA_vec = BETAList[[i]],
@@ -315,7 +315,7 @@ bayNorm <- function(
                 verbose = verbose)
 
             PRIORS_LIST <- list()
-            for (i in seq_len(Levels)) {
+            for (i in seq_len(length(Levels))) {
                 PRIORS_LIST[[i]] <- PROPRS_TEMP
 
             }
@@ -324,7 +324,7 @@ bayNorm <- function(
 
         names(PRIORS_LIST) <- paste("Group", Levels)
         Bay_out_list <- list()
-        for (i in seq_len(Levels)) {
+        for (i in seq_len(length(Levels))) {
 
             if (BB_SIZE) {
                 MU_input = PRIORS_LIST[[i]]$MME_prior$MME_MU
@@ -591,7 +591,7 @@ bayNorm_sup <- function(
         ## use existing PRIORS
         PRIORS_LIST <- PRIORS
         Bay_out_list <- list()
-        for (i in seq_len(Levels)) {
+        for (i in seq_len(length(Levels))) {
             if (BB_SIZE) {
                 MU_input = PRIORS_LIST[[i]]$MME_prior$MME_MU
                 SIZE_input = PRIORS_LIST[[i]]$MME_SIZE_adjust
