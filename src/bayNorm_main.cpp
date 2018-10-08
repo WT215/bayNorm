@@ -1260,7 +1260,6 @@ NumericMatrix Main_mean_NB_Bay(NumericMatrix Data,
     int ncol=M.n_cols;
     int i;
     int j;
-    int q;
 
     IntegerVector x;
     NumericVector y;
@@ -1362,7 +1361,6 @@ NumericMatrix Main_mode_NB_Bay(NumericMatrix Data,
     int ncol=M.n_cols;
     int i;
     int j;
-    int q;
     // double probb;
     double meann;
 

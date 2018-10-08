@@ -17,7 +17,8 @@ author:
   email: samuel.marguerat@lms.mrc.ac.uk
 - name: Vahid Shahrezaei
   email: v.shahrezaei@imperial.ac.uk
-  
+header-includes:
+   - \usepackage{amsfonts,amssymb,amsmath,amsthm}  
 
 output: 
   BiocStyle::html_document:
@@ -79,8 +80,10 @@ Essential parameters for running `bayNorm` are:
 The input parameters `BETA_vec`, `Conditions` (if specified), `UMI_sffl` (if specified), `Prior_type`, `FIX_MU`, `BB_SIZE` and `GR` are stored in the list `input_params` which should be output from `bayNorm`. Objects `PRIORS` together with `input_params` output from `bayNorm` should be input in `bayNorm_sup` for transforming between 3D array, mode or mean version's output of normalized count matricies.
 
 
-## Rationale of bayNorm
-For more details about the rationale of bayNorm, please see [1](https://github.com/WT215/bayNorm_papercode).
+
+
+
+
 
 
 ***
@@ -103,7 +106,7 @@ The function `BetaFun` selects a subset of genes such that outlier genes and gen
 
 ## Run bayNorm
 `BETA_vec` can be set to be `NULL`, then the $\beta$ are estimated to be total counts normalized to 6\%.
-```{r intro_bayNorm, echo=FALSE,eval=TRUE}
+```{r intro_bayNorm, echo=TRUE,eval=TRUE}
 #Return 3D array normalzied data, draw 20 samples from posterior distribution:
 bayNorm_3D<-bayNorm(
     Data=rse,
@@ -144,7 +147,7 @@ If you have run bayNorm on a dataset before but want to output another kind of d
 * `Conditions`: make sure to specify the same `Conditions` as before.
 You can find these two objects from the previous output of bayNorm function, which is a list.
 
-```{r intro_bayNorm_sup, echo=FALSE,eval=TRUE}
+```{r intro_bayNorm_sup, echo=TRUE,eval=TRUE}
 data('EXAMPLE_DATA_list')
 
 
@@ -180,8 +183,103 @@ bayNorm_2D<-bayNorm_sup(
 
 
 
+# Methods
+## Rationale of bayNorm
+A scRNA-seq dataset is typically represented in a matrix of dimension $P\times Q$, where P denotes the total number of genes observed and Q  denotes the total number of cells studied. The element $x_{ij}$ ($i \in \{1,2,\ldots, P\}$ and $j \in \{1,2,\ldots, Q\}$) in the matrix represents the number of transcripts reported for the $i^{\text{th}}$ gene in the $j^{\text{th}}$ cell. This is equal to the total number of sequencing reads mapping to that gene in that cell for a non-UMI protocol. For UMI based protocols this is equal to the number of individual UMIs mapping to each gene. The matrix can include data from different groups or batches of cells, representing different biological conditions. This can be represented as a vector of labels for the cell groups or conditions ($C_j$). bayNorm generates for each gene (i) in each cell (j) a posterior distribution of original expression counts ($x_{ij}^0$), given the observed scRNA-seq read count for that gene ($x_{ij}$).
+
+	
+\noindent A common approach for normalizing scRNA-seq data is based on the use of a global scaling factor ($s_j$), ignoring any gene specific biases.  The normalized data $\tilde{x}_{ij}$ is obtained by dividing the raw data for each cell $j$ by the its global scaling factor $s_j$: 
+	
+\begin{equation} \label{equ::scaling}
+\tilde{x}_{ij} = \frac{x_{ij}}{s_j}
+\end{equation}
 
 
+	
+\noindent In bayNorm, we implement global scaling using a Bayesian approach. We assume given the original number of transcripts in the cell ($x_{ij}^0$), the number of transcripts observed ($x_{ij}$) follows a Binomial model with probability $\beta_j$, which we refer to as capture effeiciency and it represents the probability of original transcripts in the cell to be observed. In addition, we assume that the original number or true count of the $i^{\text{th}}$ gene in the $j^{\text{th}}$ cell ($x_{ij}^0$) follows Negative Binomial distribution with parameters mean ($\mu$), size (or dispersion parameter, $\phi$), such that:
+	$$\Pr(x^0_{ij}=n|\phi_i,\mu_i)=\frac{\Gamma(n+\phi_i)}{\Gamma(\phi_i)n!}(\frac{\phi_i}{\mu_i+\phi_i})^{\phi_i}(\frac{\mu_i}{\mu_i+\phi_i})^{n}$$  
+	
+So, overall we have the following model:
+
+
+\begin{equation} \label{model:bay}
+\begin{split}
+&x_{ij}\sim \text{Binom}(x_{ij}^0,\text{prob}=\beta_j)\\
+&x_{ij}^0 \sim \text{NB}(\text{mean}=\mu_i,\text{size}=\phi_i)
+\end{split}
+\end{equation}
+
+
+\noindent Using the Bayes rule, we have the following posterior distribution of original number of mRNAs for each gene in each cell:
+
+\begin{equation}
+\underbrace{\Pr(x_{ij}^0|x_{ij},\beta_j,\mu_i,\phi_i)}_\text{Posterior} = \dfrac{ \overbrace{\Pr(x_{ij}|x_{ij}^0,\beta_j)}^\text{Likelihood} \times \overbrace{\Pr(x_{ij}^0|\mu_i,\phi_i)}^\text{Prior}}{\underbrace{\Pr(x_{ij}|\mu_i,\phi_i,\beta_j)}_\text{Marginal likelihood}}
+\end{equation}
+	
+The prior parameters $\mu$ and $\phi$ of each gene were estimated using an empirical Bayesian method as discussed in detail in Supplementary Information of [1](https://github.com/WT215/bayNorm_papercode). 
+
+	
+\noindent For more details about the rationale of bayNorm, please see [1](https://github.com/WT215/bayNorm_papercode).
+
+
+## Estimation of capture efficiencies
+\noindent Cell specific capture efficiency $\beta_j$ and global scaling factor ($s_j$) are closely related. We can transform scaling factors estimated by different methods (see below) into $\beta_j$ values with the following formula:
+
+\begin{equation}
+\beta_j = (s_j/\bar{s})\bar{\beta}  
+\end{equation} 
+
+
+
+\noindent $\bar{\beta}$ or $<\beta>$, a scalar, is an estimate of global mean capture efficiency across all cells, which ranges between 0 and 1.
+
+
+There are two different methods for estimating $\bar{\beta}$ and $\beta_j$:
+
+1. If spike-ins or smFISH data are available they can be used to estimate capture efficiencies. We can either divide the total number of observed spik-ins in each cell by the total number of input spike-ins, or we can fit a linear regression to estimate the cell specific $\beta_j$. If smFISH data is available, we can fit a linear regression between the mean expression of raw data (response variable) and the mean expression of the smFISH data (explanatory variable). The coefficient of the explanatory variable can be used as $\bar{\beta}$.
+2. The raw data itself can be directly used for estimation of cell specific global scaling factors ($s_j$). Then an estimate of $\bar{\beta}$ can be used to estimate $\beta_j$. There are different methods available for estimation of global scaling factors. Some were developed for bulk RNA-seq data and some are specific to scRNA-seq data. The value of $\bar{\beta}$ depends on the protocol used and can be batch dependent. For example, for Droplet based protocol, it is about 0.06 (inDrop) or 0.12 (Drop-seq).  $\bar{\beta}$ can also be estimated by spike-ins or smFISH data as explained above.
+
+
+\noindent We finally note, that estimates of capture efficiency discussed above will assume cells have simular original transcript content. Therefore, the bayNorm outputs estimates of original transcript counts for a typical cell, which is corrected for variation in cell size and transcript content. This is usually desirable for down-stream analysis such as DE detection. However, if one is interested in absolute origianl count and has additional information such as cell size or total transcirpt content per cell, the capture efficiencies can be approporiatly rescaled for this purpose. 
+
+
+## Estimation of prior parameters
+
+### Maximisation of marginal distribution
+Using an emperical bayes approach, one can use the maximisation of marginal likelihood distribution of the observed counts across cells to estimate prior parameters. Let $M_i$ denotes the marginal likelihood function for the $i^\text{th}$ gene across cells. Assuming independence between cells, the log-marginal distribution for the $i^\text{th}$ gene is
+
+\begin{equation} 
+\log M_i = \sum_{j=1}^Q \log \Pr(x_{ij}|\mu_i,\phi_i,\beta_j),
+\end{equation}
+where $\Pr(x_{ij}|\mu_i,\phi_i,\beta_j)$ is the Negative Binomial (see Methods). Maximizing of this equation yields the pair $(\mu_i,\phi_i)$.
+
+
+
+
+\noindent The above optimization needs to be done for each of the P genes. We refer to the $\phi$ and/or $\mu$ estimated by maximizing marginal distribution as BB estimates for convenience, because bayNorm utilizes spectral projected gradient method (spg) from the R package named ``BB''.   Optimizing the marginal distribution with respect to both $\mu$ and $\phi$ (2D optimization) is computationally intensive. If we had a good estimate $\mu$, then we could optimize the marginal distribution with respect to $\phi$ alone, which would be much more efficient. 
+
+
+## Method of Moments
+A heuristic way of estimating $\mu_i$ and $\phi_i$ is through a variant of the Method of Moments. The first step is to do a simple normalization of the raw data, to scale expressions given the cell specific capture efficiencies ($\beta_j$). The simple normalized count $x_{ij}^s$ is calculated as following:
+
+\begin{equation}
+x_{ij}^s=x_{ij}\frac{\langle\sum_{i=1}^Px_{ij}/\beta_j\rangle_j}{\sum_{i=1}^P{x_{ij}}},
+\end{equation}
+where the numerator of the scaling factor of $x_{ij}$ is obtained by taking the average of scaled total counts across cells.
+
+
+\noindent Based on simple normalized data, we are able to estimate prior parameters $\mu$ and $\phi$ of the Negative Binomial distribution using the Method of Moments Estimation (MME), which simply equates the theoretical and empirical moments. This estimation method is fast and simulations suggests it provides good estimates of $\mu$ but the drawback is that the estimation of $\phi$ show a systematic bias (see Supplementary Figure S24 a-b in [1](https://github.com/WT215/bayNorm_papercode)).
+
+
+## The combined method (default setting in bayNorm for estimating priors)
+Based on simulation studies (Supplementary Figure S24 in [1](https://github.com/WT215/bayNorm_papercode)), the most robust and efficient estimation of $\mu$ and $\phi$ can be obtained using the following combined approach, which is the default setting in bayNorm:
+
+1. Based on simple normalized data, we use the MME method for each gene to obtain MME estimated $\mu$ and $\phi$.
+2. Although the BB estimated $\phi$ is much closer to the true $\phi$, many estimates are at the upper boundary of the search space (Supplementary Figures S24 c-d in [1](https://github.com/WT215/bayNorm_papercode)). So, we find adjusting the MME estimated $\phi$ by a factor which can be estimated by fitting a linear regression between MME estimated $\phi$ and BB estimated $\phi$ works best (Supplementary Figures S24 c-d in [1](https://github.com/WT215/bayNorm_papercode)). This adjusted MME estimated $\phi$ together with the MME estimated $\mu$ and estimates of $\beta_j$ can be used in approximating posterior distribution for each gene in each cell.
+
+
+
+\noindent Cells are grouped together for prior estimation, based on cell-specific attributes ($C_j$). Prior estimation can be done over all cells irrespective of the experimental condition. We refer to this procedure as "global". Alternatively, suppose that there are multiple groups of cells in the datasets and we have reasons to believe each group could behave differently. Then we can estimate the prior parameters "$\mu$ and $\phi$"  within each group respectively (within groups with the same $C_j$ value). We refer to this procedure as "local". Estimating prior parameters across a certain group of cells based on "global" procedure allow for removing potential batch effects. Multiple groups normalization based on "local" procedure allows for amplifying the inter-groups' differences while mitigating the intra-group's variability, which is suitable for DE detection.
 
 
 ***
