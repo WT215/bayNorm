@@ -62,9 +62,9 @@ for each gene by maximizing marginal distribution: 1D
 }
 \examples{
 data('EXAMPLE_DATA_list')
-BB_RESULT<-BB_Fun(Data=EXAMPLE_DATA_list$inputdata,
-BETA_vec = EXAMPLE_DATA_list$inputbeta,INITIAL_MU_vec=
-EXAMPLE_DATA_list$mu,
+BB_RESULT<-BB_Fun(Data=EXAMPLE_DATA_list$inputdata[,seq(1,30)],
+BETA_vec = EXAMPLE_DATA_list$inputbeta[seq(1,30)],
+INITIAL_MU_vec=EXAMPLE_DATA_list$mu,
 INITIAL_SIZE_vec=EXAMPLE_DATA_list$size,
 MU_lower=0.01,MU_upper=500,SIZE_lower=0.01,
 SIZE_upper=30,parallel=FALSE,NCores=5,FIX_MU=TRUE,GR=FALSE)

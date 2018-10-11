@@ -116,12 +116,15 @@ and bayNorm function.
 \examples{
 data('EXAMPLE_DATA_list')
 #Return 3D array normalzied data:
-bayNorm_3D<-bayNorm(Data=EXAMPLE_DATA_list$inputdata,
-BETA_vec = EXAMPLE_DATA_list$inputbeta,mode_version=FALSE)
+bayNorm_3D<-bayNorm(
+Data=EXAMPLE_DATA_list$inputdata[,seq(1,30)],
+BETA_vec = EXAMPLE_DATA_list$inputbeta[seq(1,30)],
+mode_version=FALSE)
 
 #Return 2D matrix normalized data:
-bayNorm_2D<-bayNorm(Data=EXAMPLE_DATA_list$inputdata,
-BETA_vec = EXAMPLE_DATA_list$inputbeta
+bayNorm_2D<-bayNorm(
+Data=EXAMPLE_DATA_list$inputdata[,seq(1,30)],
+BETA_vec = EXAMPLE_DATA_list$inputbeta[seq(1,30)]
 ,mode_version=TRUE)
 
 }

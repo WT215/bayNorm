@@ -146,7 +146,7 @@ BetaFun <- function(Data, MeanBETA) {
 #' @examples
 #' data('EXAMPLE_DATA_list')
 #' #Return estimated mu and size for each gene using MME method.
-#' MME_est<-EstPrior(Data=EXAMPLE_DATA_list$inputdata,
+#' MME_est<-EstPrior(Data=EXAMPLE_DATA_list$inputdata[,seq(1,30)],
 #' verbose=TRUE)
 #' @import  fitdistrplus
 #' @importFrom SingleCellExperiment SingleCellExperiment
@@ -294,8 +294,8 @@ EstPrior <- function(Data,parallel=FALSE,NCores=5, verbose = TRUE) {
 #'
 #' @examples
 #' data('EXAMPLE_DATA_list')
-#'PRIOR_RESULT<-Prior_fun(Data=EXAMPLE_DATA_list$inputdata,
-#' BETA_vec = EXAMPLE_DATA_list$inputbeta,parallel=TRUE,
+#'PRIOR_RESULT<-Prior_fun(Data=EXAMPLE_DATA_list$inputdata[,seq(1,30)],
+#' BETA_vec = EXAMPLE_DATA_list$inputbeta[seq(1,30)],parallel=TRUE,
 #' NCores=5,FIX_MU=TRUE,GR=FALSE,BB_SIZE=TRUE,verbose=TRUE)
 #'
 #' @import parallel
@@ -368,32 +368,25 @@ This part may be time-consuming.")
             FIX_MU = FIX_MU,
             GR = GR)
 
+        BB_prior <- BB_size
+
+
         if (FIX_MU) {
-
-            BB_prior <- cbind(MME_prior$MME_MU, BB_size)
-            rownames(BB_prior) <- rownames(Data)
-            colnames(BB_prior) <- c("MME_MU", "BB_SIZE")
-
-            MME_SIZE_adjust <- AdjustSIZE_fun(
-                BB_prior[, 2],
-                MME_prior$MME_MU,
-                MME_prior$MME_SIZE)
-        } else {
-            BB_prior <- BB_size
-            rownames(BB_prior) <- rownames(Data)
-            colnames(BB_prior) <- c("BB_SIZE", "BB_MU")
-            MME_SIZE_adjust <- AdjustSIZE_fun(
-                BB_prior[, 1],
-                MME_prior$MME_MU,
-                MME_prior$MME_SIZE)
+            BB_prior <- cbind(BB_prior, MME_prior$MME_MU)
+            colnames(BB_prior) <- c("BB_SIZE", "MME_MU")
+            rownames(BB_prior)<-rownames(Data)
         }
+
+        vec <- BB_prior[,1]
+        MME_SIZE_adjust <- AdjustSIZE_fun(
+            vec,MME_prior$MME_MU,MME_prior$MME_SIZE)
 
         if (verbose) {
             message("Prior estimation has completed!")
         }
         names(MME_SIZE_adjust)<-rownames(Data)
         rownames(MME_prior)<-rownames(Data)
-        rownames(BB_prior)<-rownames(Data)
+
 
         return(list(
             MME_prior = MME_prior, BB_prior = BB_prior,
@@ -446,9 +439,9 @@ This part may be time-consuming.")
 #'
 #' @examples
 #' data('EXAMPLE_DATA_list')
-#' BB_RESULT<-BB_Fun(Data=EXAMPLE_DATA_list$inputdata,
-#' BETA_vec = EXAMPLE_DATA_list$inputbeta,INITIAL_MU_vec=
-#' EXAMPLE_DATA_list$mu,
+#' BB_RESULT<-BB_Fun(Data=EXAMPLE_DATA_list$inputdata[,seq(1,30)],
+#' BETA_vec = EXAMPLE_DATA_list$inputbeta[seq(1,30)],
+#' INITIAL_MU_vec=EXAMPLE_DATA_list$mu,
 #' INITIAL_SIZE_vec=EXAMPLE_DATA_list$size,
 #' MU_lower=0.01,MU_upper=500,SIZE_lower=0.01,
 #' SIZE_upper=30,parallel=FALSE,NCores=5,FIX_MU=TRUE,GR=FALSE)
@@ -513,188 +506,111 @@ BB_Fun <- function(
         } else{
             GR_pass<-GradientFun_NB_2D
         }
-
-
     }
 
-
-    if (FIX_MU) {
-        # 1D
-
+    if(FIX_MU){
         lower_input = SIZE_lower
         upper_input = SIZE_upper
-
-        if (parallel) {
-            cluster = makeCluster(NCores, type = "SOCK")
-            registerDoSNOW(cluster)
-            getDoParWorkers()
-
-            iterations <- dim(Data)[1]
-            pb <- txtProgressBar(max = iterations, style = 3)
-            progress <- function(n) setTxtProgressBar(pb, n)
-            opts <- list(progress = progress)
-
-            BB_parmat <- foreach(
-                Geneind = seq_len(dim(Data)[1]),
-                .combine = c,
-                .options.snow = opts) %dopar% {
-                    # print(Geneind)
-                    mu <- INITIAL_MU_vec[Geneind]
-                    size <- INITIAL_SIZE_vec[Geneind]
-                    m_observed = Data[Geneind, ]
-
-                    BB_opt <- BB::spg(
-                            par = size, fn = MarginalF_NB_1D,
-                            gr = GR_pass,MU = mu,
-                            m_observed = m_observed,
-                            BETA = BETA_vec,
-                            control = list(
-                                maximize = TRUE,
-                                trace = FALSE,
-                                maxfeval = 500),
-                            lower = lower_input,
-                            upper = upper_input)
-
-
-                    optimal_par <- BB_opt$par
-                    return(optimal_par)
-                }
-
-            close(pb)
-            stopCluster(cluster)
-
-
-        } else {
-
-            iterations <- dim(Data)[1]
-            pb <- txtProgressBar(max = iterations, style = 3)
-            progress <- function(n) setTxtProgressBar(pb, n)
-            opts <- list(progress = progress)
-
-
-            BB_parmat <- foreach(
-                Geneind = seq_len(dim(Data)[1]),
-                .combine = c,.options.snow = opts) %do% {
-
-                    # print(Geneind)
-                    setTxtProgressBar(pb, Geneind)
-
-                    mu <- INITIAL_MU_vec[Geneind]
-                    size <- INITIAL_SIZE_vec[Geneind]
-                    m_observed = Data[Geneind, ]
-
-                    BB_opt <- BB::spg(
-                            par = size, fn = MarginalF_NB_1D,
-                            gr = GR_pass,MU = mu,
-                            m_observed = m_observed,
-                            BETA = BETA_vec,
-                            control = list(
-                                maximize = TRUE,
-                                trace = FALSE,
-                                maxfeval = 500),
-                            lower = SIZE_lower,
-                            upper = SIZE_upper)
-
-
-                    #
-                    optimal_par <- BB_opt$par
-                    return(optimal_par)
-                }
-            close(pb)
-
-        }
-        names(BB_parmat) <- rownames(Data)
-    } else {
-        # 2D
-
+        fn_input = MarginalF_NB_1D
+    } else{
         lower_input = c(SIZE_lower, MU_lower)
         upper_input = c(SIZE_upper, MU_upper)
+        fn_input = MarginalF_NB_2D
+    }
 
+    if (parallel) {
+        cluster = makeCluster(NCores, type = "SOCK")
+        registerDoSNOW(cluster)
+        getDoParWorkers()
 
-        if (parallel) {
-            cluster = makeCluster(NCores, type = "SOCK")
-            registerDoSNOW(cluster)
-            getDoParWorkers()
+        iterations <- dim(Data)[1]
+        pb <- txtProgressBar(max = iterations, style = 3)
+        progress <- function(n) setTxtProgressBar(pb, n)
+        opts <- list(progress = progress)
 
-            iterations <- dim(Data)[1]
-            pb <- txtProgressBar(max = iterations, style = 3)
-            progress <- function(n) setTxtProgressBar(pb, n)
-            opts <- list(progress = progress)
+        BB_parmat <- foreach(
+            Geneind = seq_len(dim(Data)[1]),
+            .combine = c,
+            .options.snow = opts) %dopar% {
+                # print(Geneind)
+                mu <- INITIAL_MU_vec[Geneind]
+                size <- INITIAL_SIZE_vec[Geneind]
+                m_observed = Data[Geneind, ]
 
-
-            BB_parmat <- foreach(
-                Geneind = seq_len(dim(Data)[1]),
-                .combine = rbind,
-                .options.snow = opts) %dopar%
-                {
-
-                    mu <- INITIAL_MU_vec[Geneind]
-                    size <- INITIAL_SIZE_vec[Geneind]
-                    m_observed = Data[Geneind, ]
-
-                    BB_opt <- BB::spg(
-                            par = c(size, mu),
-                            fn = MarginalF_NB_2D,
-                            gr = GR_pass,
-                            m_observed = m_observed,
-                            BETA = BETA_vec,
-                            control = list(
-                                maximize = TRUE,
-                                trace = FALSE,
-                                maxfeval = 500),
-                            lower = lower_input,
-                            upper = upper_input)
-
-
-                    optimal_par <- BB_opt$par
-                    return(optimal_par)
-                }
-            close(pb)
-            stopCluster(cluster)
-
-
-        } else {
-
-
-            iterations <- dim(Data)[1]
-            pb <- txtProgressBar(max = iterations, style = 3)
-            progress <- function(n) setTxtProgressBar(pb, n)
-            opts <- list(progress = progress)
-            BB_parmat <- foreach(
-                Geneind = seq_len(dim(Data)[1]),
-                .combine = rbind) %do%
-
-                {
-                    setTxtProgressBar(pb, Geneind)
-                    mu <- INITIAL_MU_vec[Geneind]
-                    size <- INITIAL_SIZE_vec[Geneind]
-                    m_observed = Data[Geneind, ]
-
-                    BB_opt <- BB::spg(
-                            par = c(size, mu), fn = MarginalF_NB_2D,
-                            gr = GR_pass,
-                            m_observed = m_observed,
-                            BETA = BETA_vec,
-                            control = list(
-                                maximize = TRUE,
-                                trace = FALSE,
-                                maxfeval = 500),
-                            lower = c(SIZE_lower, MU_lower),
-                            upper = c(SIZE_upper, MU_upper))
-
-                    optimal_par <- BB_opt$par
-                    return(optimal_par)
+                if(FIX_MU){
+                    par_input<-size
+                } else{
+                    par_input<-c(size, mu)
                 }
 
-            close(pb)
+                BB_opt <- BB::spg(
+                        par = par_input, fn = fn_input,
+                        gr = GR_pass,MU = mu,
+                        m_observed = m_observed,
+                        BETA = BETA_vec,
+                        control = list(
+                            maximize = TRUE,
+                            trace = FALSE,
+                            maxfeval = 500),
+                        lower = lower_input,
+                        upper = upper_input)
 
 
-        }
+                optimal_par <- BB_opt$par
+                return(optimal_par)
+            }
+
+        close(pb)
+        stopCluster(cluster)
 
 
-        rownames(BB_parmat) <- rownames(Data)
+    } else {
+
+        iterations <- dim(Data)[1]
+        pb <- txtProgressBar(max = iterations, style = 3)
+        progress <- function(n) setTxtProgressBar(pb, n)
+        opts <- list(progress = progress)
+
+
+        BB_parmat <- foreach(
+            Geneind = seq_len(dim(Data)[1]),
+            .combine = c,.options.snow = opts) %do% {
+
+                setTxtProgressBar(pb, Geneind)
+
+                mu <- INITIAL_MU_vec[Geneind]
+                size <- INITIAL_SIZE_vec[Geneind]
+                m_observed = Data[Geneind, ]
+
+                if(FIX_MU){
+                    par_input<-size
+                } else{
+                    par_input<-c(size, mu)
+                }
+
+                BB_opt <- BB::spg(
+                        par = par_input, fn = fn_input,
+                        gr = GR_pass,MU = mu,
+                        m_observed = m_observed,
+                        BETA = BETA_vec,
+                        control = list(
+                            maximize = TRUE,
+                            trace = FALSE,
+                            maxfeval = 500),
+                        lower = SIZE_lower,
+                        upper = SIZE_upper)
+
+
+                #
+                optimal_par <- BB_opt$par
+                return(optimal_par)
+            }
+        close(pb)
 
     }
+
+
+    names(BB_parmat) <- rownames(Data)
 
     return(BB_parmat)
 }

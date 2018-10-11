@@ -93,7 +93,8 @@ Apart from the raw data, another parameter which user may need to provide is the
 ```{r beta, echo=TRUE,eval=TRUE}
 data('EXAMPLE_DATA_list')
 #Suppose the input data is a SummarizedExperiment object:
-rse <- SummarizedExperiment::SummarizedExperiment(assays=SimpleList(counts=EXAMPLE_DATA_list$inputdata))
+#Here we just used 30 cells for illustration
+rse <- SummarizedExperiment::SummarizedExperiment(assays=SimpleList(counts=EXAMPLE_DATA_list$inputdata[,seq(1,30)]))
 #SingleCellExperiment object can also be input in bayNorm:
 #rse <- SingleCellExperiment::SingleCellExperiment(assays=list(counts=EXAMPLE_DATA_list$inputdata))
 
@@ -116,20 +117,11 @@ bayNorm_3D<-bayNorm(
     ,verbose =FALSE)
 
 #Return 2D matrix normalized data (MAP of posterior):
-bayNorm_2D<-bayNorm(
-    Data=rse,
-    BETA_vec = NULL,
-    mode_version=TRUE,
-    mean_version = FALSE
-    ,verbose =FALSE)
+#Simply set mode_version=TRUE, but keep mean_version=FALSE
+
 
 #Return 2D matrix normalized data (mean of posterior):
-bayNorm_2D<-bayNorm(
-    Data=rse,
-    BETA_vec = NULL,
-    mode_version=FALSE,
-    mean_version = TRUE
-    ,verbose =FALSE)
+#Simply set mean_version=TRUE, but keep mode_version=FALSE
 ```
 
 
@@ -148,17 +140,6 @@ If you have run bayNorm on a dataset before but want to output another kind of d
 You can find these two objects from the previous output of bayNorm function, which is a list.
 
 ```{r intro_bayNorm_sup, echo=TRUE,eval=TRUE}
-data('EXAMPLE_DATA_list')
-
-
-#Return 3D array normalzied data:
-bayNorm_3D<-bayNorm(
-    Data=rse,
-    BETA_vec = EXAMPLE_DATA_list$inputbeta,
-    mode_version=FALSE,
-    mean_version = FALSE,
-    verbose =FALSE)
-
 #Now if you want to generate 2D matrix (MAP) using the same prior
 #estimates as generated before:
 bayNorm_2D<-bayNorm_sup(
@@ -180,6 +161,23 @@ bayNorm_2D<-bayNorm_sup(
     mean_version = TRUE,
     verbose =FALSE)
 ```
+
+# Other functions
+
+ 
+1. `Prior_fun`: This is a wrapper function of `EstPrior`, `BB_Fun` and `AdjustSIZE_fun`:
+    +  `EstPrior`: Estimating priors using MME methods.
+    +  `BB_Fun`: Estimating priors by maximizing marginal likelihood function with respect to either $\phi$ or both $\mu$ and $\phi$.
+    +  `AdjustSIZE_fun`: Adjusting $\phi$ estimated from `BB_Fun`.
+
+
+2. `noisy_gene_detection`: This is a higher wrapper function over `bayNorm`, `bayNorm_sup` and `SyntheticControl`. For details about the rationale behind this function, see the Methods part in the paper [2](https://www.biorxiv.org/content/early/2018/04/23/306795).
+
+3. `SyntheticControl`: Given a real scRNA-seq data with estimated $\beta$, it will estimate $\mu$ and $\phi$ from it and simulate control data using `Poisson` distribution. See the Methods part in the paper [2](https://www.biorxiv.org/content/early/2018/04/23/306795) for more details.
+
+4. `Main_NB_Bay`, `Main_mean_NB_Bay`, `Main_mode_NB_Bay`, `MarginalF_NB_1D`, `MarginalF_NB_2D`, `GradientFun_NB_1D`, and `GradientFun_NB_2D` are `Rcpp` functions which should not be run by users. They have to be exported so that they can be called in `foreach` function.
+
+
 
 
 
@@ -295,3 +293,4 @@ sessionInfo()
 # References
 
 - [1] <a href="https://www.biorxiv.org/content/early/2018/08/03/384586">Tang <em>et al.</em> (2018). bioRxiv. </a>
+- [2] <a href="https://www.biorxiv.org/content/early/2018/04/23/306795">Saint <em>et al.</em> (2018). bioRxiv. </a>

@@ -80,13 +80,15 @@ previous estimated parameters for obtaining 3D or
 \examples{
 data('EXAMPLE_DATA_list')
 #Return 3D array normalzied data:
-bayNorm_3D<-bayNorm(Data=EXAMPLE_DATA_list$inputdata,
-BETA_vec = EXAMPLE_DATA_list$inputbeta
+bayNorm_3D<-bayNorm(
+Data=EXAMPLE_DATA_list$inputdata[,seq(1,30)],
+BETA_vec = EXAMPLE_DATA_list$inputbeta[seq(1,30)]
 ,mode_version=FALSE)
 
 #Now if you want to generate 2D matrix using the same prior
 #estimates as generated before:
-bayNorm_2D<-bayNorm_sup(Data=EXAMPLE_DATA_list$inputdata
+bayNorm_2D<-bayNorm_sup(
+Data=EXAMPLE_DATA_list$inputdata[,seq(1,30)]
 ,PRIORS=bayNorm_3D$PRIORS,
 input_params = bayNorm_3D$input_params
 ,mode_version=TRUE)
