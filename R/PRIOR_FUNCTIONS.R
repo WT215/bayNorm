@@ -58,7 +58,7 @@ AdjustSIZE_fun <- function(BB_SIZE, MME_MU, MME_SIZE) {
 #' BETA_out<-BetaFun(Data=EXAMPLE_DATA_list$inputdata,
 #' MeanBETA=0.06)
 #'
-#' @import SingleCellExperiment
+#' @importFrom SingleCellExperiment SingleCellExperiment
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' assayNames assays colData
 #' @export
@@ -66,8 +66,6 @@ BetaFun <- function(Data, MeanBETA) {
 
     if (methods::is(Data, "SummarizedExperiment")
         | methods::is(Data, "SingleCellExperiment")) {
-        Data <- methods::as(Data, "SummarizedExperiment")
-
         if (
             is.null(
                 SummarizedExperiment::assayNames(Data)
@@ -151,7 +149,7 @@ BetaFun <- function(Data, MeanBETA) {
 #' MME_est<-EstPrior(Data=EXAMPLE_DATA_list$inputdata,
 #' verbose=TRUE)
 #' @import  fitdistrplus
-#' @import SingleCellExperiment
+#' @importFrom SingleCellExperiment SingleCellExperiment
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' assayNames assays colData
 #' @export
@@ -159,8 +157,6 @@ EstPrior <- function(Data,parallel=FALSE,NCores=5, verbose = TRUE) {
 
     if (methods::is(Data, "SummarizedExperiment")
         | methods::is(Data, "SingleCellExperiment")) {
-        Data <- methods::as(Data, "SummarizedExperiment")
-
         if (
             is.null(
                 SummarizedExperiment::assayNames(Data)
@@ -304,7 +300,7 @@ EstPrior <- function(Data,parallel=FALSE,NCores=5, verbose = TRUE) {
 #'
 #' @import parallel
 #' @import foreach
-#' @import SingleCellExperiment
+#' @importFrom SingleCellExperiment SingleCellExperiment
 #' @import doSNOW
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' assayNames assays colData
@@ -317,8 +313,6 @@ Prior_fun <- function(
 
     if (methods::is(Data, "SummarizedExperiment")
         | methods::is(Data, "SingleCellExperiment")) {
-        Data <- methods::as(Data, "SummarizedExperiment")
-
         if (
             is.null(
                 SummarizedExperiment::assayNames(Data)
@@ -466,7 +460,7 @@ This part may be time-consuming.")
 #' @import utils
 #' @import iterators
 #' @import methods
-#' @import SingleCellExperiment
+#' @importFrom SingleCellExperiment SingleCellExperiment
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' assayNames assays colData
 #' @useDynLib bayNorm
@@ -483,8 +477,6 @@ BB_Fun <- function(
 
     if (methods::is(Data, "SummarizedExperiment")
         | methods::is(Data, "SingleCellExperiment")) {
-        Data <- methods::as(Data, "SummarizedExperiment")
-
         if (
             is.null(
                 SummarizedExperiment::assayNames(Data)

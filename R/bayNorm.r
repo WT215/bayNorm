@@ -109,7 +109,7 @@
 #' @import parallel
 #' @import foreach
 #' @import doSNOW
-#' @import SingleCellExperiment
+#' @importFrom SingleCellExperiment SingleCellExperiment
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' assayNames assays colData
 #'
@@ -152,7 +152,6 @@ bayNorm <- function(
 
     # Adapted from SCnorm
     if (methods::is(Data, "SummarizedExperiment") | methods::is(Data, "SingleCellExperiment")) {
-        Data <- methods::as(Data, "SummarizedExperiment")
         if (is.null(SummarizedExperiment::assayNames(Data))
             || SummarizedExperiment::assayNames(Data)[1] !=
             "Counts") {
@@ -441,7 +440,7 @@ bayNorm <- function(
 #'
 #' @import parallel
 #' @import foreach
-#' @import SingleCellExperiment
+#' @importFrom SingleCellExperiment SingleCellExperiment
 #' @import doSNOW
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' assayNames assays colData
@@ -488,7 +487,6 @@ bayNorm_sup <- function(
 
     if (methods::is(Data, "SummarizedExperiment")
         | methods::is(Data, "SingleCellExperiment")) {
-        Data <- methods::as(Data, "SummarizedExperiment")
 
         if (
             is.null(

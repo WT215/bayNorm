@@ -76,7 +76,7 @@
 #' @import parallel
 #' @import foreach
 #' @import doSNOW
-#' @import SingleCellExperiment
+#' @importFrom SingleCellExperiment SingleCellExperiment
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' assayNames assays colData
 #' @export
@@ -113,7 +113,6 @@ noisy_gene_detection<-function(
 
     if (methods::is(Data, "SummarizedExperiment")
         | methods::is(Data, "SingleCellExperiment")) {
-        Data <- methods::as(Data, "SummarizedExperiment")
 
         if (
             is.null(

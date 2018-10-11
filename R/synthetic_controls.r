@@ -20,7 +20,7 @@
 #' SC_output<-SyntheticControl(Data=
 #' EXAMPLE_DATA_list$inputdata,
 #' BETA_vec = EXAMPLE_DATA_list$inputbeta)
-#' @import SingleCellExperiment
+#' @importFrom SingleCellExperiment SingleCellExperiment
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' assayNames assays colData
 #' @export
@@ -29,8 +29,6 @@ SyntheticControl<-function(Data,BETA_vec){
 
     if (methods::is(Data, "SummarizedExperiment")
         | methods::is(Data, "SingleCellExperiment")) {
-        Data <- methods::as(Data, "SummarizedExperiment")
-
         if (
             is.null(
                 SummarizedExperiment::assayNames(Data)
