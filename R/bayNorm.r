@@ -223,11 +223,10 @@ bayNorm <- function(
             FIX_MU = FIX_MU,GR = GR,BB_SIZE = BB_SIZE,
             verbose = verbose)
 
+        MU_input = PRIORS$MME_prior$MME_MU
         if (BB_SIZE) {
-            MU_input = PRIORS$MME_prior$MME_MU
             SIZE_input = PRIORS$MME_SIZE_adjust
         } else {
-            MU_input = PRIORS$MME_prior$MME_MU
             SIZE_input = PRIORS$MME_prior$MME_SIZE
         }
 
@@ -328,11 +327,11 @@ bayNorm <- function(
         Bay_out_list <- list()
         for (i in seq_len(length(Levels))) {
 
+            MU_input = PRIORS_LIST[[i]]$MME_prior$MME_MU
+
             if (BB_SIZE) {
-                MU_input = PRIORS_LIST[[i]]$MME_prior$MME_MU
                 SIZE_input = PRIORS_LIST[[i]]$MME_SIZE_adjust
             } else {
-                MU_input = PRIORS_LIST[[i]]$MME_prior$MME_MU
                 SIZE_input = PRIORS_LIST[[i]]$MME_prior$MME_SIZE
             }
 
@@ -530,11 +529,11 @@ bayNorm_sup <- function(
         } else {
             Data_sr <- round(Data/UMI_sffl)
         }
+
+        MU_input = PRIORS$MME_prior$MME_MU
         if (BB_SIZE) {
-            MU_input = PRIORS$MME_prior$MME_MU
             SIZE_input = PRIORS$MME_SIZE_adjust
         } else {
-            MU_input = PRIORS$MME_prior$MME_MU
             SIZE_input = PRIORS$MME_prior$MME_SIZE
         }
 
@@ -595,13 +594,12 @@ bayNorm_sup <- function(
         PRIORS_LIST <- PRIORS
         Bay_out_list <- list()
         for (i in seq_len(length(Levels))) {
+
+            MU_input = PRIORS_LIST[[i]]$MME_prior$MME_MU
             if (BB_SIZE) {
-                MU_input = PRIORS_LIST[[i]]$MME_prior$MME_MU
                 SIZE_input = PRIORS_LIST[[i]]$MME_SIZE_adjust
             } else {
-                MU_input = PRIORS_LIST[[i]]$MME_prior$MME_MU
                 SIZE_input = PRIORS_LIST[[i]]$MME_prior$MME_SIZE
-
             }
             Bay_out_list[[i]] <- myFunc(
                 Data = DataList_sr[[i]],
