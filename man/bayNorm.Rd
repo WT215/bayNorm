@@ -119,13 +119,8 @@ data('EXAMPLE_DATA_list')
 bayNorm_3D<-bayNorm(
 Data=EXAMPLE_DATA_list$inputdata[,seq(1,30)],
 BETA_vec = EXAMPLE_DATA_list$inputbeta[seq(1,30)],
-mode_version=FALSE)
+mode_version=FALSE,parallel =FALSE)
 
-#Return 2D matrix normalized data:
-bayNorm_2D<-bayNorm(
-Data=EXAMPLE_DATA_list$inputdata[,seq(1,30)],
-BETA_vec = EXAMPLE_DATA_list$inputbeta[seq(1,30)]
-,mode_version=TRUE)
 
 }
 \references{

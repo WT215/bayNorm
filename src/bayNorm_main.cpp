@@ -802,7 +802,7 @@ double D_SIZE_MU_1D(double SIZE,double MU, NumericVector m_observed,NumericVecto
 //' #Should not run by the users.
 //' \dontrun{
 //' }
-//' @export
+//' @Keywords internal
 // [[Rcpp::export]]
  */
 double GradientFun_1D(double SIZE,double MU,
@@ -831,7 +831,7 @@ double GradientFun_1D(double SIZE,double MU,
 //' #Should not run by the users.
 //' \dontrun{
 //' }
-//' @export
+//' @Keywords internal
 // [[Rcpp::export]]
  */
 double MarginalF_1D(double SIZE,double MU,
@@ -919,21 +919,7 @@ NumericMatrix DownSampling(NumericMatrix Data ,
 
 
 
-//' @title MarginalF_NB_1D
-//'
-//' @description Mariginal distribution as a function of size.
-//'
-//' @param SIZE size
-//' @param MU mu
-//' @param m_observed one observed count
-//' @param BETA The corresponding capture efficiency
-//' @return Marginal likelihood
-//' @examples
-//' data("EXAMPLE_DATA_list")
-//' #Should not run by the users, it is used in prior estimation.
-//' \dontrun{
-//' }
-//' @export
+
 // [[Rcpp::export]]
 double MarginalF_NB_1D(double SIZE,double MU,
                     NumericVector m_observed,
@@ -953,21 +939,7 @@ double MarginalF_NB_1D(double SIZE,double MU,
 }
 
 
-//' @title MarginalF_NB_2D
-//'
-//' @description Mariginal distribution as a function
-//' of both size and mu.
-//'
-//' @param SIZE_MU a vector of two elements (size,mu)
-//' @param m_observed  m_observed
-//' @param BETA Corresponding capture efficiency
-//' @return Marginal likelihood
-//' @examples
-//' data("EXAMPLE_DATA_list")
-//' #Should not run by the users, it is used in prior estimation.
-//' \dontrun{
-//' }
-//' @export
+
 // [[Rcpp::export]]
 double MarginalF_NB_2D(NumericVector SIZE_MU,
                     NumericVector m_observed,
@@ -991,25 +963,7 @@ double MarginalF_NB_2D(NumericVector SIZE_MU,
 
 
 
-//' @title GradientFun_NB_1D
-//'
-//' @description First derivative of marginal distribution
-//' with respect to size.
-//'
-//'
-//'
-//' @param SIZE size
-//' @param MU mu
-//' @param m_observed one observed count
-//' @param BETA The corresponding capture efficiency
-//' @return GradientFun_NB_1D
-//'
-//' @examples
-//' data("EXAMPLE_DATA_list")
-//' #Should not run by the users, it is used in prior estimation.
-//' \dontrun{
-//' }
-//' @export
+
 // [[Rcpp::export]]
 double GradientFun_NB_1D(double SIZE,double MU,
                       NumericVector m_observed,
@@ -1030,24 +984,7 @@ double GradientFun_NB_1D(double SIZE,double MU,
 
 
 
-//' @title GradientFun_NB_2D
-//'
-//' @description First derivative of marginal distribution
-//' with respect to size and mu.
-//'
-//'
-//'
-//' @param SIZE_MU a vector of two elements (size,mu)
-//' @param m_observed a vector of observed counts
-//' @param BETA The corresponding capture efficiency
-//' @return GradientFun_NB_2D
-//'
-//' @examples
-//' data("EXAMPLE_DATA_list")
-//' #Should not run by the users, it is used in prior estimation.
-//' \dontrun{
-//' }
-//' @export
+
 // [[Rcpp::export]]
 NumericVector GradientFun_NB_2D(NumericVector SIZE_MU,
                          NumericVector m_observed,
@@ -1117,28 +1054,7 @@ double GradientFun_NBmu_1D(double SIZE,double MU,
 
 
 
-//' @title Main_NB_Bay
-//'
-//' @description This function is used to draw S samples from
-//' Negative Binomial distribution for each gene in each cell.
-//'
-//' @param Data raw count Data
-//' @param BETA_vec A vector of capture efficiencies of cells
-//' @param size A vector of size
-//' @param mu A vector of mu
-//' @param S Draw S samples from posterior
-//' distribution to form 3D array
-//' @param thres useless parameter
-//' @return bayNorm normalized data
-//'
-//'
-//' @examples
-//' data("EXAMPLE_DATA_list")
-//' Norm_3D_array<-Main_NB_Bay(Data=EXAMPLE_DATA_list$inputdata,
-//' BETA_vec = EXAMPLE_DATA_list$inputbeta,
-//' size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,
-//' S=20,thres=10000000)
-//' @export
+
 // [[Rcpp::export]]
 NumericVector Main_NB_Bay(NumericMatrix Data,
                        NumericVector BETA_vec,
@@ -1219,27 +1135,6 @@ NumericVector Main_NB_Bay(NumericMatrix Data,
 
 
 
-//' @title  Mean_NB_Bay
-//'
-//' @description This function is used to take the mean of
-//' Negative Binomial distribution for each gene in each
-//' cell as normalized count.
-//'
-//' @param Data raw count Data
-//' @param BETA_vec A vector of capture efficiencies of cells
-//' @param size A vector of size
-//' @param mu A vector of mu
-//' @param S number of samples that you want to generate (not needed)
-//' @param thres useless parameter
-//' @return bayNorm normalized data
-//'
-//' @examples
-//' data("EXAMPLE_DATA_list")
-//' Norm_2D_matrix<-Main_mean_NB_Bay(Data=EXAMPLE_DATA_list$inputdata,
-//' BETA_vec = EXAMPLE_DATA_list$inputbeta,
-//' size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,
-//' S=20,thres=10000000)
-//' @export
 // [[Rcpp::export]]
 NumericMatrix Main_mean_NB_Bay(NumericMatrix Data,
                             NumericVector BETA_vec,
@@ -1319,28 +1214,7 @@ NumericMatrix Main_mean_NB_Bay(NumericMatrix Data,
 
 
 
-//' @title  Mode_NB_Bay
-//'
-//' @description This function is used to take the mode of
-//' Negative Binomial distribution for each gene in each
-//' cell as normalized count.
-//'
-//'
-//' @param Data raw count Data
-//' @param BETA_vec A vector of capture efficiencies of cells
-//' @param size A vector of size
-//' @param mu A vector of mu
-//' @param S number of samples that you want to generate (not needed)
-//' @param thres useless parameter
-//' @return bayNorm normalized data
-//'
-//' @examples
-//' data("EXAMPLE_DATA_list")
-//' Norm_2D_matrix<-Main_mode_NB_Bay(Data=EXAMPLE_DATA_list$inputdata,
-//' BETA_vec = EXAMPLE_DATA_list$inputbeta,
-//' size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,
-//' S=20,thres=10000000)
-//' @export
+
 // [[Rcpp::export]]
 NumericMatrix Main_mode_NB_Bay(NumericMatrix Data,
                             NumericVector BETA_vec,

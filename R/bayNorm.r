@@ -91,13 +91,8 @@
 #' bayNorm_3D<-bayNorm(
 #' Data=EXAMPLE_DATA_list$inputdata[,seq(1,30)],
 #' BETA_vec = EXAMPLE_DATA_list$inputbeta[seq(1,30)],
-#' mode_version=FALSE)
+#' mode_version=FALSE,parallel =FALSE)
 #'
-#' #Return 2D matrix normalized data:
-#' bayNorm_2D<-bayNorm(
-#' Data=EXAMPLE_DATA_list$inputdata[,seq(1,30)],
-#' BETA_vec = EXAMPLE_DATA_list$inputbeta[seq(1,30)]
-#' ,mode_version=TRUE)
 #'
 #' @references
 #' Wenhao Tang, Francois Bertaux, Philipp Thomas,
@@ -424,7 +419,7 @@ bayNorm <- function(
 #' bayNorm_3D<-bayNorm(
 #' Data=EXAMPLE_DATA_list$inputdata[,seq(1,30)],
 #' BETA_vec = EXAMPLE_DATA_list$inputbeta[seq(1,30)]
-#' ,mode_version=FALSE)
+#' ,mode_version=FALSE,parallel =FALSE)
 #'
 #' #Now if you want to generate 2D matrix using the same prior
 #' #estimates as generated before:

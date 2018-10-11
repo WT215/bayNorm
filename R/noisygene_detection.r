@@ -67,7 +67,7 @@
 #' EXAMPLE_DATA_list$inputdata[,seq(1,30)],BETA_vec
 #' =EXAMPLE_DATA_list$inputbeta[seq(1,30)], mode_version = FALSE,
 #' mean_version=FALSE,
-#' S = 20,parallel = TRUE, NCores = 5,
+#' S = 20,parallel = FALSE, NCores = 5,
 #' FIX_MU = TRUE, GR = FALSE,
 #' PRIORS=NULL,
 #' BB_SIZE = TRUE,

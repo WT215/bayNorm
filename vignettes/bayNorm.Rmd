@@ -114,7 +114,8 @@ bayNorm_3D<-bayNorm(
     BETA_vec = NULL,
     mode_version=FALSE,
     mean_version = FALSE,S=20
-    ,verbose =FALSE)
+    ,verbose =FALSE,
+    parallel = TRUE)
 
 #Return 2D matrix normalized data (MAP of posterior):
 #Simply set mode_version=TRUE, but keep mean_version=FALSE
@@ -175,7 +176,7 @@ bayNorm_2D<-bayNorm_sup(
 
 3. `SyntheticControl`: Given a real scRNA-seq data with estimated $\beta$, it will estimate $\mu$ and $\phi$ from it and simulate control data using `Poisson` distribution. See the Methods part in the paper [2](https://www.biorxiv.org/content/early/2018/04/23/306795) for more details.
 
-4. `Main_NB_Bay`, `Main_mean_NB_Bay`, `Main_mode_NB_Bay`, `MarginalF_NB_1D`, `MarginalF_NB_2D`, `GradientFun_NB_1D`, and `GradientFun_NB_2D` are `Rcpp` functions which should not be run by users. They have to be exported so that they can be called in `foreach` function.
+
 
 
 

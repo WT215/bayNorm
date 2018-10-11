@@ -69,7 +69,7 @@ BB estimated mu.
 \examples{
 data('EXAMPLE_DATA_list')
 PRIOR_RESULT<-Prior_fun(Data=EXAMPLE_DATA_list$inputdata[,seq(1,30)],
-BETA_vec = EXAMPLE_DATA_list$inputbeta[seq(1,30)],parallel=TRUE,
+BETA_vec = EXAMPLE_DATA_list$inputbeta[seq(1,30)],parallel=FALSE,
 NCores=5,FIX_MU=TRUE,GR=FALSE,BB_SIZE=TRUE,verbose=TRUE)
 
 }

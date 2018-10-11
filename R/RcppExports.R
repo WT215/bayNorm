@@ -21,162 +21,30 @@ DownSampling <- function(Data, BETA_vec) {
     .Call('_bayNorm_DownSampling', PACKAGE = 'bayNorm', Data, BETA_vec)
 }
 
-#' @title MarginalF_NB_1D
-#'
-#' @description Mariginal distribution as a function of size.
-#'
-#' @param SIZE size
-#' @param MU mu
-#' @param m_observed one observed count
-#' @param BETA The corresponding capture efficiency
-#' @return Marginal likelihood
-#' @examples
-#' data("EXAMPLE_DATA_list")
-#' #Should not run by the users, it is used in prior estimation.
-#' \dontrun{
-#' }
-#' @export
 MarginalF_NB_1D <- function(SIZE, MU, m_observed, BETA) {
     .Call('_bayNorm_MarginalF_NB_1D', PACKAGE = 'bayNorm', SIZE, MU, m_observed, BETA)
 }
 
-#' @title MarginalF_NB_2D
-#'
-#' @description Mariginal distribution as a function
-#' of both size and mu.
-#'
-#' @param SIZE_MU a vector of two elements (size,mu)
-#' @param m_observed  m_observed
-#' @param BETA Corresponding capture efficiency
-#' @return Marginal likelihood
-#' @examples
-#' data("EXAMPLE_DATA_list")
-#' #Should not run by the users, it is used in prior estimation.
-#' \dontrun{
-#' }
-#' @export
 MarginalF_NB_2D <- function(SIZE_MU, m_observed, BETA) {
     .Call('_bayNorm_MarginalF_NB_2D', PACKAGE = 'bayNorm', SIZE_MU, m_observed, BETA)
 }
 
-#' @title GradientFun_NB_1D
-#'
-#' @description First derivative of marginal distribution
-#' with respect to size.
-#'
-#'
-#'
-#' @param SIZE size
-#' @param MU mu
-#' @param m_observed one observed count
-#' @param BETA The corresponding capture efficiency
-#' @return GradientFun_NB_1D
-#'
-#' @examples
-#' data("EXAMPLE_DATA_list")
-#' #Should not run by the users, it is used in prior estimation.
-#' \dontrun{
-#' }
-#' @export
 GradientFun_NB_1D <- function(SIZE, MU, m_observed, BETA) {
     .Call('_bayNorm_GradientFun_NB_1D', PACKAGE = 'bayNorm', SIZE, MU, m_observed, BETA)
 }
 
-#' @title GradientFun_NB_2D
-#'
-#' @description First derivative of marginal distribution
-#' with respect to size and mu.
-#'
-#'
-#'
-#' @param SIZE_MU a vector of two elements (size,mu)
-#' @param m_observed a vector of observed counts
-#' @param BETA The corresponding capture efficiency
-#' @return GradientFun_NB_2D
-#'
-#' @examples
-#' data("EXAMPLE_DATA_list")
-#' #Should not run by the users, it is used in prior estimation.
-#' \dontrun{
-#' }
-#' @export
 GradientFun_NB_2D <- function(SIZE_MU, m_observed, BETA) {
     .Call('_bayNorm_GradientFun_NB_2D', PACKAGE = 'bayNorm', SIZE_MU, m_observed, BETA)
 }
 
-#' @title Main_NB_Bay
-#'
-#' @description This function is used to draw S samples from
-#' Negative Binomial distribution for each gene in each cell.
-#'
-#' @param Data raw count Data
-#' @param BETA_vec A vector of capture efficiencies of cells
-#' @param size A vector of size
-#' @param mu A vector of mu
-#' @param S Draw S samples from posterior
-#' distribution to form 3D array
-#' @param thres useless parameter
-#' @return bayNorm normalized data
-#'
-#'
-#' @examples
-#' data("EXAMPLE_DATA_list")
-#' Norm_3D_array<-Main_NB_Bay(Data=EXAMPLE_DATA_list$inputdata,
-#' BETA_vec = EXAMPLE_DATA_list$inputbeta,
-#' size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,
-#' S=20,thres=10000000)
-#' @export
 Main_NB_Bay <- function(Data, BETA_vec, size, mu, S, thres) {
     .Call('_bayNorm_Main_NB_Bay', PACKAGE = 'bayNorm', Data, BETA_vec, size, mu, S, thres)
 }
 
-#' @title  Mean_NB_Bay
-#'
-#' @description This function is used to take the mean of
-#' Negative Binomial distribution for each gene in each
-#' cell as normalized count.
-#'
-#' @param Data raw count Data
-#' @param BETA_vec A vector of capture efficiencies of cells
-#' @param size A vector of size
-#' @param mu A vector of mu
-#' @param S number of samples that you want to generate (not needed)
-#' @param thres useless parameter
-#' @return bayNorm normalized data
-#'
-#' @examples
-#' data("EXAMPLE_DATA_list")
-#' Norm_2D_matrix<-Main_mean_NB_Bay(Data=EXAMPLE_DATA_list$inputdata,
-#' BETA_vec = EXAMPLE_DATA_list$inputbeta,
-#' size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,
-#' S=20,thres=10000000)
-#' @export
 Main_mean_NB_Bay <- function(Data, BETA_vec, size, mu, S, thres) {
     .Call('_bayNorm_Main_mean_NB_Bay', PACKAGE = 'bayNorm', Data, BETA_vec, size, mu, S, thres)
 }
 
-#' @title  Mode_NB_Bay
-#'
-#' @description This function is used to take the mode of
-#' Negative Binomial distribution for each gene in each
-#' cell as normalized count.
-#'
-#'
-#' @param Data raw count Data
-#' @param BETA_vec A vector of capture efficiencies of cells
-#' @param size A vector of size
-#' @param mu A vector of mu
-#' @param S number of samples that you want to generate (not needed)
-#' @param thres useless parameter
-#' @return bayNorm normalized data
-#'
-#' @examples
-#' data("EXAMPLE_DATA_list")
-#' Norm_2D_matrix<-Main_mode_NB_Bay(Data=EXAMPLE_DATA_list$inputdata,
-#' BETA_vec = EXAMPLE_DATA_list$inputbeta,
-#' size=EXAMPLE_DATA_list$size,mu=EXAMPLE_DATA_list$mu,
-#' S=20,thres=10000000)
-#' @export
 Main_mode_NB_Bay <- function(Data, BETA_vec, size, mu, S, thres) {
     .Call('_bayNorm_Main_mode_NB_Bay', PACKAGE = 'bayNorm', Data, BETA_vec, size, mu, S, thres)
 }
