@@ -31,8 +31,8 @@
 #' (The third dimension of 3D array).
 #' Default is 20. S needs to be specified if
 #' \code{mode_version}=FALSE.
-#' @param  parallel If TRUE, 5 cores will be used
-#' for parallelization.
+#' @param  parallel If TRUE, \code{NCores} cores will be
+#' used for parallelization. Default is TRUE.
 #' @param  NCores number of cores to use, default is 5.
 #' This will be used to set up a parallel environment
 #' using either MulticoreParam

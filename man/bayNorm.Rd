@@ -65,8 +65,8 @@ generate from estimated posterior distribution
 (The third dimension of 3D array). Default is 20.
  S needs to be specified if \code{mode_version}=FALSE.}
 
-\item{parallel}{If TRUE, multiple cores will be used
-for parallelization.}
+\item{parallel}{If TRUE, \code{NCores} cores will be
+used for parallelization. Default is TRUE.}
 
 \item{NCores}{number of cores to use, default is 5.
 This will be used to set up a parallel environment

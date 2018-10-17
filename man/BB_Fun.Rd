@@ -35,8 +35,8 @@ you want to do 2D optimization). Default is 500.}
 
 \item{SIZE_upper}{The upper bound for the size. Default is 30.}
 
-\item{parallel}{If TRUE, 5 cores will be used for parallelization.
-Default is TRUE.}
+\item{parallel}{If TRUE, \code{NCores} cores
+will be used for parallelization. Default is TRUE.}
 
 \item{NCores}{number of cores to use, default is 5. This will
 be used to set up a parallel environment using either

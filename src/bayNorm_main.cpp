@@ -884,6 +884,7 @@ double MarginalF_1D(double SIZE,double MU,
 //' Downsample_data<-DownSampling(Data=EXAMPLE_DATA_list$inputdata
 //' ,BETA_vec = EXAMPLE_DATA_list$inputbeta)
 //' @export
+//'
 // [[Rcpp::export]]
 NumericMatrix DownSampling(NumericMatrix Data ,
                            NumericVector BETA_vec) {

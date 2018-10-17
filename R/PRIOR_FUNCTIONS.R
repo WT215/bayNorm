@@ -126,8 +126,8 @@ BetaFun <- function(Data, MeanBETA) {
 #' can be of class \code{SummarizedExperiment} (the
 #' assays slot contains the expression matrix and
 #' is named "Counts") or just matrix.
-#' @param  parallel If TRUE, 5 cores will be used for parallelization.
-#' Default is TRUE.
+#' @param  parallel If TRUE, \code{NCores} cores will be
+#' used for parallelization. Default is TRUE.
 #' @param  NCores number of cores to use, default is 5.
 #' This will be used to set up a parallel
 #' environment using either MulticoreParam (Linux, Mac)
@@ -149,6 +149,7 @@ BetaFun <- function(Data, MeanBETA) {
 #' MME_est<-EstPrior(Data=EXAMPLE_DATA_list$inputdata[,seq(1,30)],
 #' verbose=TRUE)
 #' @import  fitdistrplus
+#' @import BiocParallel
 #' @importFrom SingleCellExperiment SingleCellExperiment
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' assayNames assays colData
@@ -182,53 +183,26 @@ EstPrior <- function(Data,parallel=FALSE,NCores=5, verbose = TRUE) {
         Data <- data.matrix(Data)
     }
 
-    i <- NULL
 
-    if(parallel){
-        cluster = makeCluster(NCores, type = "SOCK")
-        registerDoSNOW(cluster)
-        getDoParWorkers()
 
-        iterations <- dim(Data)[1]
-        pb <- txtProgressBar(max = iterations, style = 3)
-        progress <- function(n) setTxtProgressBar(pb, n)
-        opts <- list(progress = progress)
+    FUNN_fitdistrplus<-function(x,Data=Data){
 
-        CoefDat <- foreach(
-            i = seq_len(nrow(Data)),
-            .combine = rbind,
-            .options.snow = opts) %dopar% {
+        suppressWarnings(fitre<-   fitdistrplus::fitdist(
+            Data[x,], "nbinom",
+            method = "mme",
+            keepdata = FALSE))
 
-                suppressWarnings(
-                    qq <- fitdistrplus::fitdist(
-                        Data[i, ], "nbinom",
-                        method = "mme",
-                        keepdata = FALSE))
-                return(coef(qq))
-            }
-        close(pb)
-        stopCluster(cluster)
-    } else{
-        iterations <- dim(Data)[1]
-        pb <- txtProgressBar(max = iterations, style = 3)
-        progress <- function(n) setTxtProgressBar(pb, n)
-        opts <- list(progress = progress)
 
-        CoefDat <- foreach(
-            i = seq_len(nrow(Data)),
-            .combine = rbind,
-            .options.snow = opts) %do% {
-                setTxtProgressBar(pb, i)
-
-                suppressWarnings(
-                    qq <- fitdistrplus::fitdist(
-                        Data[i, ], "nbinom",
-                        method = "mme",
-                        keepdata = FALSE))
-                return(coef(qq))
-            }
-        close(pb)
+        return(coef(fitre))
     }
+
+
+    workers=ifelse(parallel,NCores,1)
+
+    BPPARAM=SnowParam(workers=workers,progressbar=TRUE,type='SOCK')
+    temp_result<-bplapply(seq(1,dim(Data)[1]),
+                          FUNN_fitdistrplus,Data=Data,BPPARAM=BPPARAM)
+    CoefDat<-do.call(rbind,temp_result)
 
     rownames(CoefDat) <- rownames(Data)
     M_ave_ori <- CoefDat[, 2]
@@ -422,8 +396,8 @@ This part may be time-consuming.")
 #' you want to do 2D optimization). Default is 500.
 #' @param  SIZE_lower The lower bound for the size. Default is 0.01.
 #' @param  SIZE_upper The upper bound for the size. Default is 30.
-#' @param  parallel If TRUE, 5 cores will be used for parallelization.
-#' Default is TRUE.
+#' @param  parallel If TRUE, \code{NCores} cores
+#' will be used for parallelization. Default is TRUE.
 #' @param  NCores number of cores to use, default is 5. This will
 #' be used to set up a parallel environment using either
 #' MulticoreParam (Linux, Mac) or SnowParam (Windows) with NCores
@@ -453,6 +427,7 @@ This part may be time-consuming.")
 #' @import utils
 #' @import iterators
 #' @import methods
+#' @import BiocParallel
 #' @importFrom SingleCellExperiment SingleCellExperiment
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' assayNames assays colData
@@ -518,99 +493,85 @@ BB_Fun <- function(
         fn_input = MarginalF_NB_2D
     }
 
-    if (parallel) {
-        cluster = makeCluster(NCores, type = "SOCK")
-        registerDoSNOW(cluster)
-        getDoParWorkers()
+    workers=ifelse(parallel,NCores,1)
 
-        iterations <- dim(Data)[1]
-        pb <- txtProgressBar(max = iterations, style = 3)
-        progress <- function(n) setTxtProgressBar(pb, n)
-        opts <- list(progress = progress)
-
-        BB_parmat <- foreach(
-            Geneind = seq_len(dim(Data)[1]),
-            .combine = c,
-            .options.snow = opts) %dopar% {
-                # print(Geneind)
-                mu <- INITIAL_MU_vec[Geneind]
-                size <- INITIAL_SIZE_vec[Geneind]
-                m_observed = Data[Geneind, ]
-
-                if(FIX_MU){
-                    par_input<-size
-                } else{
-                    par_input<-c(size, mu)
-                }
-
-                BB_opt <- BB::spg(
-                        par = par_input, fn = fn_input,
-                        gr = GR_pass,MU = mu,
-                        m_observed = m_observed,
-                        BETA = BETA_vec,
-                        control = list(
-                            maximize = TRUE,
-                            trace = FALSE,
-                            maxfeval = 500),
-                        lower = lower_input,
-                        upper = upper_input)
+    BPPARAM=SnowParam(workers=workers,progressbar=TRUE,type='SOCK')
 
 
-                optimal_par <- BB_opt$par
-                return(optimal_par)
-            }
 
-        close(pb)
-        stopCluster(cluster)
+    FUNN_spg<-function(
+        Geneind,
+        Data,
+        INITIAL_MU_vec,
+        INITIAL_SIZE_vec,
+        lower_input,
+        upper_input,
+        GR_pass,
+        BETA_vec){
+        #library(bayNorm)
+        #library(debugpack)
+
+        mu <- INITIAL_MU_vec[Geneind]
+        size <- INITIAL_SIZE_vec[Geneind]
+        m_observed = Data[Geneind, ]
+        if(FIX_MU){
+            par_input<-size
+        } else{
+            par_input<-c(size, mu)
+        }
+
+        BB_opt <- if(FIX_MU){
+            BB::spg(par = par_input, fn = fn_input,
+                     gr = GR_pass,
+                     m_observed = m_observed,
+                     BETA = BETA_vec,
+                     control = list(
+                         maximize = TRUE,
+                         trace = FALSE,
+                         maxfeval = 500),
+                     lower = lower_input,
+                     upper = upper_input,MU=mu)
+        } else{
+            BB::spg(par = par_input, fn = fn_input,
+                     gr = GR_pass,
+                     m_observed = m_observed,
+                     BETA = BETA_vec,
+                     control = list(
+                         maximize = TRUE,
+                         trace = FALSE,
+                         maxfeval = 500),
+                     lower = lower_input,
+                     upper = upper_input)
+        }
 
 
-    } else {
-
-        iterations <- dim(Data)[1]
-        pb <- txtProgressBar(max = iterations, style = 3)
-        progress <- function(n) setTxtProgressBar(pb, n)
-        opts <- list(progress = progress)
-
-
-        BB_parmat <- foreach(
-            Geneind = seq_len(dim(Data)[1]),
-            .combine = c,.options.snow = opts) %do% {
-
-                setTxtProgressBar(pb, Geneind)
-
-                mu <- INITIAL_MU_vec[Geneind]
-                size <- INITIAL_SIZE_vec[Geneind]
-                m_observed = Data[Geneind, ]
-
-                if(FIX_MU){
-                    par_input<-size
-                } else{
-                    par_input<-c(size, mu)
-                }
-
-                BB_opt <- BB::spg(
-                        par = par_input, fn = fn_input,
-                        gr = GR_pass,MU = mu,
-                        m_observed = m_observed,
-                        BETA = BETA_vec,
-                        control = list(
-                            maximize = TRUE,
-                            trace = FALSE,
-                            maxfeval = 500),
-                        lower = SIZE_lower,
-                        upper = SIZE_upper)
-
-
-                #
-                optimal_par <- BB_opt$par
-                return(optimal_par)
-            }
-        close(pb)
+        optimal_par <- BB_opt$par
+        return(optimal_par)
 
     }
 
 
-    names(BB_parmat) <- rownames(Data)
+    temp_result<-bplapply(seq(1,dim(Data)[1]), FUNN_spg,
+                          Data=Data,
+                          INITIAL_MU_vec=INITIAL_MU_vec,
+                          INITIAL_SIZE_vec=INITIAL_SIZE_vec,
+                          lower_input=lower_input,
+                          upper_input=upper_input,
+                          GR_pass=GR_pass,
+                          BETA_vec=BETA_vec,
+                          BPPARAM=BPPARAM)
+
+    if(FIX_MU){
+        BB_parmat<-do.call(c,temp_result)
+        names(BB_parmat) <- rownames(Data)
+
+    } else{
+        BB_parmat<-do.call(rbind,temp_result)
+        rownames(BB_parmat) <- rownames(Data)
+        colnames(BB_parmat)<-c('size','mu')
+    }
+
+
 
     return(BB_parmat)
 }

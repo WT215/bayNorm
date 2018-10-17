@@ -17,6 +17,7 @@
 #' Downsample_data<-DownSampling(Data=EXAMPLE_DATA_list$inputdata
 #' ,BETA_vec = EXAMPLE_DATA_list$inputbeta)
 #' @export
+#'
 DownSampling <- function(Data, BETA_vec) {
     .Call('_bayNorm_DownSampling', PACKAGE = 'bayNorm', Data, BETA_vec)
 }

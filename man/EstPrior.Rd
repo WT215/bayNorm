@@ -14,8 +14,8 @@ can be of class \code{SummarizedExperiment} (the
 assays slot contains the expression matrix and
 is named "Counts") or just matrix.}
 
-\item{parallel}{If TRUE, 5 cores will be used for parallelization.
-Default is TRUE.}
+\item{parallel}{If TRUE, \code{NCores} cores will be
+used for parallelization. Default is TRUE.}
 
 \item{NCores}{number of cores to use, default is 5.
 This will be used to set up a parallel

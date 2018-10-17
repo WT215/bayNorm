@@ -1,7 +1,7 @@
 Package: bayNorm
 Type: Package
 Title: Single-cell RNA sequencing data normalization
-Version: 0.99.18
+Version: 0.99.19
 Authors@R: c(person("Wenhao", "Tang", role=c("aut", "cre"),
         email="wt215@ic.ac.uk"), 
         person("Fran<U+00E7>ois", "Bertaux", role=c("aut")),
@@ -32,6 +32,7 @@ Imports:
     grDevices,
     SingleCellExperiment,
     SummarizedExperiment,
+    BiocParallel,
     utils
 LinkingTo: Rcpp, RcppArmadillo,RcppProgress
 Suggests:

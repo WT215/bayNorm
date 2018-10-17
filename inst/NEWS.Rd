@@ -41,3 +41,10 @@
 \item Let more examples to be runnable; Updated vignette; Including SingleCellExperiment Class.
     }
 }
+
+\section{Version 0.99.19}{
+\itemize{
+\item Replacing foreach with BiocParallel
+\item Fix some errors in BB_fun
+    }
+}
