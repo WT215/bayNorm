@@ -284,7 +284,9 @@ bayNorm <- function(
         } else {
             # non-UMI
             DataList_sr <- lapply(seq_along(Levels), function(x) {
-                round(Data[, which(Conditions == Levels[x])]/UMI_sffl[x])
+                tempp<-round(Data[, which(Conditions == Levels[x])]/UMI_sffl[x])
+                tempp<-tempp[-drop(which(rowMeans(tempp)==0)),]
+                return(tempp)
             })
         }
 
@@ -523,6 +525,7 @@ bayNorm_sup <- function(
             Data_sr <- Data
         } else {
             Data_sr <- round(Data/UMI_sffl)
+            Data_sr <- Data_sr[-which(rowMeans(Data_sr)==0),]
         }
 
         MU_input = PRIORS$MME_prior$MME_MU
@@ -581,7 +584,9 @@ bayNorm_sup <- function(
         } else {
             # non-UMI
             DataList_sr <- lapply(seq_along(Levels), function(x) {
-                round(Data[, which(Conditions == Levels[x])]/UMI_sffl[x])
+                tempp<-round(Data[, which(Conditions == Levels[x])]/UMI_sffl[x])
+                tempp<-tempp[-drop(which(rowMeans(tempp)==0)),]
+                return(tempp)
             })
         }
 
