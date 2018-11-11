@@ -210,6 +210,7 @@ bayNorm <- function(
             Data_sr <- Data
         } else {
             Data_sr <- round(Data/UMI_sffl)
+            Data_sr <- Data_sr[-which(rowMeans(Data_sr)==0),]
         }
 
         PRIORS = Prior_fun(
