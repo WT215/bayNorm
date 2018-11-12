@@ -233,8 +233,8 @@ bayNorm <- function(
             size = SIZE_input,
             mu = MU_input, S = S,
             thres = max(Data_sr)*2)
-        rownames(Bay_out) <- rownames(Data)
-        colnames(Bay_out) <- colnames(Data)
+        rownames(Bay_out) <- rownames(Data_sr)
+        colnames(Bay_out) <- colnames(Data_sr)
 
         return(list(
             Bay_out = Bay_out,
@@ -342,8 +342,8 @@ bayNorm <- function(
                 S = S,
                 thres = max(Data)*2)
 
-            rownames(Bay_out_list[[i]]) <- rownames(DataList[[i]])
-            colnames(Bay_out_list[[i]]) <- colnames(DataList[[i]])
+            rownames(Bay_out_list[[i]]) <- rownames(DataList_sr[[i]])
+            colnames(Bay_out_list[[i]]) <- colnames(DataList_sr[[i]])
         }
         names(Bay_out_list) <- paste("Group", Levels)
 
@@ -542,8 +542,8 @@ bayNorm_sup <- function(
             size = SIZE_input,
             mu = MU_input, S = S,
             thres = max(Data_sr)*2)
-        rownames(Bay_out) <- rownames(Data)
-        colnames(Bay_out) <- colnames(Data)
+        rownames(Bay_out) <- rownames(Data_sr)
+        colnames(Bay_out) <- colnames(Data_sr)
 
         return(list(
             Bay_out = Bay_out,
@@ -608,8 +608,8 @@ bayNorm_sup <- function(
                 size = SIZE_input, mu = MU_input,
                 S = S, thres = max(Data) * 2)
 
-            rownames(Bay_out_list[[i]]) <- rownames(DataList[[i]])
-            colnames(Bay_out_list[[i]]) <- colnames(DataList[[i]])
+            rownames(Bay_out_list[[i]]) <- rownames(DataList_sr[[i]])
+            colnames(Bay_out_list[[i]]) <- colnames(DataList_sr[[i]])
         }
         names(Bay_out_list) <- paste("Group", Levels)
         names(BETAList)<-paste("Group", Levels)

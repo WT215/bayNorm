@@ -301,7 +301,7 @@ NOISY_FUN<-function(bay_array_N,bay_array_C,plot.out=FALSE){
         legend(
             'topright',
             legend=c('Genes: real cell data',
-                'Genes: sysnthetic control',
+                'Genes: synthetic control',
                 'Noisy genes'),
             col=c(col_N,col_C,col_noisy),pch=16,cex=1)
     }
