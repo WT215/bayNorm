@@ -171,13 +171,7 @@ bayNorm <- function(
 
 
     if (is.null(BETA_vec)) {
-        BETA_vec <- colSums(Data)/mean(colSums(Data)) * 0.06
-    }
-    if (length(which(BETA_vec >= 1)) > 0) {
-        BETA_vec[BETA_vec >= 1] = max(BETA_vec[BETA_vec < 1])
-    }
-    if (length(which(BETA_vec <= 0)) > 0) {
-        BETA_vec[BETA_vec <= 0] = min(BETA_vec[BETA_vec > 0])
+        BETA_vec <- BetaFun(Data=Data, MeanBETA=0.06)$BETA
     }
 
     # Some pre-checkings:
@@ -210,7 +204,10 @@ bayNorm <- function(
             Data_sr <- Data
         } else {
             Data_sr <- round(Data/UMI_sffl)
-            Data_sr <- Data_sr[-which(rowMeans(Data_sr)==0),]
+            #Data_sr <- Data_sr[-which(rowMeans(Data_sr)==0),]
+            if (is.null(BETA_vec)) {
+                BETA_vec <- BetaFun(Data=Data_sr, MeanBETA=0.06)$BETA
+            }
         }
 
         PRIORS = Prior_fun(
@@ -286,9 +283,18 @@ bayNorm <- function(
             # non-UMI
             DataList_sr <- lapply(seq_along(Levels), function(x) {
                 tempp<-round(Data[, which(Conditions == Levels[x])]/UMI_sffl[x])
-                tempp<-tempp[-drop(which(rowMeans(tempp)==0)),]
+                #tempp<-tempp[-drop(which(rowMeans(tempp)==0)),]
                 return(tempp)
             })
+            
+            if (is.null(BETA_vec)) {
+                
+                BETAList <- lapply(DataList_sr,function(x){
+                    qtemp<-BetaFun(Data=x, MeanBETA=0.06)$BETA
+                    return(qtemp)
+                    })
+            }
+                
         }
 
 

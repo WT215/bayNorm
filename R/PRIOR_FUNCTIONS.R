@@ -112,7 +112,15 @@ BetaFun <- function(Data, MeanBETA) {
 
     temppp <- colSums(Data[Select_ind, ])
     BETA <- temppp/mean(temppp) * MeanBETA
+    if (length(which(BETA >= 1)) > 0) {
+        BETA[BETA >= 1] = max(BETA[BETA < 1])
+    }
+    if (length(which(BETA <= 0)) > 0) {
+        BETA[BETA <= 0] = min(BETA[BETA > 0])
+    }
+    
     names(BETA) <- colnames(Data)
+    
     return(list(BETA = BETA, Selected_genes = Selected_genes))
 }
 
