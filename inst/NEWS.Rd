@@ -48,3 +48,9 @@
 \item Fix some errors in BB_fun
     }
 }
+
+\section{Version 1.1.4}{
+\itemize{
+\item For a smoother progress bar, use foreach instead of BiocParallel.
+    }
+}

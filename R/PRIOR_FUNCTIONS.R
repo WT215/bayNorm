@@ -450,7 +450,7 @@ BB_Fun <- function(
     MU_lower = 0.01, MU_upper = 500, SIZE_lower = 0.01,
     SIZE_upper = 30,parallel = FALSE, NCores = 5,
     FIX_MU = TRUE, GR = FALSE) {
-
+    
     if (methods::is(Data, "SummarizedExperiment")
         | methods::is(Data, "SingleCellExperiment")) {
         if (
@@ -463,24 +463,24 @@ BB_Fun <- function(
                     firstelement in
                     assays(Data) to 'Counts'")
             SummarizedExperiment::assayNames(Data)[1] <- "Counts"
-
+            
             if (is.null(colnames(
                 SummarizedExperiment::assays(Data)[["Counts"]]))) {
                 stop("Must supply sample/cell names!")
             }
-
+            
         }
         Data <- SummarizedExperiment::assays(Data)[["Counts"]]
     }
-
+    
     if (!(methods::is(Data, "SummarizedExperiment"))
         & !(methods::is(Data, "SingleCellExperiment"))) {
         Data <- data.matrix(Data)
     }
-
-
+    
+    
     Geneind <- NULL
-
+    
     if(!GR){
         GR_pass<-NULL
     } else if(GR){
@@ -490,97 +490,143 @@ BB_Fun <- function(
             GR_pass<-GradientFun_NB_2D
         }
     }
-
+    
     if(FIX_MU){
-        lower_input = SIZE_lower
-        upper_input = SIZE_upper
-        fn_input = MarginalF_NB_1D
+        lower_input <- SIZE_lower
+        upper_input <- SIZE_upper
+        fn_input <- MarginalF_NB_1D
     } else{
-        lower_input = c(SIZE_lower, MU_lower)
-        upper_input = c(SIZE_upper, MU_upper)
-        fn_input = MarginalF_NB_2D
+        lower_input <- c(SIZE_lower, MU_lower)
+        upper_input <- c(SIZE_upper, MU_upper)
+        fn_input <- MarginalF_NB_2D
     }
+    
+    
+    combinee<-ifelse(FIX_MU,c,rbind)
+    
 
-    workers=ifelse(parallel,NCores,1)
-
-    BPPARAM=SnowParam(workers=workers,progressbar=TRUE,type='SOCK')
-
-
-
-    FUNN_spg<-function(
-        Geneind,
-        Data,
-        INITIAL_MU_vec,
-        INITIAL_SIZE_vec,
-        lower_input,
-        upper_input,
-        GR_pass,
-        BETA_vec){
-        #library(bayNorm)
-        #library(debugpack)
-
-        mu <- INITIAL_MU_vec[Geneind]
-        size <- INITIAL_SIZE_vec[Geneind]
-        m_observed = Data[Geneind, ]
-        if(FIX_MU){
-            par_input<-size
-        } else{
-            par_input<-c(size, mu)
-        }
-
-        BB_opt <- if(FIX_MU){
-            BB::spg(par = par_input, fn = fn_input,
-                     gr = GR_pass,
-                     m_observed = m_observed,
-                     BETA = BETA_vec,
-                     control = list(
-                         maximize = TRUE,
-                         trace = FALSE,
-                         maxfeval = 500),
-                     lower = lower_input,
-                     upper = upper_input,MU=mu)
-        } else{
-            BB::spg(par = par_input, fn = fn_input,
-                     gr = GR_pass,
-                     m_observed = m_observed,
-                     BETA = BETA_vec,
-                     control = list(
-                         maximize = TRUE,
-                         trace = FALSE,
-                         maxfeval = 500),
-                     lower = lower_input,
-                     upper = upper_input)
-        }
-
-
-        optimal_par <- BB_opt$par
-        return(optimal_par)
-
+    if (parallel) {
+        cluster <- makeCluster(NCores, type = "SOCK")
+        registerDoSNOW(cluster)
+        getDoParWorkers()
+        
+        iterations <- dim(Data)[1]
+        pb <- txtProgressBar(max = iterations, style = 3)
+        progress <- function(n) setTxtProgressBar(pb, n)
+        opts <- list(progress = progress)
+        
+        BB_parmat <- foreach(
+            Geneind = seq_len(dim(Data)[1]),
+            .combine = combinee,
+            .options.snow = opts) %dopar% {
+                # print(Geneind)
+                mu <- INITIAL_MU_vec[Geneind]
+                size <- INITIAL_SIZE_vec[Geneind]
+                m_observed = Data[Geneind, ]
+                
+                if(FIX_MU){
+                    par_input<-size
+                    BB_opt <- BB::spg(
+                        par = par_input, fn = fn_input,
+                        gr = GR_pass,MU = mu,
+                        m_observed = m_observed,
+                        BETA = BETA_vec,
+                        control = list(
+                            maximize = TRUE,
+                            trace = FALSE,
+                            maxfeval = 500),
+                        lower = lower_input,
+                        upper = upper_input)
+                } else{
+                    par_input<-c(size, mu)
+                    BB_opt <- BB::spg(
+                        par = par_input, fn = fn_input,
+                        gr = GR_pass,
+                        m_observed = m_observed,
+                        BETA = BETA_vec,
+                        control = list(
+                            maximize = TRUE,
+                            trace = FALSE,
+                            maxfeval = 500),
+                        lower = lower_input,
+                        upper = upper_input)
+                }
+                
+                
+                
+                
+                optimal_par <- BB_opt$par
+                return(optimal_par)
+            }
+        
+        close(pb)
+        stopCluster(cluster)
+        
+        
+    } else {
+        
+        iterations <- dim(Data)[1]
+        pb <- txtProgressBar(max = iterations, style = 3)
+        progress <- function(n) setTxtProgressBar(pb, n)
+        opts <- list(progress = progress)
+        
+        
+        BB_parmat <- foreach(
+            Geneind = seq_len(dim(Data)[1]),
+            .combine = combinee,.options.snow = opts) %do% {
+                
+                setTxtProgressBar(pb, Geneind)
+                
+                mu <- INITIAL_MU_vec[Geneind]
+                size <- INITIAL_SIZE_vec[Geneind]
+                m_observed = Data[Geneind, ]
+                
+                if(FIX_MU){
+                    par_input<-size
+                    BB_opt <- BB::spg(
+                        par = par_input, fn = fn_input,
+                        gr = GR_pass,MU = mu,
+                        m_observed = m_observed,
+                        BETA = BETA_vec,
+                        control = list(
+                            maximize = TRUE,
+                            trace = FALSE,
+                            maxfeval = 500),
+                        lower = SIZE_lower,
+                        upper = SIZE_upper)
+                } else{
+                    par_input<-c(size, mu)
+                    BB_opt <- BB::spg(
+                        par = par_input, fn = fn_input,
+                        gr = GR_pass,
+                        m_observed = m_observed,
+                        BETA = BETA_vec,
+                        control = list(
+                            maximize = TRUE,
+                            trace = FALSE,
+                            maxfeval = 500),
+                        lower = SIZE_lower,
+                        upper = SIZE_upper)
+                }
+                
+                
+                
+                
+                #
+                optimal_par <- BB_opt$par
+                return(optimal_par)
+            }
+        close(pb)
+        
     }
-
-
-    temp_result<-bplapply(seq(1,dim(Data)[1]), FUNN_spg,
-                          Data=Data,
-                          INITIAL_MU_vec=INITIAL_MU_vec,
-                          INITIAL_SIZE_vec=INITIAL_SIZE_vec,
-                          lower_input=lower_input,
-                          upper_input=upper_input,
-                          GR_pass=GR_pass,
-                          BETA_vec=BETA_vec,
-                          BPPARAM=BPPARAM)
-
+    
     if(FIX_MU){
-        BB_parmat<-do.call(c,temp_result)
         names(BB_parmat) <- rownames(Data)
-
+        
     } else{
-        BB_parmat<-do.call(rbind,temp_result)
         rownames(BB_parmat) <- rownames(Data)
         colnames(BB_parmat)<-c('size','mu')
     }
-
-
-
+    
     return(BB_parmat)
 }
-
