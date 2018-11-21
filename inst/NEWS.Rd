@@ -49,7 +49,7 @@
     }
 }
 
-\section{Version 1.1.4}{
+\section{Version 1.0.6}{
 \itemize{
 \item For a smoother progress bar, use foreach instead of BiocParallel.
     }
