@@ -1,7 +1,7 @@
 Package: bayNorm
 Type: Package
 Title: Single-cell RNA sequencing data normalization
-Version: 1.1.4
+Version: 1.1.5
 Authors@R: c(person("Wenhao", "Tang", role=c("aut", "cre"),
         email="wt215@ic.ac.uk"), 
         person("Fran<U+00E7>ois", "Bertaux", role=c("aut")),
@@ -42,6 +42,6 @@ Suggests:
         devtools,
         testthat
 VignetteBuilder: knitr
-biocViews: Normalization, RNASeq, SingleCell,Sequencing
+biocViews: ImmunoOncology, Normalization, RNASeq, SingleCell,Sequencing
 URL: https://github.com/WT215/bayNorm
 BugReports: https://github.com/WT215/bayNorm/issues
