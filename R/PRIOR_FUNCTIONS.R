@@ -208,8 +208,8 @@ EstPrior <- function(Data,parallel=FALSE,NCores=5, verbose = TRUE) {
     workers=ifelse(parallel,NCores,1)
 
     BPPARAM=SnowParam(workers=workers,progressbar=TRUE,type='SOCK')
-    temp_result<-bplapply(seq(1,dim(Data)[1]),
-                          FUNN_fitdistrplus,Data=Data,BPPARAM=BPPARAM)
+    suppressWarnings(temp_result<-bplapply(seq(1,dim(Data)[1]),
+                          FUNN_fitdistrplus,Data=Data,BPPARAM=BPPARAM))
     CoefDat<-do.call(rbind,temp_result)
 
     rownames(CoefDat) <- rownames(Data)
@@ -320,7 +320,11 @@ Prior_fun <- function(
         Data <- data.matrix(Data)
     }
 
-    normcount_N <- t(t(Data)/colSums(Data)) * mean(colSums(Data)/BETA_vec)
+    #normcount_N <- t(t(Data)/colSums(Data)) * mean(colSums(Data)/BETA_vec)
+    normcount_N <- t(t(Data)/BETA_vec)
+    
+    
+    
     Priors <- EstPrior(normcount_N, verbose = verbose,parallel=parallel,NCores=NCores)
     M_ave_ori <- Priors$MU
     size_est <- Priors$SIZE

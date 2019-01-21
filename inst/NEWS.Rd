@@ -54,3 +54,10 @@
 \item For a smoother progress bar, use foreach instead of BiocParallel.
     }
 }
+
+
+\section{Version 1.1.6}{
+\itemize{
+\item Suppress warning message came from BiocParallel.
+    }
+}
