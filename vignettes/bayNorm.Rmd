@@ -180,6 +180,81 @@ bayNorm_2D<-bayNorm_sup(
 
 
 
+#Downstream analysis: DE genes detection
+DE function used in bayNorm paper, which was kindly provided by the author of SCnorm.
+```{r DE_fun, echo=TRUE,eval=FALSE}
+library(MAST)
+library(reshape2)
+########SCnorm_runMAST3##########
+SCnorm_runMAST3 <- function(Data, NumCells) {
+    if(length(dim(Data))==2){
+        resultss<-SCnorm_runMAST(Data, NumCells)
+    } else if(length(dim(Data))==3){
+        
+        library(foreach)
+        resultss<- foreach(sampleind=1:dim(Data)[3],.combine=cbind)%do%{
+            print(sampleind)
+            
+            qq<-SCnorm_runMAST(Data[,,sampleind], NumCells)
+            return(qq$adjpval)
+        }
+    }
+    
+    return(resultss) 
+}
+
+SCnorm_runMAST <- function(Data, NumCells) {
+
+  NA_ind<-which(rowSums(Data)==0)
+  Data = as.matrix(log2(Data+1))
+
+
+  G1<-Data[,seq(1,NumCells[1])]
+  G2<-Data[,-seq(1,NumCells[1])]
+
+  qq_temp<- rowMeans(G2)-rowMeans(G1)
+  qq_temp[NA_ind]=NA
+
+  numGenes = dim(Data)[1]
+  datalong = melt(Data)
+  Cond = c(rep("c1", NumCells[1]*numGenes), rep("c2", NumCells[2]*numGenes))
+  dataL = cbind(datalong, Cond)
+  colnames(dataL) = c("gene","cell","value","Cond")
+  dataL$gene = factor(dataL$gene)
+  dataL$cell = factor(dataL$cell)
+  vdata = FromFlatDF(dataframe = dataL, idvars = "cell", primerid = "gene", measurement = "value",  id = numeric(0), cellvars = "Cond", featurevars = NULL,  phenovars = NULL)
+
+  zlm.output = zlm(~ Cond, vdata, method='glm', ebayes=TRUE)
+
+  zlm.lr = lrTest(zlm.output, 'Cond')
+
+  gpval = zlm.lr[,,'Pr(>Chisq)']
+  adjpval = p.adjust(gpval[,1],"BH") ## Use only pvalues from the continuous part.
+  adjpval = adjpval[rownames(Data)]
+  return(list(adjpval=adjpval, logFC_re=qq_temp))
+}
+
+
+
+
+```
+
+```{r DE_run, echo=TRUE,eval=FALSE}
+#Now, detect DE genes between two groups of cells with 15 cells in each group respectively
+
+#For 3D array
+DE_out<-SCnorm_runMAST3(Data=bayNorm_3D$Bay_out, NumCells=c(15,15))
+med_pvals<-apply(DE_out,1,median)
+#DE genes are called with threshold 0.05:
+DE_genes<-names(which(med_pvals<0.05))
+
+#For 2D array
+DE_out<-SCnorm_runMAST3(Data=bayNorm_2D$Bay_out, NumCells=c(15,15))
+DE_genes<-names(which(DE_out$adjpval<0.05))
+```
+
+
+
 
 
 # Methods

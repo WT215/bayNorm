@@ -39,26 +39,25 @@ Essential input and parameters for running `bayNorm` are:
 
 ```R
 data('EXAMPLE_DATA_list')
-#Return 3D array normalzied data:
+rse <- SummarizedExperiment::SummarizedExperiment(assays=SimpleList(counts=EXAMPLE_DATA_list$inputdata[,seq(1,30)]))
+#SingleCellExperiment object can also be input in bayNorm:
+#rse <- SingleCellExperiment::SingleCellExperiment(assays=list(counts=EXAMPLE_DATA_list$inputdata))
+
+#Return 3D array normalzied data, draw 20 samples from posterior distribution:
 bayNorm_3D<-bayNorm(
-    Data=EXAMPLE_DATA_list$inputdata,
-    BETA_vec = EXAMPLE_DATA_list$inputbeta,
-    mode_version=F,
-    mean_version = F)
+    Data=rse,
+    BETA_vec = NULL,
+    mode_version=FALSE,
+    mean_version = FALSE,S=20
+    ,verbose =FALSE,
+    parallel = TRUE)
 
 #Return 2D matrix normalized data (MAP of posterior):
-bayNorm_2D<-bayNorm(
-    Data=EXAMPLE_DATA_list$inputdata,
-    BETA_vec = EXAMPLE_DATA_list$inputbeta,
-    mode_version=T,
-    mean_version = F)
+#Simply set mode_version=TRUE, but keep mean_version=FALSE
+
 
 #Return 2D matrix normalized data (mean of posterior):
-bayNorm_2D<-bayNorm(
-    Data=EXAMPLE_DATA_list$inputdata,
-    BETA_vec = EXAMPLE_DATA_list$inputbeta,
-    mode_version=F,
-    mean_version = T)
+#Simply set mean_version=TRUE, but keep mode_version=FALSE
 ```
 
 ## Non-UMI scRNAseq dataset
@@ -78,8 +77,8 @@ data('EXAMPLE_DATA_list')
 bayNorm_3D<-bayNorm(
     Data=EXAMPLE_DATA_list$inputdata,
     BETA_vec = EXAMPLE_DATA_list$inputbeta,
-    mode_version=F,
-    mean_version = F)
+    mode_version=FALSE,
+    mean_version = FALSE)
 
 #Now if you want to generate 2D matrix (MAP) using the same prior
 #estimates as generated before:
@@ -87,8 +86,8 @@ bayNorm_2D<-bayNorm_sup(
     Data=EXAMPLE_DATA_list$inputdata,
     PRIORS=bayNorm_3D$PRIORS,
     input_params=bayNorm_3D$input_params,
-    mode_version=T,
-    mean_version = F)
+    mode_version=TRUE,
+    mean_version = FALSE)
 
 #Or you may want to generate 2D matrix 
 #(mean of posterior) using the same prior
@@ -97,8 +96,8 @@ bayNorm_2D<-bayNorm_sup(
     Data=EXAMPLE_DATA_list$inputdata,
     PRIORS=bayNorm_3D$PRIORS,
     input_params=bayNorm_3D$input_params,
-    mode_version=F,
-    mean_version = T)
+    mode_version=FALSE,
+    mean_version = TRUE)
 ```
 
 ## References
