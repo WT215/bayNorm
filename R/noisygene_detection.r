@@ -83,7 +83,7 @@
 #'
 
 noisy_gene_detection<-function(
-    Data,BETA_vec,
+    Data,BETA_vec=NULL,
     mode_version=FALSE,
     mean_version=FALSE,
     S=20,

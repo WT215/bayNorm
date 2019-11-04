@@ -102,4 +102,4 @@ bayNorm_2D<-bayNorm_sup(
 
 ## References
 
-- [1] <a href="https://www.biorxiv.org/content/early/2018/08/03/384586">Tang <em>et al.</em> (2018). bioRxiv. </a>
+- [1] <a href="https://academic.oup.com/bioinformatics/advance-article/doi/10.1093/bioinformatics/btz726/5581401">Tang <em>et al.</em> (2019). Bioinformatics. </a>
