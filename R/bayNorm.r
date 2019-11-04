@@ -16,7 +16,7 @@
 #' 0.06 will be used
 #' as the input \code{BETA_vec}. \code{BETA_vec} less and
 #' equal to 0 or greater and equal to 1 will be replaced
-#' by the minimum and maximum of the BETA_vec which
+#' by the minimum and maximum of the \code{BETA_vec} which
 #' range between (0,1) respectively.
 #' @param  Conditions vector of condition labels,
 #' this should correspond to the columns of the Data. D
@@ -100,7 +100,7 @@
 #' Blaise Marguerat, Vahid Shahrezaei
 #' bayNorm: Bayesian gene expression recovery,
 #' imputation and normalisation for single cell RNA-sequencing data
-#' bioRxiv 384586; doi: https://doi.org/10.1101/384586
+#' Bioinformatics, btz726; doi: 10.1093/bioinformatics/btz726
 #'
 #'
 #'
@@ -114,7 +114,7 @@
 #' @export
 #'
 bayNorm <- function(
-    Data, BETA_vec, Conditions = NULL,
+    Data, BETA_vec=NULL, Conditions = NULL,
     UMI_sffl = NULL,Prior_type = NULL,
     mode_version = FALSE,
     mean_version=FALSE,
@@ -171,7 +171,10 @@ bayNorm <- function(
 
 
     if (is.null(BETA_vec)) {
-        BETA_vec <- BetaFun(Data=Data, MeanBETA=0.06)$BETA
+        #BETA_vec <- BetaFun(Data=Data, MeanBETA=0.06)$BETA
+        BETA_vec <- colSums(Data)/mean(colSums(Data))*0.06
+        BETA_vec[BETA_vec<=0]<-min(BETA_vec[BETA_vec>0])
+        BETA_vec[BETA_vec>=1]<-max(BETA_vec[BETA_vec<1])
     }
 
     # Some pre-checkings:
@@ -444,7 +447,7 @@ bayNorm <- function(
 #' Blaise Marguerat, Vahid Shahrezaei
 #' bayNorm: Bayesian gene expression recovery,
 #' imputation and normalisation for single cell RNA-sequencing data
-#' bioRxiv 384586; doi: https://doi.org/10.1101/384586
+#' Bioinformatics, btz726; doi: 10.1093/bioinformatics/btz726
 #'
 #' @import parallel
 #' @import foreach

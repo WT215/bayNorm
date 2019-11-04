@@ -61,3 +61,10 @@
 \item Suppress warning message came from BiocParallel.
     }
 }
+
+\section{Version 1.5.0}{
+\itemize{
+\item Set default setting of BETA_vec=NULL.
+\item Update citation.
+    }
+}
