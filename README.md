@@ -2,6 +2,8 @@
 
 bayNorm is an R package which is used to normalize single-cell RNA-seq data. 
 
+The bayNorm in Julia language is now available: `https://github.com/WT215/bayNormJL.jl`.
+
 ## Code for bayNorm paper
 The code for producing figures in bayNorm paper [1] can be found [here](https://github.com/WT215/bayNorm_papercode)
 
