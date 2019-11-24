@@ -68,3 +68,9 @@
 \item Update citation.
     }
 }
+
+\section{Version 1.5.2}{
+\itemize{
+\item Vectorize computation in EstPrior function.
+    }
+}
