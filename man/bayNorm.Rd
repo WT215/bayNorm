@@ -4,7 +4,7 @@
 \alias{bayNorm}
 \title{A wrapper function of prior estimation and bayNorm function}
 \usage{
-bayNorm(Data, BETA_vec, Conditions = NULL, UMI_sffl = NULL,
+bayNorm(Data, BETA_vec = NULL, Conditions = NULL, UMI_sffl = NULL,
   Prior_type = NULL, mode_version = FALSE, mean_version = FALSE,
   S = 20, parallel = TRUE, NCores = 5, FIX_MU = TRUE, GR = FALSE,
   BB_SIZE = TRUE, verbose = TRUE)
@@ -22,7 +22,7 @@ If it is null, library size (total count) normalized to
 0.06 will be used
 as the input \code{BETA_vec}. \code{BETA_vec} less and
 equal to 0 or greater and equal to 1 will be replaced
-by the minimum and maximum of the BETA_vec which
+by the minimum and maximum of the \code{BETA_vec} which
 range between (0,1) respectively.}
 
 \item{Conditions}{vector of condition labels,
@@ -129,5 +129,5 @@ Claire Stefanelli, Malika Saint, Samuel
 Blaise Marguerat, Vahid Shahrezaei
 bayNorm: Bayesian gene expression recovery,
 imputation and normalisation for single cell RNA-sequencing data
-bioRxiv 384586; doi: https://doi.org/10.1101/384586
+Bioinformatics, btz726; doi: 10.1093/bioinformatics/btz726
 }

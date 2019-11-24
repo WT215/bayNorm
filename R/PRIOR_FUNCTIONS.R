@@ -134,13 +134,6 @@ BetaFun <- function(Data, MeanBETA) {
 #' can be of class \code{SummarizedExperiment} (the
 #' assays slot contains the expression matrix and
 #' is named "Counts") or just matrix.
-#' @param  parallel If TRUE, \code{NCores} cores will be
-#' used for parallelization. Default is TRUE.
-#' @param  NCores number of cores to use, default is 5.
-#' This will be used to set up a parallel
-#' environment using either MulticoreParam (Linux, Mac)
-#' or SnowParam (Windows) with NCores
-#' using the package BiocParallel.
 #' @param verbose print out status messages. Default is TRUE.
 #'
 #' @details mu and size are two parameters of the prior that
@@ -162,7 +155,7 @@ BetaFun <- function(Data, MeanBETA) {
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' assayNames assays colData
 #' @export
-EstPrior <- function(Data,parallel=FALSE,NCores=5, verbose = TRUE) {
+EstPrior <- function(Data,verbose = TRUE) {
 
     if (methods::is(Data, "SummarizedExperiment")
         | methods::is(Data, "SingleCellExperiment")) {
@@ -193,28 +186,39 @@ EstPrior <- function(Data,parallel=FALSE,NCores=5, verbose = TRUE) {
 
 
 
-    FUNN_fitdistrplus<-function(x,Data=Data){
+    # FUNN_fitdistrplus<-function(x,Data=Data){
+    # 
+    #     suppressWarnings(fitre<-   fitdistrplus::fitdist(
+    #         Data[x,], "nbinom",
+    #         method = "mme",
+    #         keepdata = FALSE))
+    # 
+    # 
+    #     return(coef(fitre))
+    # }
+    # 
+    # 
+    # workers=ifelse(parallel,NCores,1)
+    # 
+    # BPPARAM=SnowParam(workers=workers,progressbar=TRUE,type='SOCK')
+    # suppressWarnings(temp_result<-bplapply(seq(1,dim(Data)[1]),
+    #                       FUNN_fitdistrplus,Data=Data,BPPARAM=BPPARAM))
+    # CoefDat<-do.call(rbind,temp_result)
+    # rownames(CoefDat) <- rownames(Data)
+    # M_ave_ori <- CoefDat[, 2]
+    # size_est <- CoefDat[, 1]
+    
+    #Vectorization make computation faster
+    n=dim(Data)[2];
+    m = rowMeans(Data)
+    v = (n - 1) / n * apply(Data,1,var);
+    mme_size= m^2/(v - m);
+    mme_size[v<=m] =NaN;
+    
+    M_ave_ori <- m
+    size_est <- mme_size
 
-        suppressWarnings(fitre<-   fitdistrplus::fitdist(
-            Data[x,], "nbinom",
-            method = "mme",
-            keepdata = FALSE))
-
-
-        return(coef(fitre))
-    }
-
-
-    workers=ifelse(parallel,NCores,1)
-
-    BPPARAM=SnowParam(workers=workers,progressbar=TRUE,type='SOCK')
-    suppressWarnings(temp_result<-bplapply(seq(1,dim(Data)[1]),
-                          FUNN_fitdistrplus,Data=Data,BPPARAM=BPPARAM))
-    CoefDat<-do.call(rbind,temp_result)
-
-    rownames(CoefDat) <- rownames(Data)
-    M_ave_ori <- CoefDat[, 2]
-    size_est <- CoefDat[, 1]
+    
     names(M_ave_ori)<-rownames(Data)
     names(size_est)<-rownames(Data)
 
@@ -325,7 +329,7 @@ Prior_fun <- function(
     
     
     
-    Priors <- EstPrior(normcount_N, verbose = verbose,parallel=parallel,NCores=NCores)
+    Priors <- EstPrior(normcount_N, verbose = verbose)
     M_ave_ori <- Priors$MU
     size_est <- Priors$SIZE
     size_est[is.na(size_est)] <- min(size_est[!is.na(size_est)])

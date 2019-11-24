@@ -100,5 +100,5 @@ Claire Stefanelli, Malika Saint, Samuel
 Blaise Marguerat, Vahid Shahrezaei
 bayNorm: Bayesian gene expression recovery,
 imputation and normalisation for single cell RNA-sequencing data
-bioRxiv 384586; doi: https://doi.org/10.1101/384586
+Bioinformatics, btz726; doi: 10.1093/bioinformatics/btz726
 }
