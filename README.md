@@ -102,6 +102,34 @@ bayNorm_2D<-bayNorm_sup(
     mean_version = TRUE)
 ```
 
+## Work around Seurat object: clusters detection
+```R
+library(bayNorm)
+library(Seurat)
+
+data('EXAMPLE_DATA_list')
+
+library(Seurat)
+bay_out<-bayNorm(EXAMPLE_DATA_list$inputdata,mean_version = TRUE)
+x.seurat <- CreateSeuratObject(counts =bay_out$Bay_out,assay = 'bayNorm')
+# x.seurat <- NormalizeData(x.seurat)
+x.seurat <- ScaleData(x.seurat)
+x.seurat <- FindVariableFeatures(x.seurat, do.plot = FALSE)
+#Specifying: assay='bayNorm'
+x.seurat <- RunPCA(x.seurat, pc.genes = x.seurat@var.genes,
+                   pcs.compute = 50, do.print = FALSE,assay='bayNorm')
+
+x.seurat <- RunUMAP(x.seurat, dims = 1:10,assay='bayNorm')
+#x.seurat <- JackStraw(x.seurat, prop.freq = 0.06)
+x.seurat <- FindNeighbors(x.seurat, dims = 1:10)
+x.seurat <- FindClusters(x.seurat, resolution = 0.5)
+head(Idents(x.seurat), 5)
+#It is a toy example. Here only one cluster was found
+plot(x.seurat@reductions$umap@cell.embeddings,pch=16,col=as.factor(Idents(x.seurat)))
+#Double check that the assay we used comes from bayNorm
+x.seurat@reductions$pca@assay.used
+```
+
 ## References
 
 - [1] <a href="https://academic.oup.com/bioinformatics/advance-article/doi/10.1093/bioinformatics/btz726/5581401">Tang <em>et al.</em> (2019). Bioinformatics. </a>
