@@ -4,10 +4,22 @@
 \alias{bayNorm}
 \title{A wrapper function of prior estimation and bayNorm function}
 \usage{
-bayNorm(Data, BETA_vec = NULL, Conditions = NULL, UMI_sffl = NULL,
-  Prior_type = NULL, mode_version = FALSE, mean_version = FALSE,
-  S = 20, parallel = TRUE, NCores = 5, FIX_MU = TRUE, GR = FALSE,
-  BB_SIZE = TRUE, verbose = TRUE)
+bayNorm(
+  Data,
+  BETA_vec = NULL,
+  Conditions = NULL,
+  UMI_sffl = NULL,
+  Prior_type = NULL,
+  mode_version = FALSE,
+  mean_version = FALSE,
+  S = 20,
+  parallel = TRUE,
+  NCores = 5,
+  FIX_MU = TRUE,
+  GR = FALSE,
+  BB_SIZE = TRUE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{Data}{A matrix of single-cell expression where rows

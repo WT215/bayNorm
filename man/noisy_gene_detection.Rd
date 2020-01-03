@@ -6,10 +6,22 @@
 his produces synthetic control, performs bayNorm on both real
 cell data and synthetic controls and does noisy gene detection.}
 \usage{
-noisy_gene_detection(Data, BETA_vec = NULL, mode_version = FALSE,
-  mean_version = FALSE, S = 20, parallel = TRUE, NCores = 5,
-  FIX_MU = TRUE, GR = FALSE, BB_SIZE = TRUE, verbose = TRUE,
-  plot.out = FALSE, PRIORS = NULL, input_params = NULL)
+noisy_gene_detection(
+  Data,
+  BETA_vec = NULL,
+  mode_version = FALSE,
+  mean_version = FALSE,
+  S = 20,
+  parallel = TRUE,
+  NCores = 5,
+  FIX_MU = TRUE,
+  GR = FALSE,
+  BB_SIZE = TRUE,
+  verbose = TRUE,
+  plot.out = FALSE,
+  PRIORS = NULL,
+  input_params = NULL
+)
 }
 \arguments{
 \item{Data}{A matrix of single-cell expression where rows

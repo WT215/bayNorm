@@ -1,7 +1,7 @@
 Package: bayNorm
 Type: Package
 Title: Single-cell RNA sequencing data normalization
-Version: 1.5.2
+Version: 1.5.3
 Authors@R: c(person("Wenhao", "Tang", role=c("aut", "cre"),
         email="wt215@ic.ac.uk"), 
         person("Fran<U+00E7>ois", "Bertaux", role=c("aut")),
@@ -13,7 +13,7 @@ Authors@R: c(person("Wenhao", "Tang", role=c("aut", "cre"),
 Description: bayNorm is used for normalizing single-cell RNA-seq data.
 License: GPL (>= 2)
 Encoding: UTF-8
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
 Depends:
 	R (>= 3.5),
 Imports:

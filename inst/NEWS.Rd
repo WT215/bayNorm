@@ -74,3 +74,9 @@
 \item Vectorize computation in EstPrior function.
     }
 }
+
+\section{Version 1.5.3}{
+\itemize{
+\item Add Rcpp EstPrior function.
+    }
+}

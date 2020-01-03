@@ -120,6 +120,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// EstPrior_rcpp
+List EstPrior_rcpp(NumericMatrix Data);
+RcppExport SEXP _bayNorm_EstPrior_rcpp(SEXP DataSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type Data(DataSEXP);
+    rcpp_result_gen = Rcpp::wrap(EstPrior_rcpp(Data));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_bayNorm_DownSampling", (DL_FUNC) &_bayNorm_DownSampling, 2},
@@ -130,6 +141,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_bayNorm_Main_NB_Bay", (DL_FUNC) &_bayNorm_Main_NB_Bay, 6},
     {"_bayNorm_Main_mean_NB_Bay", (DL_FUNC) &_bayNorm_Main_mean_NB_Bay, 6},
     {"_bayNorm_Main_mode_NB_Bay", (DL_FUNC) &_bayNorm_Main_mode_NB_Bay, 6},
+    {"_bayNorm_EstPrior_rcpp", (DL_FUNC) &_bayNorm_EstPrior_rcpp, 1},
     {NULL, NULL, 0}
 };
 

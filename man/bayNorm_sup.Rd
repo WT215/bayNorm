@@ -4,9 +4,18 @@
 \alias{bayNorm_sup}
 \title{bayNorm with estimated parameters as input}
 \usage{
-bayNorm_sup(Data, PRIORS = NULL, input_params = NULL,
-  mode_version = FALSE, mean_version = FALSE, S = 20,
-  parallel = TRUE, NCores = 5, BB_SIZE = TRUE, verbose = TRUE)
+bayNorm_sup(
+  Data,
+  PRIORS = NULL,
+  input_params = NULL,
+  mode_version = FALSE,
+  mean_version = FALSE,
+  S = 20,
+  parallel = TRUE,
+  NCores = 5,
+  BB_SIZE = TRUE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{Data}{A matrix of single-cell expression where rows

@@ -1289,3 +1289,71 @@ NumericMatrix Main_mode_NB_Bay(NumericMatrix Data,
 
     return(Rcpp::wrap(Final_mat2));
 }
+
+
+//' @title Estimate size and mu for Negative Binomial distribution
+//' for each gene using MME method (Rcpp version)
+//'
+//' @description  Input raw data and return
+//' estimated size and mu for each gene using the MME method.
+//' @param Data A matrix of single-cell expression where rows
+//' are genes and columns are samples (cells). \code{Data}
+//' can be of class \code{SummarizedExperiment} (the
+//' assays slot contains the expression matrix and
+//' is named "Counts") or just matrix.
+//' @details mu and size are two parameters of the prior that
+//' need to be specified for each gene in bayNorm.
+//' They are parameters of negative binomial distribution.
+//' The variance is \eqn{mu + mu^2/size} in this parametrization.
+//'
+//' @return  List containing estimated mu and
+//' size for each gene.
+//'
+//' @examples
+//' data("EXAMPLE_DATA_list")
+//' #Should not run by the users, it is used in prior estimation.
+//' \dontrun{
+//' }
+//' @export
+// [[Rcpp::export]]
+
+
+List EstPrior_rcpp(NumericMatrix Data) {
+  arma::mat M = Rcpp::as<arma::mat>(Data);
+  int Nrows;
+  int Ncols;
+  
+  Nrows=Data.nrow();
+  Ncols=Data.ncol();
+  
+  double n=Ncols;
+  int dim;
+  int norm_type;
+  int iterr;
+  //double debugg=(n - 1) / n;
+  
+  arma::vec vaaa=var( M, norm_type=0, dim=1 );
+  arma::vec m = mean( M, dim=1 );
+  arma::vec v = (n - 1) / n * var( M, norm_type=0, dim=1 );
+  arma::vec mme_size = pow(m,2)/(v - m);
+  
+  uvec q1 = find(v <= m);
+  int ll=q1.n_elem;
+  
+  // for( iterr=0;iterr<ll;iterr++){
+  //   mme_size(q1(iterr))=NA_INTEGER;
+  //   
+  // }
+  
+  // mme_size(q1) = NA_INTEGER;
+  //mme_size.elem(q1)=NA_INTEGER;
+  
+  //M_ave_ori = m;
+  //size_est = mme_size;
+  
+  // Create list L from vector v1, v2
+  //List L = List::create(v1, v2);
+  List L = List::create(Named("MU") = m , _["SIZE"] = mme_size,_["v"]=v);
+  return(Rcpp::wrap(L));
+  //return(Rcpp::wrap(debugg));
+}

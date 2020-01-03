@@ -5,8 +5,16 @@
 \title{A wrapper function of \code{EstPrior}
 and \code{AdjustSIZE_fun}}
 \usage{
-Prior_fun(Data, BETA_vec, parallel = TRUE, NCores = 5, FIX_MU = TRUE,
-  GR = FALSE, BB_SIZE = TRUE, verbose = TRUE)
+Prior_fun(
+  Data,
+  BETA_vec,
+  parallel = TRUE,
+  NCores = 5,
+  FIX_MU = TRUE,
+  GR = FALSE,
+  BB_SIZE = TRUE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{Data}{A matrix of single-cell expression where rows

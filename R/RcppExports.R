@@ -50,3 +50,31 @@ Main_mode_NB_Bay <- function(Data, BETA_vec, size, mu, S, thres) {
     .Call('_bayNorm_Main_mode_NB_Bay', PACKAGE = 'bayNorm', Data, BETA_vec, size, mu, S, thres)
 }
 
+#' @title Estimate size and mu for Negative Binomial distribution
+#' for each gene using MME method (Rcpp version)
+#'
+#' @description  Input raw data and return
+#' estimated size and mu for each gene using the MME method.
+#' @param Data A matrix of single-cell expression where rows
+#' are genes and columns are samples (cells). \code{Data}
+#' can be of class \code{SummarizedExperiment} (the
+#' assays slot contains the expression matrix and
+#' is named "Counts") or just matrix.
+#' @details mu and size are two parameters of the prior that
+#' need to be specified for each gene in bayNorm.
+#' They are parameters of negative binomial distribution.
+#' The variance is \eqn{mu + mu^2/size} in this parametrization.
+#'
+#' @return  List containing estimated mu and
+#' size for each gene.
+#'
+#' @examples
+#' data("EXAMPLE_DATA_list")
+#' #Should not run by the users, it is used in prior estimation.
+#' \dontrun{
+#' }
+#' @export
+EstPrior_rcpp <- function(Data) {
+    .Call('_bayNorm_EstPrior_rcpp', PACKAGE = 'bayNorm', Data)
+}
+
