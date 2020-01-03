@@ -58,6 +58,7 @@ AdjustSIZE_fun <- function(BB_SIZE, MME_MU, MME_SIZE) {
 #' BETA_out<-BetaFun(Data=EXAMPLE_DATA_list$inputdata,
 #' MeanBETA=0.06)
 #'
+#' @importFrom Matrix colSums rowMeans
 #' @importFrom SingleCellExperiment SingleCellExperiment
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' assayNames assays colData
@@ -86,14 +87,21 @@ BetaFun <- function(Data, MeanBETA) {
         Data <- SummarizedExperiment::assays(Data)[["Counts"]]
     }
 
-    if (!(methods::is(Data, "SummarizedExperiment"))
-        & !(methods::is(Data, "SingleCellExperiment"))) {
-        Data <- data.matrix(Data)
+    #Allow sparse matrix
+    if(!is(Data, 'sparseMatrix')){
+        if (!(methods::is(Data, "SummarizedExperiment")) &
+            !(methods::is(Data, "SingleCellExperiment"))) {
+            Data <- as(as.matrix(Data), "dgCMatrix")
+        }
+        
     }
 
-
-    Normcount <- t(t(Data)/colSums(Data)) * mean(colSums(Data))
-    means <- rowMeans(Normcount)
+    xx<-Matrix::colSums(Data)
+    Normcount <- t_sp(t_sp(Data)/xx) * mean(xx)
+    
+    
+    
+    means <- Matrix::rowMeans(Normcount)
     lmeans <- log(means)
     med <- apply(log(Normcount + 1), 1, function(x) {
         median(x)
@@ -110,7 +118,7 @@ BetaFun <- function(Data, MeanBETA) {
     Select_ind <- intersect(ind, which(dropout < 0.35))
     Selected_genes <- rownames(Data)[Select_ind]
 
-    temppp <- colSums(Data[Select_ind, ])
+    temppp <- Matrix::colSums(Data[Select_ind, ])
     BETA <- temppp/mean(temppp) * MeanBETA
     if (length(which(BETA >= 1)) > 0) {
         BETA[BETA >= 1] = max(BETA[BETA < 1])
@@ -179,9 +187,12 @@ EstPrior <- function(Data,verbose = TRUE) {
         Data <- SummarizedExperiment::assays(Data)[["Counts"]]
     }
 
-    if (!(methods::is(Data, "SummarizedExperiment"))
-        & !(methods::is(Data, "SingleCellExperiment"))) {
-        Data <- data.matrix(Data)
+    if(!is(Data, 'sparseMatrix')){
+        if (!(methods::is(Data, "SummarizedExperiment")) &
+            !(methods::is(Data, "SingleCellExperiment"))) {
+            Data <- as(as.matrix(Data), "dgCMatrix")
+        }
+        
     }
 
 
@@ -237,6 +248,11 @@ EstPrior <- function(Data,verbose = TRUE) {
     size_est<-rout[[2]]
     names(M_ave_ori)<-rownames(Data)
     names(size_est)<-rownames(Data)
+    
+    if (verbose) {
+        message("Priors estimation based on MME method has completed.")
+    }
+    
     return(list(MU = M_ave_ori, SIZE = size_est))
 }
 #' @title   A wrapper function of \code{EstPrior}
@@ -299,6 +315,7 @@ EstPrior <- function(Data,verbose = TRUE) {
 #' @import foreach
 #' @importFrom SingleCellExperiment SingleCellExperiment
 #' @import doSNOW
+#' @importFrom Matrix colSums
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' assayNames assays colData
 #' @export
@@ -330,13 +347,16 @@ Prior_fun <- function(
         Data <- SummarizedExperiment::assays(Data)[["Counts"]]
     }
 
-    if (!(methods::is(Data, "SummarizedExperiment"))
-        & !(methods::is(Data, "SingleCellExperiment"))) {
-        Data <- data.matrix(Data)
+    if(!is(Data, 'sparseMatrix')){
+        if (!(methods::is(Data, "SummarizedExperiment")) &
+            !(methods::is(Data, "SingleCellExperiment"))) {
+            Data <- as(as.matrix(Data), "dgCMatrix")
+        }
+        
     }
 
     #normcount_N <- t(t(Data)/colSums(Data)) * mean(colSums(Data)/BETA_vec)
-    normcount_N <- t(t(Data)/BETA_vec)
+    normcount_N <- t_sp(t_sp(Data)/BETA_vec)
     
     
     
@@ -492,9 +512,12 @@ BB_Fun <- function(
         Data <- SummarizedExperiment::assays(Data)[["Counts"]]
     }
     
-    if (!(methods::is(Data, "SummarizedExperiment"))
-        & !(methods::is(Data, "SingleCellExperiment"))) {
-        Data <- data.matrix(Data)
+    if(!is(Data, 'sparseMatrix')){
+        if (!(methods::is(Data, "SummarizedExperiment")) &
+            !(methods::is(Data, "SingleCellExperiment"))) {
+            Data <- as(as.matrix(Data), "dgCMatrix")
+        }
+        
     }
     
     

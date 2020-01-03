@@ -73,12 +73,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // Main_NB_Bay
-NumericVector Main_NB_Bay(NumericMatrix Data, NumericVector BETA_vec, NumericVector size, Nullable<NumericVector> mu, int S, int thres);
+NumericVector Main_NB_Bay(arma::sp_mat Data, NumericVector BETA_vec, NumericVector size, Nullable<NumericVector> mu, int S, int thres);
 RcppExport SEXP _bayNorm_Main_NB_Bay(SEXP DataSEXP, SEXP BETA_vecSEXP, SEXP sizeSEXP, SEXP muSEXP, SEXP SSEXP, SEXP thresSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type Data(DataSEXP);
+    Rcpp::traits::input_parameter< arma::sp_mat >::type Data(DataSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type BETA_vec(BETA_vecSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type size(sizeSEXP);
     Rcpp::traits::input_parameter< Nullable<NumericVector> >::type mu(muSEXP);
@@ -89,12 +89,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // Main_mean_NB_Bay
-NumericMatrix Main_mean_NB_Bay(NumericMatrix Data, NumericVector BETA_vec, NumericVector size, Nullable<NumericVector> mu, int S, int thres);
+NumericMatrix Main_mean_NB_Bay(arma::sp_mat Data, NumericVector BETA_vec, NumericVector size, Nullable<NumericVector> mu, int S, int thres);
 RcppExport SEXP _bayNorm_Main_mean_NB_Bay(SEXP DataSEXP, SEXP BETA_vecSEXP, SEXP sizeSEXP, SEXP muSEXP, SEXP SSEXP, SEXP thresSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type Data(DataSEXP);
+    Rcpp::traits::input_parameter< arma::sp_mat >::type Data(DataSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type BETA_vec(BETA_vecSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type size(sizeSEXP);
     Rcpp::traits::input_parameter< Nullable<NumericVector> >::type mu(muSEXP);
@@ -105,12 +105,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // Main_mode_NB_Bay
-NumericMatrix Main_mode_NB_Bay(NumericMatrix Data, NumericVector BETA_vec, NumericVector size, Nullable<NumericVector> mu, int S, int thres);
+NumericMatrix Main_mode_NB_Bay(arma::sp_mat Data, NumericVector BETA_vec, NumericVector size, Nullable<NumericVector> mu, int S, int thres);
 RcppExport SEXP _bayNorm_Main_mode_NB_Bay(SEXP DataSEXP, SEXP BETA_vecSEXP, SEXP sizeSEXP, SEXP muSEXP, SEXP SSEXP, SEXP thresSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type Data(DataSEXP);
+    Rcpp::traits::input_parameter< arma::sp_mat >::type Data(DataSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type BETA_vec(BETA_vecSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type size(sizeSEXP);
     Rcpp::traits::input_parameter< Nullable<NumericVector> >::type mu(muSEXP);
@@ -121,13 +121,24 @@ BEGIN_RCPP
 END_RCPP
 }
 // EstPrior_rcpp
-List EstPrior_rcpp(NumericMatrix Data);
+List EstPrior_rcpp(arma::sp_mat Data);
 RcppExport SEXP _bayNorm_EstPrior_rcpp(SEXP DataSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type Data(DataSEXP);
+    Rcpp::traits::input_parameter< arma::sp_mat >::type Data(DataSEXP);
     rcpp_result_gen = Rcpp::wrap(EstPrior_rcpp(Data));
+    return rcpp_result_gen;
+END_RCPP
+}
+// t_sp
+arma::sp_mat t_sp(arma::sp_mat Data);
+RcppExport SEXP _bayNorm_t_sp(SEXP DataSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::sp_mat >::type Data(DataSEXP);
+    rcpp_result_gen = Rcpp::wrap(t_sp(Data));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -142,6 +153,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_bayNorm_Main_mean_NB_Bay", (DL_FUNC) &_bayNorm_Main_mean_NB_Bay, 6},
     {"_bayNorm_Main_mode_NB_Bay", (DL_FUNC) &_bayNorm_Main_mode_NB_Bay, 6},
     {"_bayNorm_EstPrior_rcpp", (DL_FUNC) &_bayNorm_EstPrior_rcpp, 1},
+    {"_bayNorm_t_sp", (DL_FUNC) &_bayNorm_t_sp, 1},
     {NULL, NULL, 0}
 };
 

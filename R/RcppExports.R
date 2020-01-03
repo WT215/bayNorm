@@ -78,3 +78,25 @@ EstPrior_rcpp <- function(Data) {
     .Call('_bayNorm_EstPrior_rcpp', PACKAGE = 'bayNorm', Data)
 }
 
+#' @title Transpose of sparse matrix
+#'
+#' @description  Transpose of sparse matrix
+#' @param Data A matrix of single-cell expression where rows
+#' are genes and columns are samples (cells). \code{Data}
+#' can be of class \code{SummarizedExperiment} (the
+#' assays slot contains the expression matrix and
+#' is named "Counts") or just matrix.
+#' @details Transpose of sparse matrix.
+#'
+#' @return  Transpose of sparse matrix.
+#'
+#' @examples
+#' data("EXAMPLE_DATA_list")
+#' #Should not run by the users, it is used in prior estimation.
+#' \dontrun{
+#' }
+#' @export
+t_sp <- function(Data) {
+    .Call('_bayNorm_t_sp', PACKAGE = 'bayNorm', Data)
+}
+

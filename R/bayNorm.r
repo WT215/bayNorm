@@ -107,6 +107,7 @@
 #' @import parallel
 #' @import foreach
 #' @import doSNOW
+#' @importFrom Matrix colSums
 #' @importFrom SingleCellExperiment SingleCellExperiment
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' assayNames assays colData
@@ -163,24 +164,31 @@ bayNorm <- function(
         }
         Data <- SummarizedExperiment::assays(Data)[["Counts"]]
     }
-    if (!(methods::is(Data, "SummarizedExperiment")) &
-        !(methods::is(Data, "SingleCellExperiment"))) {
-        Data <- data.matrix(Data)
+    
+    if(!is(Data, 'sparseMatrix')){
+        if (!(methods::is(Data, "SummarizedExperiment")) &
+            !(methods::is(Data, "SingleCellExperiment"))) {
+            Data <- as(as.matrix(Data), "dgCMatrix")
+        }
+        
     }
+    
 
-
+    
 
     if (is.null(BETA_vec)) {
         #BETA_vec <- BetaFun(Data=Data, MeanBETA=0.06)$BETA
-        BETA_vec <- colSums(Data)/mean(colSums(Data))*0.06
+        xx<-Matrix::colSums(Data)
+        BETA_vec <- xx/mean(xx)*0.06
         BETA_vec[BETA_vec<=0]<-min(BETA_vec[BETA_vec>0])
         BETA_vec[BETA_vec>=1]<-max(BETA_vec[BETA_vec<1])
     }
 
     # Some pre-checkings:
-    if (!is(Data,"matrix")) {
-        stop("Input data should be of class matrix")
-    }
+    # if (!is(Data,"matrix")) {
+    #     stop("Input data should be of class matrix")
+    # }
+    
     if (sum(duplicated(rownames(Data))) > 0) {
         warning("There are duplicated row names in Data")
     }
@@ -519,9 +527,12 @@ bayNorm_sup <- function(
         Data <- SummarizedExperiment::assays(Data)[["Counts"]]
     }
 
-    if (!(methods::is(Data, "SummarizedExperiment"))
-        & !(methods::is(Data, "SingleCellExperiment"))) {
-        Data <- data.matrix(Data)
+    if(!is(Data, 'sparseMatrix')){
+        if (!(methods::is(Data, "SummarizedExperiment")) &
+            !(methods::is(Data, "SingleCellExperiment"))) {
+            Data <- as(as.matrix(Data), "dgCMatrix")
+        }
+        
     }
 
 

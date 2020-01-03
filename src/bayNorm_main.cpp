@@ -1057,7 +1057,7 @@ double GradientFun_NBmu_1D(double SIZE,double MU,
 
 
 // [[Rcpp::export]]
-NumericVector Main_NB_Bay(NumericMatrix Data,
+NumericVector Main_NB_Bay(arma::sp_mat Data,
                        NumericVector BETA_vec,
                        NumericVector size,
                        Nullable<NumericVector> mu,
@@ -1066,7 +1066,8 @@ NumericVector Main_NB_Bay(NumericMatrix Data,
 
 
 
-    arma::mat M = Rcpp::as<arma::mat>(Data);
+    //arma::mat M = Rcpp::as<arma::mat>(Data);
+    arma::mat M(Data);
 
     arma::vec Beta = Rcpp::as<arma::vec>(BETA_vec);
     arma::vec M_ave;
@@ -1128,8 +1129,8 @@ NumericVector Main_NB_Bay(NumericMatrix Data,
 
 
     NumericVector Final_mat2=Rcpp::wrap(Final_mat);
-    Rcpp::rownames(Final_mat2) = Rcpp::rownames(Data);
-    Rcpp::colnames(Final_mat2) = Rcpp::colnames(Data);
+    // Rcpp::rownames(Final_mat2) = Rcpp::rownames(Data);
+    // Rcpp::colnames(Final_mat2) = Rcpp::colnames(Data);
 
     return(Rcpp::wrap(Final_mat2));
 }
@@ -1137,7 +1138,7 @@ NumericVector Main_NB_Bay(NumericMatrix Data,
 
 
 // [[Rcpp::export]]
-NumericMatrix Main_mean_NB_Bay(NumericMatrix Data,
+NumericMatrix Main_mean_NB_Bay(arma::sp_mat Data,
                             NumericVector BETA_vec,
                             NumericVector size,
                             Nullable<NumericVector> mu,
@@ -1146,7 +1147,8 @@ NumericMatrix Main_mean_NB_Bay(NumericMatrix Data,
 
 
 
-    arma::mat M = Rcpp::as<arma::mat>(Data);
+    //arma::mat M = Rcpp::as<arma::mat>(Data);
+    arma::mat M(Data);
 
     arma::vec Beta = Rcpp::as<arma::vec>(BETA_vec);
     arma::vec M_ave;
@@ -1206,8 +1208,8 @@ NumericMatrix Main_mean_NB_Bay(NumericMatrix Data,
 
 
     NumericVector Final_mat2=Rcpp::wrap(Final_mat);
-    Rcpp::rownames(Final_mat2) = Rcpp::rownames(Data);
-    Rcpp::colnames(Final_mat2) = Rcpp::colnames(Data);
+    //Rcpp::rownames(Final_mat2) = Rcpp::rownames(Data);
+    //Rcpp::colnames(Final_mat2) = Rcpp::colnames(Data);
 
     return(Rcpp::wrap(Final_mat2));
 }
@@ -1217,7 +1219,7 @@ NumericMatrix Main_mean_NB_Bay(NumericMatrix Data,
 
 
 // [[Rcpp::export]]
-NumericMatrix Main_mode_NB_Bay(NumericMatrix Data,
+NumericMatrix Main_mode_NB_Bay(arma::sp_mat Data,
                             NumericVector BETA_vec,
                             NumericVector size,
                             Nullable<NumericVector> mu,
@@ -1226,7 +1228,8 @@ NumericMatrix Main_mode_NB_Bay(NumericMatrix Data,
 
 
 
-    arma::mat M = Rcpp::as<arma::mat>(Data);
+    //arma::mat M = Rcpp::as<arma::mat>(Data);
+    arma::mat M(Data);
 
     arma::vec Beta = Rcpp::as<arma::vec>(BETA_vec);
     arma::vec M_ave;
@@ -1284,8 +1287,8 @@ NumericMatrix Main_mode_NB_Bay(NumericMatrix Data,
 
 
     NumericVector Final_mat2=Rcpp::wrap(Final_mat);
-    Rcpp::rownames(Final_mat2) = Rcpp::rownames(Data);
-    Rcpp::colnames(Final_mat2) = Rcpp::colnames(Data);
+    //Rcpp::rownames(Final_mat2) = Rcpp::rownames(Data);
+    //Rcpp::colnames(Final_mat2) = Rcpp::colnames(Data);
 
     return(Rcpp::wrap(Final_mat2));
 }
@@ -1318,18 +1321,20 @@ NumericMatrix Main_mode_NB_Bay(NumericMatrix Data,
 // [[Rcpp::export]]
 
 
-List EstPrior_rcpp(NumericMatrix Data) {
-  arma::mat M = Rcpp::as<arma::mat>(Data);
+List EstPrior_rcpp(arma::sp_mat Data) {
+  //arma::mat M = Rcpp::as<arma::mat>(Data);
+  
+  arma::mat M(Data);
+  
   int Nrows;
   int Ncols;
   
-  Nrows=Data.nrow();
-  Ncols=Data.ncol();
+  Nrows=size(M)(0);
+  Ncols=size(M)(1);
   
   double n=Ncols;
   int dim;
   int norm_type;
-  int iterr;
   //double debugg=(n - 1) / n;
   
   arma::vec vaaa=var( M, norm_type=0, dim=1 );
@@ -1337,23 +1342,38 @@ List EstPrior_rcpp(NumericMatrix Data) {
   arma::vec v = (n - 1) / n * var( M, norm_type=0, dim=1 );
   arma::vec mme_size = pow(m,2)/(v - m);
   
-  uvec q1 = find(v <= m);
-  int ll=q1.n_elem;
-  
-  // for( iterr=0;iterr<ll;iterr++){
-  //   mme_size(q1(iterr))=NA_INTEGER;
-  //   
-  // }
-  
-  // mme_size(q1) = NA_INTEGER;
-  //mme_size.elem(q1)=NA_INTEGER;
-  
-  //M_ave_ori = m;
-  //size_est = mme_size;
-  
-  // Create list L from vector v1, v2
-  //List L = List::create(v1, v2);
+  // uvec q1 = find(v <= m);
+  // int ll=q1.n_elem;
+
   List L = List::create(Named("MU") = m , _["SIZE"] = mme_size,_["v"]=v);
   return(Rcpp::wrap(L));
   //return(Rcpp::wrap(debugg));
+}
+
+//' @title Transpose of sparse matrix
+//'
+//' @description  Transpose of sparse matrix
+//' @param Data A matrix of single-cell expression where rows
+//' are genes and columns are samples (cells). \code{Data}
+//' can be of class \code{SummarizedExperiment} (the
+//' assays slot contains the expression matrix and
+//' is named "Counts") or just matrix.
+//' @details Transpose of sparse matrix.
+//'
+//' @return  Transpose of sparse matrix.
+//'
+//' @examples
+//' data("EXAMPLE_DATA_list")
+//' #Should not run by the users, it is used in prior estimation.
+//' \dontrun{
+//' }
+//' @export
+// [[Rcpp::export]]
+
+
+arma::sp_mat t_sp(arma::sp_mat Data) {
+  //arma::mat M = Rcpp::as<arma::mat>(Data);
+  arma::sp_mat t_mat=trans(Data);
+  
+  return(t_mat);
 }

@@ -76,6 +76,7 @@
 #' @import parallel
 #' @import foreach
 #' @import doSNOW
+#' @importFrom Matrix colSums
 #' @importFrom SingleCellExperiment SingleCellExperiment
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' assayNames assays colData
@@ -134,9 +135,12 @@ noisy_gene_detection<-function(
         Data <- SummarizedExperiment::assays(Data)[["Counts"]]
     }
 
-    if (!(methods::is(Data, "SummarizedExperiment"))
-        & !(methods::is(Data, "SingleCellExperiment"))) {
-        Data <- data.matrix(Data)
+    if(!is(Data, 'sparseMatrix')){
+        if (!(methods::is(Data, "SummarizedExperiment")) &
+            !(methods::is(Data, "SingleCellExperiment"))) {
+            Data <- as(as.matrix(Data), "dgCMatrix")
+        }
+        
     }
 
 
@@ -184,7 +188,8 @@ noisy_gene_detection<-function(
     }
 
 
-    bayNorm_C_array<-myFunc(Data=synthetic_out$N_c,
+    tempppdat<-as(as.matrix(synthetic_out$N_c), "dgCMatrix")
+    bayNorm_C_array<-myFunc(Data=tempppdat,
                             BETA_vec=synthetic_out$beta_c,size=size_c,
                             mu=mu_c,S=S,
                             thres=max(synthetic_out$N_c)*2)

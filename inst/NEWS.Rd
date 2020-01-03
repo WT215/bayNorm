@@ -80,3 +80,9 @@
 \item Add Rcpp EstPrior function.
     }
 }
+
+\section{Version 1.5.4}{
+\itemize{
+\item Support sparse matrix: dgTMatrix and dgCMatrix.
+    }
+}
