@@ -100,7 +100,7 @@
     }
 }
 
-\section{Version 1.5.6}{
+\section{Version 1.5.7}{
 \itemize{
 \item Add useful function file.
 \item Use Rcpp EstPrior function.
