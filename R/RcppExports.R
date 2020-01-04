@@ -100,3 +100,25 @@ t_sp <- function(Data) {
     .Call('_bayNorm_t_sp', PACKAGE = 'bayNorm', Data)
 }
 
+#' @title Rcpp version: as.matrix
+#'
+#' @description  Rcpp version: as.matrix
+#' @param rp vector
+#' @param cp vector
+#' @param z vector
+#' @param nrows nrows
+#' @param ncols ncols
+#' @details Rcpp version: as.matrix
+#'
+#' @return  Matrix object in R.
+#'
+#' @examples
+#' data("EXAMPLE_DATA_list")
+#' #Should not run by the users, it is used in prior estimation.
+#' \dontrun{
+#' }
+#' @export
+asMatrix <- function(rp, cp, z, nrows, ncols) {
+    .Call('_bayNorm_asMatrix', PACKAGE = 'bayNorm', rp, cp, z, nrows, ncols)
+}
+

@@ -1058,7 +1058,7 @@ double GradientFun_NBmu_1D(double SIZE,double MU,
 
 
 // [[Rcpp::export]]
-NumericVector Main_NB_Bay(arma::sp_mat Data,
+NumericVector Main_NB_Bay(NumericMatrix Data,
                        NumericVector BETA_vec,
                        NumericVector size,
                        Nullable<NumericVector> mu,
@@ -1067,8 +1067,8 @@ NumericVector Main_NB_Bay(arma::sp_mat Data,
 
 
 
-    //arma::mat M = Rcpp::as<arma::mat>(Data);
-    arma::mat M(Data);
+    arma::mat M = Rcpp::as<arma::mat>(Data);
+    //arma::mat M(Data);
 
     arma::vec Beta = Rcpp::as<arma::vec>(BETA_vec);
     arma::vec M_ave;
@@ -1139,7 +1139,7 @@ NumericVector Main_NB_Bay(arma::sp_mat Data,
 
 
 // [[Rcpp::export]]
-NumericMatrix Main_mean_NB_Bay(arma::sp_mat Data,
+NumericMatrix Main_mean_NB_Bay(NumericMatrix Data,
                             NumericVector BETA_vec,
                             NumericVector size,
                             Nullable<NumericVector> mu,
@@ -1148,8 +1148,8 @@ NumericMatrix Main_mean_NB_Bay(arma::sp_mat Data,
 
 
 
-    //arma::mat M = Rcpp::as<arma::mat>(Data);
-    arma::mat M(Data);
+    arma::mat M = Rcpp::as<arma::mat>(Data);
+    //arma::mat M(Data);
 
     arma::vec Beta = Rcpp::as<arma::vec>(BETA_vec);
     arma::vec M_ave;
@@ -1220,7 +1220,7 @@ NumericMatrix Main_mean_NB_Bay(arma::sp_mat Data,
 
 
 // [[Rcpp::export]]
-NumericMatrix Main_mode_NB_Bay(arma::sp_mat Data,
+NumericMatrix Main_mode_NB_Bay(NumericMatrix Data,
                             NumericVector BETA_vec,
                             NumericVector size,
                             Nullable<NumericVector> mu,
@@ -1229,8 +1229,8 @@ NumericMatrix Main_mode_NB_Bay(arma::sp_mat Data,
 
 
 
-    //arma::mat M = Rcpp::as<arma::mat>(Data);
-    arma::mat M(Data);
+    arma::mat M = Rcpp::as<arma::mat>(Data);
+    //arma::mat M(Data);
 
     arma::vec Beta = Rcpp::as<arma::vec>(BETA_vec);
     arma::vec M_ave;
@@ -1377,4 +1377,41 @@ arma::sp_mat t_sp(arma::sp_mat Data) {
   arma::sp_mat t_mat=trans(Data);
   
   return(t_mat);
+}
+
+
+//' @title Rcpp version: as.matrix
+//'
+//' @description  Rcpp version: as.matrix
+//' @param rp vector
+//' @param cp vector
+//' @param z vector
+//' @param nrows nrows
+//' @param ncols ncols
+//' @details Rcpp version: as.matrix
+//'
+//' @return  Matrix object in R.
+//'
+//' @examples
+//' data("EXAMPLE_DATA_list")
+//' #Should not run by the users, it is used in prior estimation.
+//' \dontrun{
+//' }
+//' @export
+// [[Rcpp::export]]
+IntegerMatrix asMatrix(NumericVector rp,
+                       NumericVector cp,
+                       NumericVector z,
+                       int nrows,
+                       int ncols){
+  
+  int k = z.size() ;
+  
+  IntegerMatrix  mat(nrows, ncols);
+  
+  for (int i = 0; i < k; i++){
+    mat(rp[i],cp[i]) = z[i];
+  }
+  
+  return mat;
 }

@@ -135,12 +135,20 @@ noisy_gene_detection<-function(
         Data <- SummarizedExperiment::assays(Data)[["Counts"]]
     }
 
-    if(!is(Data, 'sparseMatrix')){
+    #Set matrix as object for input data
+    if(is(Data, 'sparseMatrix')){
+        if(!is(Data, 'dgCMatrix')){
+            Data <- as(as.matrix(Data), "dgCMatrix")
+            Data<-as_matrix(Data)
+        } else{
+            Data<-as_matrix(Data)
+        }
+    } else{
+        
         if (!(methods::is(Data, "SummarizedExperiment")) &
             !(methods::is(Data, "SingleCellExperiment"))) {
-            Data <- as(as.matrix(Data), "dgCMatrix")
+            Data <- as.matrix(Data)
         }
-        
     }
 
 
@@ -188,7 +196,8 @@ noisy_gene_detection<-function(
     }
 
 
-    tempppdat<-as(as.matrix(synthetic_out$N_c), "dgCMatrix")
+    #tempppdat<-as(as.matrix(synthetic_out$N_c), "dgCMatrix")
+    tempppdat<-synthetic_out$N_c
     bayNorm_C_array<-myFunc(Data=tempppdat,
                             BETA_vec=synthetic_out$beta_c,size=size_c,
                             mu=mu_c,S=S,

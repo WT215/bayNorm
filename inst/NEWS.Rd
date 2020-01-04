@@ -93,3 +93,9 @@
 \item Modify EstPrior, using rowSums from Matrix package to calculated variance. Hence no need for Rcpp EstPrior function.
     }
 }
+
+\section{Version 1.5.6}{
+\itemize{
+\item as_matrix for transforming sparse matrix to matrix in R efficiently than as.matrix.
+    }
+}

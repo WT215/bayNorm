@@ -32,6 +32,33 @@ AdjustSIZE_fun <- function(BB_SIZE, MME_MU, MME_SIZE) {
     return(MME_SIZE_adjust)
 }
 
+#' @title Rcpp version's as.matrix 
+#'
+#' @description  Transform sparse matrix to matrix.
+#'
+#' @param mat Sparse matrix.
+#' @return Matrix.
+#'
+#' @examples
+#' aa<-matrix(seq(1,6),nrow=2,ncol=3)
+#' qq<-as(as.matrix(aa), "dgCMatrix")
+#' all.equal(unname(as_matrix(qq)),unname(as.matrix(qq)))
+#' @import stats
+#'
+#' @export
+as_matrix <- function(mat){
+    
+    row_pos <- mat@i
+    col_pos <- findInterval(seq(mat@x)-1,mat@p[-1])
+    
+    tmp <- asMatrix(rp = row_pos, cp = col_pos, z = mat@x,
+                    nrows =  mat@Dim[1], ncols = mat@Dim[2])
+    
+    row.names(tmp) <- mat@Dimnames[[1]]
+    colnames(tmp) <- mat@Dimnames[[2]]
+    return(tmp)
+}
+
 
 #' @title Estimate capture efficiency for cells
 #'
@@ -87,14 +114,24 @@ BetaFun <- function(Data, MeanBETA) {
         Data <- SummarizedExperiment::assays(Data)[["Counts"]]
     }
 
-    #Allow sparse matrix
-    if(!is(Data, 'sparseMatrix')){
-        if (!(methods::is(Data, "SummarizedExperiment")) &
-            !(methods::is(Data, "SingleCellExperiment"))) {
-            Data <- as(as.matrix(Data), "dgCMatrix")
+    #Set matrix as object for input data
+    if(!is(Data, 'matrix')){
+        if(is(Data, 'sparseMatrix')){
+            if(!is(Data, 'dgCMatrix')){
+                Data <- as(as.matrix(Data), "dgCMatrix")
+                Data<-as_matrix(Data)
+            } else{
+                Data<-as_matrix(Data)
+            }
+        } else{
+            
+            if (!(methods::is(Data, "SummarizedExperiment")) &
+                !(methods::is(Data, "SingleCellExperiment"))) {
+                Data <- as.matrix(Data)
+            }
         }
-        
     }
+    
 
     xx<-Matrix::colSums(Data)
     #Normcount <- t_sp(t_sp(Data)/xx) * mean(xx)
@@ -188,13 +225,24 @@ EstPrior <- function(Data,verbose = TRUE) {
         Data <- SummarizedExperiment::assays(Data)[["Counts"]]
     }
 
-    if(!is(Data, 'sparseMatrix')){
-        if (!(methods::is(Data, "SummarizedExperiment")) &
-            !(methods::is(Data, "SingleCellExperiment"))) {
-            Data <- as(as.matrix(Data), "dgCMatrix")
+    #Set matrix as object for input data
+    if(!is(Data, 'matrix')){
+        if(is(Data, 'sparseMatrix')){
+            if(!is(Data, 'dgCMatrix')){
+                Data <- as(as.matrix(Data), "dgCMatrix")
+                Data<-as_matrix(Data)
+            } else{
+                Data<-as_matrix(Data)
+            }
+        } else{
+            
+            if (!(methods::is(Data, "SummarizedExperiment")) &
+                !(methods::is(Data, "SingleCellExperiment"))) {
+                Data <- as.matrix(Data)
+            }
         }
-        
     }
+    
 
 
 
@@ -353,13 +401,24 @@ Prior_fun <- function(
         Data <- SummarizedExperiment::assays(Data)[["Counts"]]
     }
 
-    if(!is(Data, 'sparseMatrix')){
-        if (!(methods::is(Data, "SummarizedExperiment")) &
-            !(methods::is(Data, "SingleCellExperiment"))) {
-            Data <- as(as.matrix(Data), "dgCMatrix")
+    #Set matrix as object for input data
+    if(!is(Data, 'matrix')){
+        if(is(Data, 'sparseMatrix')){
+            if(!is(Data, 'dgCMatrix')){
+                Data <- as(as.matrix(Data), "dgCMatrix")
+                Data<-as_matrix(Data)
+            } else{
+                Data<-as_matrix(Data)
+            }
+        } else{
+            
+            if (!(methods::is(Data, "SummarizedExperiment")) &
+                !(methods::is(Data, "SingleCellExperiment"))) {
+                Data <- as.matrix(Data)
+            }
         }
-        
     }
+    
 
     #normcount_N <- t(t(Data)/colSums(Data)) * mean(colSums(Data)/BETA_vec)
     #normcount_N <- t_sp(t_sp(Data)/BETA_vec)
@@ -527,10 +586,24 @@ BB_Fun <- function(
     # }
     
     #matrix object: faster access to the row than dgCMatrix
-    if (!(methods::is(Data, "SummarizedExperiment")) &
-        !(methods::is(Data, "SingleCellExperiment"))) {
-        Data <- as.matrix(Data)
+    #Set matrix as object for input data
+    if(!is(Data, 'matrix')){
+        if(is(Data, 'sparseMatrix')){
+            if(!is(Data, 'dgCMatrix')){
+                Data <- as(as.matrix(Data), "dgCMatrix")
+                Data<-as_matrix(Data)
+            } else{
+                Data<-as_matrix(Data)
+            }
+        } else{
+            
+            if (!(methods::is(Data, "SummarizedExperiment")) &
+                !(methods::is(Data, "SingleCellExperiment"))) {
+                Data <- as.matrix(Data)
+            }
+        }
     }
+
 
     Geneind <- NULL
     

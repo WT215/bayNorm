@@ -165,13 +165,27 @@ bayNorm <- function(
         Data <- SummarizedExperiment::assays(Data)[["Counts"]]
     }
     
-    if(!is(Data, 'sparseMatrix')){
-        if (!(methods::is(Data, "SummarizedExperiment")) &
-            !(methods::is(Data, "SingleCellExperiment"))) {
-            Data <- as(as.matrix(Data), "dgCMatrix")
+    if(!is(Data, 'matrix')){
+        if(is(Data, 'sparseMatrix')){
+            if(!is(Data, 'dgCMatrix')){
+                Data <- as(as.matrix(Data), "dgCMatrix")
+                Data<-as_matrix(Data)
+            } else{
+                Data<-as_matrix(Data)
+            }
+        } else{
+            
+            if (!(methods::is(Data, "SummarizedExperiment")) &
+                !(methods::is(Data, "SingleCellExperiment"))) {
+                Data <- as.matrix(Data)
+            }
         }
-        
     }
+    
+    
+    
+    
+    
     
 
     
@@ -527,13 +541,23 @@ bayNorm_sup <- function(
         Data <- SummarizedExperiment::assays(Data)[["Counts"]]
     }
 
-    if(!is(Data, 'sparseMatrix')){
-        if (!(methods::is(Data, "SummarizedExperiment")) &
-            !(methods::is(Data, "SingleCellExperiment"))) {
-            Data <- as(as.matrix(Data), "dgCMatrix")
+    if(!is(Data, 'matrix')){
+        if(is(Data, 'sparseMatrix')){
+            if(!is(Data, 'dgCMatrix')){
+                Data <- as(as.matrix(Data), "dgCMatrix")
+                Data<-as_matrix(Data)
+            } else{
+                Data<-as_matrix(Data)
+            }
+        } else{
+            
+            if (!(methods::is(Data, "SummarizedExperiment")) &
+                !(methods::is(Data, "SingleCellExperiment"))) {
+                Data <- as.matrix(Data)
+            }
         }
-        
     }
+    
 
 
 
@@ -555,6 +579,8 @@ bayNorm_sup <- function(
         } else {
             SIZE_input = PRIORS$MME_prior$MME_SIZE
         }
+        
+        
 
         Bay_out <- myFunc(
             Data = Data_sr,
