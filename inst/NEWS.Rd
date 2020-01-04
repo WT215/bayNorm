@@ -106,3 +106,9 @@
 \item Use Rcpp EstPrior function.
     }
 }
+
+\section{Version 1.5.8}{
+\itemize{
+\item Change back to rowSums instead of using Rcpp EstPrior function.
+    }
+}
