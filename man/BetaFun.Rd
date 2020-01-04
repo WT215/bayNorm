@@ -33,5 +33,4 @@ drop-out are excluded.
 data('EXAMPLE_DATA_list')
 BETA_out<-BetaFun(Data=EXAMPLE_DATA_list$inputdata,
 MeanBETA=0.06)
-
 }

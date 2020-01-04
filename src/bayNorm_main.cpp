@@ -6,6 +6,7 @@
 #include <progress_bar.hpp>
 // [[Rcpp::depends(RcppArmadillo)]]
 // [[Rcpp::depends(RcppProgress)]]
+// [[Rcpp::plugins(cpp11)]] 
 
 
 using namespace Rcpp;

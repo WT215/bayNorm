@@ -86,3 +86,10 @@
 \item Support sparse matrix: dgTMatrix and dgCMatrix.
     }
 }
+
+\section{Version 1.5.5}{
+\itemize{
+\item Make BB_fun faster: speed up the access of row of dgCMatrix object.
+\item Modify EstPrior, using rowSums from Matrix package to calculated variance. Hence no need for Rcpp EstPrior function.
+    }
+}

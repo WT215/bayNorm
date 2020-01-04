@@ -57,14 +57,14 @@ AdjustSIZE_fun <- function(BB_SIZE, MME_MU, MME_SIZE) {
 #' data('EXAMPLE_DATA_list')
 #' BETA_out<-BetaFun(Data=EXAMPLE_DATA_list$inputdata,
 #' MeanBETA=0.06)
-#'
-#' @importFrom Matrix colSums rowMeans
+#' @importFrom Matrix colSums rowMeans t
 #' @importFrom SingleCellExperiment SingleCellExperiment
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' assayNames assays colData
 #' @export
 BetaFun <- function(Data, MeanBETA) {
-
+##@ #importFrom Matrix colSums rowMeans
+    
     if (methods::is(Data, "SummarizedExperiment")
         | methods::is(Data, "SingleCellExperiment")) {
         if (
@@ -97,8 +97,8 @@ BetaFun <- function(Data, MeanBETA) {
     }
 
     xx<-Matrix::colSums(Data)
-    Normcount <- t_sp(t_sp(Data)/xx) * mean(xx)
-    
+    #Normcount <- t_sp(t_sp(Data)/xx) * mean(xx)
+    Normcount <- t(t(Data)/xx) * mean(xx)
     
     
     means <- Matrix::rowMeans(Normcount)
@@ -159,6 +159,7 @@ BetaFun <- function(Data, MeanBETA) {
 #' verbose=TRUE)
 #' @import  fitdistrplus
 #' @import BiocParallel
+#' @importFrom Matrix colSums rowSums rowMeans t
 #' @importFrom SingleCellExperiment SingleCellExperiment
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' assayNames assays colData
@@ -220,16 +221,36 @@ EstPrior <- function(Data,verbose = TRUE) {
     # size_est <- CoefDat[, 1]
     
     #Vectorization make computation faster
-    # n=dim(Data)[2];
-    # m = rowMeans(Data)
-    # v = (n - 1) / n * apply(Data,1,var);
-    # mme_size= m^2/(v - m);
-    # mme_size[v<=m] =NaN;
+    n=dim(Data)[2];
+    m = Matrix::rowMeans(Data)
+    #v = (n - 1) / n * apply(Data,1,var);
+    v = (n - 1) / n * (Matrix::rowSums((Data-m)^2)/(n-1));
+    mme_size= m^2/(v - m);
+    mme_size[v<=m] =NaN;
+
+    M_ave_ori <- m
+    size_est <- mme_size
+
+
+    names(M_ave_ori)<-rownames(Data)
+    names(size_est)<-rownames(Data)
+
+    if (verbose) {
+        message("Priors estimation based on MME method has completed.")
+    }
+
+    return(list(MU = M_ave_ori, SIZE = size_est))
+    
+    
+    #Rcpp version
+    # rout<-EstPrior_rcpp(Data=Data)
+    # rout[[1]]<-as.vector(rout[[1]])
+    # rout[[2]]<-as.vector(rout[[2]])
+    # rout[[3]]<-as.vector(rout[[3]])
+    # rout[[2]][rout[[3]]<=rout[[1]]] =NaN;
     # 
-    # M_ave_ori <- m
-    # size_est <- mme_size
-    # 
-    # 
+    # M_ave_ori<-rout[[1]]
+    # size_est<-rout[[2]]
     # names(M_ave_ori)<-rownames(Data)
     # names(size_est)<-rownames(Data)
     # 
@@ -238,22 +259,6 @@ EstPrior <- function(Data,verbose = TRUE) {
     # }
     # 
     # return(list(MU = M_ave_ori, SIZE = size_est))
-    rout<-EstPrior_rcpp(Data=Data)
-    rout[[1]]<-as.vector(rout[[1]])
-    rout[[2]]<-as.vector(rout[[2]])
-    rout[[3]]<-as.vector(rout[[3]])
-    rout[[2]][rout[[3]]<=rout[[1]]] =NaN;
-    
-    M_ave_ori<-rout[[1]]
-    size_est<-rout[[2]]
-    names(M_ave_ori)<-rownames(Data)
-    names(size_est)<-rownames(Data)
-    
-    if (verbose) {
-        message("Priors estimation based on MME method has completed.")
-    }
-    
-    return(list(MU = M_ave_ori, SIZE = size_est))
 }
 #' @title   A wrapper function of \code{EstPrior}
 #' and \code{AdjustSIZE_fun}
@@ -315,12 +320,13 @@ EstPrior <- function(Data,verbose = TRUE) {
 #' @import foreach
 #' @importFrom SingleCellExperiment SingleCellExperiment
 #' @import doSNOW
-#' @importFrom Matrix colSums
+#' @importFrom Matrix colSums rowSums t
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' assayNames assays colData
 #' @export
 #'
 Prior_fun <- function(
+    ##@ importFrom Matrix colSums
     Data, BETA_vec, parallel = TRUE,
     NCores = 5, FIX_MU = TRUE,GR = FALSE,
     BB_SIZE = TRUE, verbose = TRUE) {
@@ -356,8 +362,8 @@ Prior_fun <- function(
     }
 
     #normcount_N <- t(t(Data)/colSums(Data)) * mean(colSums(Data)/BETA_vec)
-    normcount_N <- t_sp(t_sp(Data)/BETA_vec)
-    
+    #normcount_N <- t_sp(t_sp(Data)/BETA_vec)
+    normcount_N <- t(t(Data)/BETA_vec)
     
     
     Priors <- EstPrior(normcount_N, verbose = verbose)
@@ -512,15 +518,20 @@ BB_Fun <- function(
         Data <- SummarizedExperiment::assays(Data)[["Counts"]]
     }
     
-    if(!is(Data, 'sparseMatrix')){
-        if (!(methods::is(Data, "SummarizedExperiment")) &
-            !(methods::is(Data, "SingleCellExperiment"))) {
-            Data <- as(as.matrix(Data), "dgCMatrix")
-        }
-        
+    # if(!is(Data, 'sparseMatrix')){
+    #     if (!(methods::is(Data, "SummarizedExperiment")) &
+    #         !(methods::is(Data, "SingleCellExperiment"))) {
+    #         Data <- as(as.matrix(Data), "dgCMatrix")
+    #     }
+    #     
+    # }
+    
+    #matrix object: faster access to the row than dgCMatrix
+    if (!(methods::is(Data, "SummarizedExperiment")) &
+        !(methods::is(Data, "SingleCellExperiment"))) {
+        Data <- as.matrix(Data)
     }
-    
-    
+
     Geneind <- NULL
     
     if(!GR){
