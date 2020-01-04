@@ -3,6 +3,7 @@
 export(AdjustSIZE_fun)
 export(BB_Fun)
 export(BetaFun)
+export(Check_input)
 export(DownSampling)
 export(EstPrior)
 export(EstPrior_rcpp)

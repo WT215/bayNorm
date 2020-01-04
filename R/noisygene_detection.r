@@ -136,20 +136,7 @@ noisy_gene_detection<-function(
     }
 
     #Set matrix as object for input data
-    if(is(Data, 'sparseMatrix')){
-        if(!is(Data, 'dgCMatrix')){
-            Data <- as(as.matrix(Data), "dgCMatrix")
-            Data<-as_matrix(Data)
-        } else{
-            Data<-as_matrix(Data)
-        }
-    } else{
-        
-        if (!(methods::is(Data, "SummarizedExperiment")) &
-            !(methods::is(Data, "SingleCellExperiment"))) {
-            Data <- as.matrix(Data)
-        }
-    }
+    Data<-Check_input(Data)
 
 
     message("Apply bayNorm on the real cell datasets.")

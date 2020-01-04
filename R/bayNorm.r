@@ -165,22 +165,9 @@ bayNorm <- function(
         Data <- SummarizedExperiment::assays(Data)[["Counts"]]
     }
     
-    if(!is(Data, 'matrix')){
-        if(is(Data, 'sparseMatrix')){
-            if(!is(Data, 'dgCMatrix')){
-                Data <- as(as.matrix(Data), "dgCMatrix")
-                Data<-as_matrix(Data)
-            } else{
-                Data<-as_matrix(Data)
-            }
-        } else{
-            
-            if (!(methods::is(Data, "SummarizedExperiment")) &
-                !(methods::is(Data, "SingleCellExperiment"))) {
-                Data <- as.matrix(Data)
-            }
-        }
-    }
+
+    
+    Data<-Check_input(Data)
     
     
     
@@ -541,22 +528,7 @@ bayNorm_sup <- function(
         Data <- SummarizedExperiment::assays(Data)[["Counts"]]
     }
 
-    if(!is(Data, 'matrix')){
-        if(is(Data, 'sparseMatrix')){
-            if(!is(Data, 'dgCMatrix')){
-                Data <- as(as.matrix(Data), "dgCMatrix")
-                Data<-as_matrix(Data)
-            } else{
-                Data<-as_matrix(Data)
-            }
-        } else{
-            
-            if (!(methods::is(Data, "SummarizedExperiment")) &
-                !(methods::is(Data, "SingleCellExperiment"))) {
-                Data <- as.matrix(Data)
-            }
-        }
-    }
+    Data<-Check_input(Data)
     
 
 

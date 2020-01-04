@@ -1321,11 +1321,9 @@ NumericMatrix Main_mode_NB_Bay(NumericMatrix Data,
 //' @export
 // [[Rcpp::export]]
 
-
-List EstPrior_rcpp(arma::sp_mat Data) {
-  //arma::mat M = Rcpp::as<arma::mat>(Data);
-  
-  arma::mat M(Data);
+List EstPrior_rcpp(NumericMatrix Data) {
+  arma::mat M = Rcpp::as<arma::mat>(Data);
+  //arma::mat M(Data);
   
   int Nrows;
   int Ncols;

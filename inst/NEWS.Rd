@@ -99,3 +99,10 @@
 \item as_matrix for transforming sparse matrix to matrix in R efficiently than as.matrix.
     }
 }
+
+\section{Version 1.5.6}{
+\itemize{
+\item Add useful function file.
+\item Use Rcpp EstPrior function.
+    }
+}

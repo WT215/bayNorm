@@ -121,12 +121,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // EstPrior_rcpp
-List EstPrior_rcpp(arma::sp_mat Data);
+List EstPrior_rcpp(NumericMatrix Data);
 RcppExport SEXP _bayNorm_EstPrior_rcpp(SEXP DataSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::sp_mat >::type Data(DataSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type Data(DataSEXP);
     rcpp_result_gen = Rcpp::wrap(EstPrior_rcpp(Data));
     return rcpp_result_gen;
 END_RCPP
