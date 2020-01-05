@@ -107,6 +107,7 @@
 #' @import parallel
 #' @import foreach
 #' @import doSNOW
+#' @importFrom Matrix colSums
 #' @importFrom SingleCellExperiment SingleCellExperiment
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' assayNames assays colData
@@ -148,39 +149,33 @@ bayNorm <- function(
                        BB_SIZE=BB_SIZE,
                        GR=GR)
 
-    # Adapted from SCnorm
-    if (methods::is(Data, "SummarizedExperiment") | methods::is(Data, "SingleCellExperiment")) {
-        if (is.null(SummarizedExperiment::assayNames(Data))
-            || SummarizedExperiment::assayNames(Data)[1] !=
-            "Counts") {
-            message("Renaming the first element in assays(Data) to 'Counts'")
-            SummarizedExperiment::assayNames(Data)[1] <- "Counts"
-            if (
-                is.null(
-                    colnames(SummarizedExperiment::assays(Data)[["Counts"]]))) {
-                stop("Must supply sample/cell names!")
-            }
-        }
-        Data <- SummarizedExperiment::assays(Data)[["Counts"]]
-    }
-    if (!(methods::is(Data, "SummarizedExperiment")) &
-        !(methods::is(Data, "SingleCellExperiment"))) {
-        Data <- data.matrix(Data)
-    }
 
+    
 
+    
+    Data<-Check_input(Data)
+    
+    
+    
+    
+    
+    
+
+    
 
     if (is.null(BETA_vec)) {
         #BETA_vec <- BetaFun(Data=Data, MeanBETA=0.06)$BETA
-        BETA_vec <- colSums(Data)/mean(colSums(Data))*0.06
+        xx<-Matrix::colSums(Data)
+        BETA_vec <- xx/mean(xx)*0.06
         BETA_vec[BETA_vec<=0]<-min(BETA_vec[BETA_vec>0])
         BETA_vec[BETA_vec>=1]<-max(BETA_vec[BETA_vec<1])
     }
 
     # Some pre-checkings:
-    if (!is(Data,"matrix")) {
-        stop("Input data should be of class matrix")
-    }
+    # if (!is(Data,"matrix")) {
+    #     stop("Input data should be of class matrix")
+    # }
+    
     if (sum(duplicated(rownames(Data))) > 0) {
         warning("There are duplicated row names in Data")
     }
@@ -494,35 +489,8 @@ bayNorm_sup <- function(
              Try to run bayNorm with BB_SIZE=TRUE.")
     }
 
-
-
-    if (methods::is(Data, "SummarizedExperiment")
-        | methods::is(Data, "SingleCellExperiment")) {
-
-        if (
-            is.null(
-                SummarizedExperiment::assayNames(Data)
-            )
-            || SummarizedExperiment::assayNames(Data)[1] !=
-            "Counts") {
-            message("Renaming the
-                    firstelement in
-                    assays(Data) to 'Counts'")
-            SummarizedExperiment::assayNames(Data)[1] <- "Counts"
-
-            if (is.null(colnames(
-                SummarizedExperiment::assays(Data)[["Counts"]]))) {
-                stop("Must supply sample/cell names!")
-            }
-
-        }
-        Data <- SummarizedExperiment::assays(Data)[["Counts"]]
-    }
-
-    if (!(methods::is(Data, "SummarizedExperiment"))
-        & !(methods::is(Data, "SingleCellExperiment"))) {
-        Data <- data.matrix(Data)
-    }
+    Data<-Check_input(Data)
+    
 
 
 
@@ -544,6 +512,8 @@ bayNorm_sup <- function(
         } else {
             SIZE_input = PRIORS$MME_prior$MME_SIZE
         }
+        
+        
 
         Bay_out <- myFunc(
             Data = Data_sr,

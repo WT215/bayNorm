@@ -76,6 +76,7 @@
 #' @import parallel
 #' @import foreach
 #' @import doSNOW
+#' @importFrom Matrix colSums
 #' @importFrom SingleCellExperiment SingleCellExperiment
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' assayNames assays colData
@@ -111,33 +112,8 @@ noisy_gene_detection<-function(
 
 
 
-    if (methods::is(Data, "SummarizedExperiment")
-        | methods::is(Data, "SingleCellExperiment")) {
-
-        if (
-            is.null(
-                SummarizedExperiment::assayNames(Data)
-            )
-            || SummarizedExperiment::assayNames(Data)[1] !=
-            "Counts") {
-            message("Renaming the
-                    firstelement in
-                    assays(Data) to 'Counts'")
-            SummarizedExperiment::assayNames(Data)[1] <- "Counts"
-
-            if (is.null(colnames(
-                SummarizedExperiment::assays(Data)[["Counts"]]))) {
-                stop("Must supply sample/cell names!")
-            }
-
-        }
-        Data <- SummarizedExperiment::assays(Data)[["Counts"]]
-    }
-
-    if (!(methods::is(Data, "SummarizedExperiment"))
-        & !(methods::is(Data, "SingleCellExperiment"))) {
-        Data <- data.matrix(Data)
-    }
+    #Set matrix as object for input data
+    Data<-Check_input(Data)
 
 
     message("Apply bayNorm on the real cell datasets.")
@@ -184,7 +160,9 @@ noisy_gene_detection<-function(
     }
 
 
-    bayNorm_C_array<-myFunc(Data=synthetic_out$N_c,
+    #tempppdat<-as(as.matrix(synthetic_out$N_c), "dgCMatrix")
+    tempppdat<-Check_input(synthetic_out$N_c)
+    bayNorm_C_array<-myFunc(Data=tempppdat,
                             BETA_vec=synthetic_out$beta_c,size=size_c,
                             mu=mu_c,S=S,
                             thres=max(synthetic_out$N_c)*2)
