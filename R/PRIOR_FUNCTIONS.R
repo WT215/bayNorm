@@ -177,36 +177,17 @@ EstPrior <- function(Data,verbose = TRUE) {
     # size_est <- CoefDat[, 1]
     
     #Vectorization make computation faster
-    n=dim(Data)[2];
-    m = Matrix::rowMeans(Data)
-    #v = (n - 1) / n * apply(Data,1,var);
-    v = (n - 1) / n * (Matrix::rowSums((Data-m)^2)/(n-1));
-    mme_size= m^2/(v - m);
-    mme_size[v<=m] =NaN;
-
-    M_ave_ori <- m
-    size_est <- mme_size
-
-
-    names(M_ave_ori)<-rownames(Data)
-    names(size_est)<-rownames(Data)
-
-    if (verbose) {
-        message("Priors estimation based on MME method has completed.")
-    }
-
-    return(list(MU = M_ave_ori, SIZE = size_est))
-    
-    
-    #Rcpp version
-    # rout<-EstPrior_rcpp(Data=Data)
-    # rout[[1]]<-as.vector(rout[[1]])
-    # rout[[2]]<-as.vector(rout[[2]])
-    # rout[[3]]<-as.vector(rout[[3]])
-    # rout[[2]][rout[[3]]<=rout[[1]]] =NaN;
+    # n=dim(Data)[2];
+    # m = Matrix::rowMeans(Data)
+    # #v = (n - 1) / n * apply(Data,1,var);
+    # v = (n - 1) / n * (Matrix::rowSums((Data-m)^2)/(n-1));
+    # mme_size= m^2/(v - m);
+    # mme_size[v<=m] =NaN;
     # 
-    # M_ave_ori<-rout[[1]]
-    # size_est<-rout[[2]]
+    # M_ave_ori <- m
+    # size_est <- mme_size
+    # 
+    # 
     # names(M_ave_ori)<-rownames(Data)
     # names(size_est)<-rownames(Data)
     # 
@@ -215,6 +196,25 @@ EstPrior <- function(Data,verbose = TRUE) {
     # }
     # 
     # return(list(MU = M_ave_ori, SIZE = size_est))
+    
+    
+    #Rcpp version
+    rout<-EstPrior_sprcpp(Data=Data)
+    rout[[1]]<-as.vector(rout[[1]])
+    rout[[2]]<-as.vector(rout[[2]])
+    rout[[3]]<-as.vector(rout[[3]])
+    rout[[2]][rout[[3]]<=rout[[1]]] =NaN;
+
+    M_ave_ori<-rout[[1]]
+    size_est<-rout[[2]]
+    names(M_ave_ori)<-rownames(Data)
+    names(size_est)<-rownames(Data)
+
+    if (verbose) {
+        message("Priors estimation based on MME method has completed.")
+    }
+
+    return(list(MU = M_ave_ori, SIZE = size_est))
 }
 #' @title   A wrapper function of \code{EstPrior}
 #' and \code{AdjustSIZE_fun}

@@ -184,7 +184,7 @@ noisy_gene_detection<-function(
 
 
     #tempppdat<-as(as.matrix(synthetic_out$N_c), "dgCMatrix")
-    tempppdat<-synthetic_out$N_c
+    tempppdat<-Check_input(synthetic_out$N_c)
     bayNorm_C_array<-myFunc(Data=tempppdat,
                             BETA_vec=synthetic_out$beta_c,size=size_c,
                             mu=mu_c,S=S,

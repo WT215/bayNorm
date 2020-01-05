@@ -73,12 +73,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // Main_NB_Bay
-NumericVector Main_NB_Bay(NumericMatrix Data, NumericVector BETA_vec, NumericVector size, Nullable<NumericVector> mu, int S, int thres);
+NumericVector Main_NB_Bay(arma::sp_mat Data, NumericVector BETA_vec, NumericVector size, Nullable<NumericVector> mu, int S, int thres);
 RcppExport SEXP _bayNorm_Main_NB_Bay(SEXP DataSEXP, SEXP BETA_vecSEXP, SEXP sizeSEXP, SEXP muSEXP, SEXP SSEXP, SEXP thresSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type Data(DataSEXP);
+    Rcpp::traits::input_parameter< arma::sp_mat >::type Data(DataSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type BETA_vec(BETA_vecSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type size(sizeSEXP);
     Rcpp::traits::input_parameter< Nullable<NumericVector> >::type mu(muSEXP);
@@ -89,12 +89,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // Main_mean_NB_Bay
-NumericMatrix Main_mean_NB_Bay(NumericMatrix Data, NumericVector BETA_vec, NumericVector size, Nullable<NumericVector> mu, int S, int thres);
+NumericMatrix Main_mean_NB_Bay(arma::sp_mat Data, NumericVector BETA_vec, NumericVector size, Nullable<NumericVector> mu, int S, int thres);
 RcppExport SEXP _bayNorm_Main_mean_NB_Bay(SEXP DataSEXP, SEXP BETA_vecSEXP, SEXP sizeSEXP, SEXP muSEXP, SEXP SSEXP, SEXP thresSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type Data(DataSEXP);
+    Rcpp::traits::input_parameter< arma::sp_mat >::type Data(DataSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type BETA_vec(BETA_vecSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type size(sizeSEXP);
     Rcpp::traits::input_parameter< Nullable<NumericVector> >::type mu(muSEXP);
@@ -105,18 +105,52 @@ BEGIN_RCPP
 END_RCPP
 }
 // Main_mode_NB_Bay
-NumericMatrix Main_mode_NB_Bay(NumericMatrix Data, NumericVector BETA_vec, NumericVector size, Nullable<NumericVector> mu, int S, int thres);
+NumericMatrix Main_mode_NB_Bay(arma::sp_mat Data, NumericVector BETA_vec, NumericVector size, Nullable<NumericVector> mu, int S, int thres);
 RcppExport SEXP _bayNorm_Main_mode_NB_Bay(SEXP DataSEXP, SEXP BETA_vecSEXP, SEXP sizeSEXP, SEXP muSEXP, SEXP SSEXP, SEXP thresSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type Data(DataSEXP);
+    Rcpp::traits::input_parameter< arma::sp_mat >::type Data(DataSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type BETA_vec(BETA_vecSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type size(sizeSEXP);
     Rcpp::traits::input_parameter< Nullable<NumericVector> >::type mu(muSEXP);
     Rcpp::traits::input_parameter< int >::type S(SSEXP);
     Rcpp::traits::input_parameter< int >::type thres(thresSEXP);
     rcpp_result_gen = Rcpp::wrap(Main_mode_NB_Bay(Data, BETA_vec, size, mu, S, thres));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rowMeansFast
+NumericVector rowMeansFast(arma::sp_mat x);
+RcppExport SEXP _bayNorm_rowMeansFast(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::sp_mat >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(rowMeansFast(x));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rowVarsFast
+NumericVector rowVarsFast(arma::sp_mat x, NumericVector means);
+RcppExport SEXP _bayNorm_rowVarsFast(SEXP xSEXP, SEXP meansSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::sp_mat >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type means(meansSEXP);
+    rcpp_result_gen = Rcpp::wrap(rowVarsFast(x, means));
+    return rcpp_result_gen;
+END_RCPP
+}
+// EstPrior_sprcpp
+List EstPrior_sprcpp(arma::sp_mat Data);
+RcppExport SEXP _bayNorm_EstPrior_sprcpp(SEXP DataSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::sp_mat >::type Data(DataSEXP);
+    rcpp_result_gen = Rcpp::wrap(EstPrior_sprcpp(Data));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -167,6 +201,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_bayNorm_Main_NB_Bay", (DL_FUNC) &_bayNorm_Main_NB_Bay, 6},
     {"_bayNorm_Main_mean_NB_Bay", (DL_FUNC) &_bayNorm_Main_mean_NB_Bay, 6},
     {"_bayNorm_Main_mode_NB_Bay", (DL_FUNC) &_bayNorm_Main_mode_NB_Bay, 6},
+    {"_bayNorm_rowMeansFast", (DL_FUNC) &_bayNorm_rowMeansFast, 1},
+    {"_bayNorm_rowVarsFast", (DL_FUNC) &_bayNorm_rowVarsFast, 2},
+    {"_bayNorm_EstPrior_sprcpp", (DL_FUNC) &_bayNorm_EstPrior_sprcpp, 1},
     {"_bayNorm_EstPrior_rcpp", (DL_FUNC) &_bayNorm_EstPrior_rcpp, 1},
     {"_bayNorm_t_sp", (DL_FUNC) &_bayNorm_t_sp, 1},
     {"_bayNorm_asMatrix", (DL_FUNC) &_bayNorm_asMatrix, 5},

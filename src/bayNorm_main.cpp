@@ -1,3 +1,4 @@
+#define ARMA_64BIT_WORD 1
 #include <RcppArmadillo.h>
 #include <RcppArmadilloExtensions/sample.h>
 #include <Rmath.h>
@@ -5,8 +6,9 @@
 #include <progress.hpp>
 #include <progress_bar.hpp>
 // [[Rcpp::depends(RcppArmadillo)]]
+// [[Rcpp::plugins(cpp11)]]
 // [[Rcpp::depends(RcppProgress)]]
-// [[Rcpp::plugins(cpp11)]] 
+
 
 
 using namespace Rcpp;
@@ -1058,7 +1060,7 @@ double GradientFun_NBmu_1D(double SIZE,double MU,
 
 
 // [[Rcpp::export]]
-NumericVector Main_NB_Bay(NumericMatrix Data,
+NumericVector Main_NB_Bay(arma::sp_mat Data,
                        NumericVector BETA_vec,
                        NumericVector size,
                        Nullable<NumericVector> mu,
@@ -1066,8 +1068,8 @@ NumericVector Main_NB_Bay(NumericMatrix Data,
 {
 
 
-
-    arma::mat M = Rcpp::as<arma::mat>(Data);
+    arma::sp_mat M=Data;
+    //arma::mat M = Rcpp::as<arma::mat>(Data);
     //arma::mat M(Data);
 
     arma::vec Beta = Rcpp::as<arma::vec>(BETA_vec);
@@ -1139,7 +1141,7 @@ NumericVector Main_NB_Bay(NumericMatrix Data,
 
 
 // [[Rcpp::export]]
-NumericMatrix Main_mean_NB_Bay(NumericMatrix Data,
+NumericMatrix Main_mean_NB_Bay(arma::sp_mat Data,
                             NumericVector BETA_vec,
                             NumericVector size,
                             Nullable<NumericVector> mu,
@@ -1148,8 +1150,9 @@ NumericMatrix Main_mean_NB_Bay(NumericMatrix Data,
 
 
 
-    arma::mat M = Rcpp::as<arma::mat>(Data);
+    //arma::mat M = Rcpp::as<arma::mat>(Data);
     //arma::mat M(Data);
+    arma::sp_mat M=Data;
 
     arma::vec Beta = Rcpp::as<arma::vec>(BETA_vec);
     arma::vec M_ave;
@@ -1220,7 +1223,7 @@ NumericMatrix Main_mean_NB_Bay(NumericMatrix Data,
 
 
 // [[Rcpp::export]]
-NumericMatrix Main_mode_NB_Bay(NumericMatrix Data,
+NumericMatrix Main_mode_NB_Bay(arma::sp_mat Data,
                             NumericVector BETA_vec,
                             NumericVector size,
                             Nullable<NumericVector> mu,
@@ -1229,9 +1232,10 @@ NumericMatrix Main_mode_NB_Bay(NumericMatrix Data,
 
 
 
-    arma::mat M = Rcpp::as<arma::mat>(Data);
+    //arma::mat M = Rcpp::as<arma::mat>(Data);
     //arma::mat M(Data);
-
+    arma::sp_mat M=Data;
+    
     arma::vec Beta = Rcpp::as<arma::vec>(BETA_vec);
     arma::vec M_ave;
     arma::mat M_t;
@@ -1295,6 +1299,101 @@ NumericMatrix Main_mode_NB_Bay(NumericMatrix Data,
 }
 
 
+// [[Rcpp::export]]
+NumericVector rowMeansFast(arma::sp_mat x) {
+  int nrow = x.n_rows, ncol = x.n_cols;
+  
+  NumericVector means(nrow);
+  for (int i = 0; i < nrow; ++i)
+  {
+    means(i) = 0;
+  }
+  for(arma::sp_mat::const_iterator i = x.begin(); i != x.end(); ++i)
+  {
+    means(i.row()) += *i;
+  }
+  for (int i = 0; i < nrow; ++i)
+  {
+    means(i) /= ncol;
+  }
+  return means;
+}
+
+// [[Rcpp::export]]
+NumericVector rowVarsFast(arma::sp_mat x, NumericVector means) {
+  int nrow = x.n_rows, ncol = x.n_cols;
+  
+  NumericVector vars(nrow);
+  NumericVector nonzero_vals(nrow);
+  
+  for(arma::sp_mat::const_iterator i = x.begin(); i != x.end(); ++i)
+  {
+    vars(i.row()) += (*i-means(i.row()))*(*i-means(i.row())); 
+    nonzero_vals(i.row()) += 1;
+  }
+  // Add back square mean error for zero elements
+  // const_iterator only loops over nonzero elements 
+  for (int i = 0; i < nrow; ++i)
+  {
+    vars(i) += (ncol - nonzero_vals(i))*(means(i)*means(i));
+    vars(i) /= (ncol-1);
+  }
+  return vars;
+}
+
+//' @title Estimate size and mu for Negative Binomial distribution
+//' for each gene using MME method (Rcpp version, sp_mat)
+//'
+//' @description  Input raw data and return
+//' estimated size and mu for each gene using the MME method.
+//' @param Data A matrix of single-cell expression where rows
+//' are genes and columns are samples (cells). \code{Data}
+//' can be of class \code{SummarizedExperiment} (the
+//' assays slot contains the expression matrix and
+//' is named "Counts") or just matrix.
+//' @details mu and size are two parameters of the prior that
+//' need to be specified for each gene in bayNorm.
+//' They are parameters of negative binomial distribution.
+//' The variance is \eqn{mu + mu^2/size} in this parametrization.
+//'
+//' @return  List containing estimated mu and
+//' size for each gene.
+//'
+//' @examples
+//' data("EXAMPLE_DATA_list")
+//' #Should not run by the users, it is used in prior estimation.
+//' \dontrun{
+//' }
+//' @export
+// [[Rcpp::export]]
+
+List EstPrior_sprcpp(arma::sp_mat Data) {
+  //arma::mat M = Rcpp::as<arma::mat>(Data);
+  //arma::mat M(Data);
+  
+  int Nrows;
+  int Ncols;
+  
+  Nrows=Data.n_rows;
+  Ncols=Data.n_cols;
+  
+  double n=Ncols;
+  //double debugg=(n - 1) / n;
+  NumericVector m = rowMeansFast(Data);
+  NumericVector vaaa=rowVarsFast(Data, m);
+  
+  NumericVector v = (n - 1) / n * vaaa;
+  NumericVector mme_size = pow(m,2)/(v - m);
+  
+  // uvec q1 = find(v <= m);
+  // int ll=q1.n_elem;
+  
+  List L = List::create(Named("MU") = m , _["SIZE"] = mme_size,_["v"]=v);
+  return(Rcpp::wrap(L));
+  //return(Rcpp::wrap(debugg));
+}
+
+
 //' @title Estimate size and mu for Negative Binomial distribution
 //' for each gene using MME method (Rcpp version)
 //'
@@ -1338,7 +1437,7 @@ List EstPrior_rcpp(NumericMatrix Data) {
   
   arma::vec vaaa=var( M, norm_type=0, dim=1 );
   arma::vec m = mean( M, dim=1 );
-  arma::vec v = (n - 1) / n * var( M, norm_type=0, dim=1 );
+  arma::vec v = (n - 1) / n * vaaa;
   arma::vec mme_size = pow(m,2)/(v - m);
   
   // uvec q1 = find(v <= m);

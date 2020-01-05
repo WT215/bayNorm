@@ -112,3 +112,11 @@
 \item Change back to rowSums instead of using Rcpp EstPrior function.
     }
 }
+
+\section{Version 1.5.9}{
+\itemize{
+\item Change back to Rcpp EstPrior function (sp_mat version).
+\item Use dgCMatrix instead of matrix in R.
+\item #define ARMA_64BIT_WORD 1 and so on allows for big sparse matrix (learn from the liger R package).
+    }
+}
