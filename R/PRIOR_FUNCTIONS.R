@@ -29,36 +29,14 @@
 #' @export
 BetaFun <- function(Data, MeanBETA) {
 ##@ #importFrom Matrix colSums rowMeans
-    
-    if (methods::is(Data, "SummarizedExperiment")
-        | methods::is(Data, "SingleCellExperiment")) {
-        if (
-            is.null(
-                SummarizedExperiment::assayNames(Data)
-            )
-            || SummarizedExperiment::assayNames(Data)[1] !=
-            "Counts") {
-            message("Renaming the
-                    firstelement in
-                    assays(Data) to 'Counts'")
-            SummarizedExperiment::assayNames(Data)[1] <- "Counts"
-
-            if (is.null(colnames(
-                SummarizedExperiment::assays(Data)[["Counts"]]))) {
-                stop("Must supply sample/cell names!")
-            }
-
-        }
-        Data <- SummarizedExperiment::assays(Data)[["Counts"]]
-    }
-
+  
     #Set matrix as object for input data
     Data<-Check_input(Data)
     
 
     xx<-Matrix::colSums(Data)
     #Normcount <- t_sp(t_sp(Data)/xx) * mean(xx)
-    Normcount <- t(t(Data)/xx) * mean(xx)
+    Normcount <- Matrix::t(Matrix::t(Data)/xx) * mean(xx)
     
     
     means <- Matrix::rowMeans(Normcount)
@@ -126,27 +104,6 @@ BetaFun <- function(Data, MeanBETA) {
 #' @export
 EstPrior <- function(Data,verbose = TRUE) {
 
-    if (methods::is(Data, "SummarizedExperiment")
-        | methods::is(Data, "SingleCellExperiment")) {
-        if (
-            is.null(
-                SummarizedExperiment::assayNames(Data)
-            )
-            || SummarizedExperiment::assayNames(Data)[1] !=
-            "Counts") {
-            message("Renaming the
-                    firstelement in
-                    assays(Data) to 'Counts'")
-            SummarizedExperiment::assayNames(Data)[1] <- "Counts"
-
-            if (is.null(colnames(
-                SummarizedExperiment::assays(Data)[["Counts"]]))) {
-                stop("Must supply sample/cell names!")
-            }
-
-        }
-        Data <- SummarizedExperiment::assays(Data)[["Counts"]]
-    }
 
     #Set matrix as object for input data
     Data<-Check_input(Data)
@@ -287,35 +244,13 @@ Prior_fun <- function(
     NCores = 5, FIX_MU = TRUE,GR = FALSE,
     BB_SIZE = TRUE, verbose = TRUE) {
 
-    if (methods::is(Data, "SummarizedExperiment")
-        | methods::is(Data, "SingleCellExperiment")) {
-        if (
-            is.null(
-                SummarizedExperiment::assayNames(Data)
-            )
-            || SummarizedExperiment::assayNames(Data)[1] !=
-            "Counts") {
-            message("Renaming the
-                    firstelement in
-                    assays(Data) to 'Counts'")
-            SummarizedExperiment::assayNames(Data)[1] <- "Counts"
-
-            if (is.null(colnames(
-                SummarizedExperiment::assays(Data)[["Counts"]]))) {
-                stop("Must supply sample/cell names!")
-            }
-
-        }
-        Data <- SummarizedExperiment::assays(Data)[["Counts"]]
-    }
-
     #Set matrix as object for input data
     Data<-Check_input(Data)
     
 
     #normcount_N <- t(t(Data)/colSums(Data)) * mean(colSums(Data)/BETA_vec)
     #normcount_N <- t_sp(t_sp(Data)/BETA_vec)
-    normcount_N <- t(t(Data)/BETA_vec)
+    normcount_N <- Matrix::t(Matrix::t(Data)/BETA_vec)
     
     
     Priors <- EstPrior(normcount_N, verbose = verbose)
@@ -447,29 +382,7 @@ BB_Fun <- function(
     MU_lower = 0.01, MU_upper = 500, SIZE_lower = 0.01,
     SIZE_upper = 30,parallel = FALSE, NCores = 5,
     FIX_MU = TRUE, GR = FALSE) {
-    
-    if (methods::is(Data, "SummarizedExperiment")
-        | methods::is(Data, "SingleCellExperiment")) {
-        if (
-            is.null(
-                SummarizedExperiment::assayNames(Data)
-            )
-            || SummarizedExperiment::assayNames(Data)[1] !=
-            "Counts") {
-            message("Renaming the
-                    firstelement in
-                    assays(Data) to 'Counts'")
-            SummarizedExperiment::assayNames(Data)[1] <- "Counts"
-            
-            if (is.null(colnames(
-                SummarizedExperiment::assays(Data)[["Counts"]]))) {
-                stop("Must supply sample/cell names!")
-            }
-            
-        }
-        Data <- SummarizedExperiment::assays(Data)[["Counts"]]
-    }
-    
+
     # if(!is(Data, 'sparseMatrix')){
     #     if (!(methods::is(Data, "SummarizedExperiment")) &
     #         !(methods::is(Data, "SingleCellExperiment"))) {

@@ -120,3 +120,9 @@
 \item #define ARMA_64BIT_WORD 1 and so on allows for big sparse matrix (learn from the liger R package).
     }
 }
+
+\section{Version 1.5.10}{
+\itemize{
+\item Update RELEASE_3_10 1.4.2 to 1.4.3.
+    }
+}

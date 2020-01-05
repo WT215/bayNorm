@@ -78,6 +78,23 @@ as_matrix <- function(mat){
 #' @export
 Check_input <- function(Data){
   
+  # Adapted from SCnorm
+  if (methods::is(Data, "SummarizedExperiment") | methods::is(Data, "SingleCellExperiment")) {
+    if (is.null(SummarizedExperiment::assayNames(Data))
+        || SummarizedExperiment::assayNames(Data)[1] !=
+        "Counts") {
+      message("Renaming the first element in assays(Data) to 'Counts'")
+      SummarizedExperiment::assayNames(Data)[1] <- "Counts"
+      if (
+        is.null(
+          colnames(SummarizedExperiment::assays(Data)[["Counts"]]))) {
+        stop("Must supply sample/cell names!")
+      }
+    }
+    Data <- SummarizedExperiment::assays(Data)[["Counts"]]
+  }
+  
+  
   #use dgCMatrix
     if(is(Data, 'sparseMatrix')){
       if(!is(Data, 'dgCMatrix')){

@@ -112,29 +112,6 @@ noisy_gene_detection<-function(
 
 
 
-    if (methods::is(Data, "SummarizedExperiment")
-        | methods::is(Data, "SingleCellExperiment")) {
-
-        if (
-            is.null(
-                SummarizedExperiment::assayNames(Data)
-            )
-            || SummarizedExperiment::assayNames(Data)[1] !=
-            "Counts") {
-            message("Renaming the
-                    firstelement in
-                    assays(Data) to 'Counts'")
-            SummarizedExperiment::assayNames(Data)[1] <- "Counts"
-
-            if (is.null(colnames(
-                SummarizedExperiment::assays(Data)[["Counts"]]))) {
-                stop("Must supply sample/cell names!")
-            }
-
-        }
-        Data <- SummarizedExperiment::assays(Data)[["Counts"]]
-    }
-
     #Set matrix as object for input data
     Data<-Check_input(Data)
 
