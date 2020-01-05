@@ -123,7 +123,8 @@ bayNorm <- function(
     parallel = TRUE,NCores = 5,
     FIX_MU = TRUE, GR = FALSE,
     BB_SIZE = TRUE, verbose = TRUE) {
-
+  
+  
     if(mode_version & mean_version){
         stop("Only one of mode_version and mean_version
         should be specified to be TRUE, otherwise both
@@ -148,19 +149,8 @@ bayNorm <- function(
                        FIX_MU=FIX_MU,
                        BB_SIZE=BB_SIZE,
                        GR=GR)
-
-
-    
-
-    
+  
     Data<-Check_input(Data)
-    
-    
-    
-    
-    
-    
-
     
 
     if (is.null(BETA_vec)) {
@@ -603,3 +593,5 @@ bayNorm_sup <- function(
         message("bayNorm has completed!")
     }
 }
+
+#debug 1.5.10
