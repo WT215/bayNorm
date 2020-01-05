@@ -4,10 +4,30 @@
 \alias{bayNorm}
 \title{A wrapper function of prior estimation and bayNorm function}
 \usage{
+<<<<<<< HEAD
 bayNorm(Data, BETA_vec = NULL, Conditions = NULL, UMI_sffl = NULL,
   Prior_type = NULL, mode_version = FALSE, mean_version = FALSE,
   S = 20, parallel = TRUE, NCores = 5, FIX_MU = TRUE, GR = FALSE,
   BB_SIZE = TRUE, verbose = TRUE)
+=======
+bayNorm(
+  Data,
+  BETA_vec = NULL,
+  Conditions = NULL,
+  UMI_sffl = NULL,
+  Prior_type = NULL,
+  mode_version = FALSE,
+  mean_version = FALSE,
+  S = 20,
+  parallel = TRUE,
+  NCores = 5,
+  FIX_MU = TRUE,
+  GR = FALSE,
+  BB_SIZE = TRUE,
+  verbose = TRUE,
+  out.sparse = FALSE
+)
+>>>>>>> c6a2982... DEV 1.5.11 allow dgCMatrix as output
 }
 \arguments{
 \item{Data}{A matrix of single-cell expression where rows
@@ -90,6 +110,10 @@ prior using maximization of marginal likelihood,
 and then use it for adjusting MME estimate of SIZE Default is TRUE.}
 
 \item{verbose}{print out status messages. Default is TRUE.}
+
+\item{out.sparse}{Only valid for mean version: 
+Whether the output is of type dgCMatrix or not. 
+Default is FALSE.}
 }
 \value{
 List containing 3D arrays of normalized

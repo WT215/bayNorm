@@ -72,6 +72,9 @@
 #' prior using maximization of marginal likelihood,
 #' and then use it for adjusting MME estimate of SIZE Default is TRUE.
 #' @param verbose print out status messages. Default is TRUE.
+#' @param out.sparse Only valid for mean version: 
+#' Whether the output is of type dgCMatrix or not. 
+#' Default is FALSE. 
 #' @return  List containing 3D arrays of normalized
 #' expression (if \code{mode_version}=FALSE) or 2D matrix
 #' of normalized expression (if \code{mode_version}=TRUE
@@ -122,7 +125,8 @@ bayNorm <- function(
     S = 20,
     parallel = TRUE,NCores = 5,
     FIX_MU = TRUE, GR = FALSE,
-    BB_SIZE = TRUE, verbose = TRUE) {
+    BB_SIZE = TRUE, verbose = TRUE,
+    out.sparse=FALSE) {
   
   
     if(mode_version & mean_version){
@@ -138,7 +142,12 @@ bayNorm <- function(
     }else if(mode_version & !mean_version){
         myFunc <- Main_mode_NB_Bay
     }else if(!mode_version & mean_version){
+      if(out.sparse){
+        myFunc <-  Main_mean_NB_spBay
+      }else{
         myFunc <-  Main_mean_NB_Bay
+      }
+       
     }
 
 
@@ -394,6 +403,9 @@ bayNorm <- function(
 #' calculated based on both MME estimated size and BB
 #' estimated size. If FALSE, use MME estimated SIZE.
 #' @param verbose print out status messages. Default is TRUE.
+#' @param out.sparse Only valid for mean version: 
+#' Whether the output is of type dgCMatrix or not. 
+#' Default is FALSE. 
 #' @return  List containing 3D arrays of normalized
 #' expression (if \code{mode_version}=FALSE) or 2D matrix
 #' of normalized expression (if \code{mode_version}=TRUE
@@ -451,7 +463,8 @@ bayNorm_sup <- function(
     mean_version=FALSE,
     S = 20,
     parallel = TRUE, NCores = 5,
-    BB_SIZE = TRUE, verbose = TRUE) {
+    BB_SIZE = TRUE, verbose = TRUE,
+    out.sparse=FALSE) {
 
     if(mode_version & mean_version){
         stop("Only one of mode_version and mean_version
@@ -461,11 +474,16 @@ bayNorm_sup <- function(
     }
 
     if(!mode_version & !mean_version){
-        myFunc <- Main_NB_Bay
+      myFunc <- Main_NB_Bay
     }else if(mode_version & !mean_version){
-        myFunc <- Main_mode_NB_Bay
+      myFunc <- Main_mode_NB_Bay
     }else if(!mode_version & mean_version){
+      if(out.sparse){
+        myFunc <-  Main_mean_NB_spBay
+      }else{
         myFunc <-  Main_mean_NB_Bay
+      }
+      
     }
 
 
@@ -593,5 +611,3 @@ bayNorm_sup <- function(
         message("bayNorm has completed!")
     }
 }
-
-#debug 1.5.10

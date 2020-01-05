@@ -191,6 +191,22 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// Main_mean_NB_spBay
+arma::sp_mat Main_mean_NB_spBay(arma::sp_mat Data, NumericVector BETA_vec, NumericVector size, Nullable<NumericVector> mu, int S, int thres);
+RcppExport SEXP _bayNorm_Main_mean_NB_spBay(SEXP DataSEXP, SEXP BETA_vecSEXP, SEXP sizeSEXP, SEXP muSEXP, SEXP SSEXP, SEXP thresSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::sp_mat >::type Data(DataSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type BETA_vec(BETA_vecSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type size(sizeSEXP);
+    Rcpp::traits::input_parameter< Nullable<NumericVector> >::type mu(muSEXP);
+    Rcpp::traits::input_parameter< int >::type S(SSEXP);
+    Rcpp::traits::input_parameter< int >::type thres(thresSEXP);
+    rcpp_result_gen = Rcpp::wrap(Main_mean_NB_spBay(Data, BETA_vec, size, mu, S, thres));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_bayNorm_DownSampling", (DL_FUNC) &_bayNorm_DownSampling, 2},
@@ -207,6 +223,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_bayNorm_EstPrior_rcpp", (DL_FUNC) &_bayNorm_EstPrior_rcpp, 1},
     {"_bayNorm_t_sp", (DL_FUNC) &_bayNorm_t_sp, 1},
     {"_bayNorm_asMatrix", (DL_FUNC) &_bayNorm_asMatrix, 5},
+    {"_bayNorm_Main_mean_NB_spBay", (DL_FUNC) &_bayNorm_Main_mean_NB_spBay, 6},
     {NULL, NULL, 0}
 };
 

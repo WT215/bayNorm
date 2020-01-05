@@ -158,3 +158,7 @@ asMatrix <- function(rp, cp, z, nrows, ncols) {
     .Call('_bayNorm_asMatrix', PACKAGE = 'bayNorm', rp, cp, z, nrows, ncols)
 }
 
+Main_mean_NB_spBay <- function(Data, BETA_vec, size, mu, S, thres) {
+    .Call('_bayNorm_Main_mean_NB_spBay', PACKAGE = 'bayNorm', Data, BETA_vec, size, mu, S, thres)
+}
+

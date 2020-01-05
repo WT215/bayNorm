@@ -1512,3 +1512,83 @@ IntegerMatrix asMatrix(NumericVector rp,
   
   return mat;
 }
+
+
+
+// [[Rcpp::export]]
+arma::sp_mat Main_mean_NB_spBay(arma::sp_mat Data,
+                              NumericVector BETA_vec,
+                              NumericVector size,
+                              Nullable<NumericVector> mu,
+                              int S,int thres)
+{
+  
+  
+  
+  //arma::mat M = Rcpp::as<arma::mat>(Data);
+  //arma::mat M(Data);
+  arma::sp_mat M=Data;
+  
+  arma::vec Beta = Rcpp::as<arma::vec>(BETA_vec);
+  arma::vec M_ave;
+  arma::mat M_t;
+  
+  int nrow=M.n_rows;
+  int ncol=M.n_cols;
+  int i;
+  int j;
+  
+  IntegerVector x;
+  NumericVector y;
+  
+  double tempmu;
+  
+  arma::sp_mat Final_mat(nrow, ncol);
+  
+  
+  if (mu.isNotNull())
+  {
+    
+    M_ave = Rcpp::as<arma::vec>(mu);
+  }
+  
+  
+  Progress p(ncol*nrow, true);
+  
+  
+  for( i=0;i<ncol;i++){
+    //Rcout << "The cell is \n" << i+1 << std::endl;
+    
+    for( j=0;j<nrow;j++){
+      
+      p.increment();
+      
+      if(M(j,i)==NA_INTEGER) {
+        Final_mat(j,i)=NA_INTEGER;
+      }
+      
+      else{
+        tempmu=(M(j,i)+size(j))*(M_ave(j)-M_ave(j)*Beta(i))/(size(j)+M_ave(j)*Beta(i))+M(j,i);
+        
+        Final_mat(j,i)=tempmu;
+        
+        //Rcout << "The gene is \n" << j+1 << std::endl;
+        
+        
+        //Final_mat.subcube(j,i,0,j,i,S-1)=S_input;
+        
+      } //end of else
+      
+      
+    } //j
+    
+  }  //i
+  
+  
+  
+  //NumericVector Final_mat2=Rcpp::wrap(Final_mat);
+  //Rcpp::rownames(Final_mat2) = Rcpp::rownames(Data);
+  //Rcpp::colnames(Final_mat2) = Rcpp::colnames(Data);
+  
+  return Final_mat;
+}
