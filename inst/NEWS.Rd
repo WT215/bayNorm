@@ -126,3 +126,10 @@
 \item Update RELEASE_3_10 1.4.2 to 1.4.3.
     }
 }
+
+\section{Version 1.5.11}{
+\itemize{
+\item Allow sparse matrix as output (valid only for mean version procedure).
+\item Let version of RELEASE_3_10 to be 1.4.11.
+    }
+}

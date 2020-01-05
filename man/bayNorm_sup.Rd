@@ -14,7 +14,8 @@ bayNorm_sup(
   parallel = TRUE,
   NCores = 5,
   BB_SIZE = TRUE,
-  verbose = TRUE
+  verbose = TRUE,
+  out.sparse = FALSE
 )
 }
 \arguments{
@@ -61,6 +62,10 @@ calculated based on both MME estimated size and BB
 estimated size. If FALSE, use MME estimated SIZE.}
 
 \item{verbose}{print out status messages. Default is TRUE.}
+
+\item{out.sparse}{Only valid for mean version: 
+Whether the output is of type dgCMatrix or not. 
+Default is FALSE.}
 }
 \value{
 List containing 3D arrays of normalized
