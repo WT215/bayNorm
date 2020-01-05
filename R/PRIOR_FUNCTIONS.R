@@ -1,38 +1,3 @@
-#' @title Adjust MME size estimate
-#'
-#' @description  This function adjusts MME estimated size parameter
-#' of prior, which is a negative binomial distribution,
-#' using estimates from maximizing marginal distirbution
-#' (\code{BB_SIZE}). Simulation studies has shown this hybrid
-#' method of using adjusted MME size estimates is the most
-#' robust (see bayNorm paper). Hence, this is the default
-#' option for estimating size in bayNorm.
-#'
-#' @param BB_SIZE size estimated from \code{BB_Fun}.
-#' @param  MME_MU mu estimated from EstPrior.
-#' @param  MME_SIZE size estimated from EstPrior.
-#' @return MME_SIZE_adjust: A vector of estimated size.
-#' Adjusted MME_SIZE based on BB_SIZE
-#' (size estimated by maximizing marginal distribution)
-#'
-#' @examples
-#' data('EXAMPLE_DATA_list')
-#' MME_MU<-rlnorm(100,meanlog=5,sdlog=1)
-#' MME_SIZE<-rlnorm(100,meanlog=1,sdlog=1)
-#' BB_SIZE<-rlnorm(100,meanlog=0.5,sdlog=1)
-#' adjustt<-AdjustSIZE_fun(BB_SIZE, MME_MU, MME_SIZE)
-#' @import stats
-#'
-#' @export
-AdjustSIZE_fun <- function(BB_SIZE, MME_MU, MME_SIZE) {
-    fitind <- which(BB_SIZE < max(BB_SIZE) & BB_SIZE > min(BB_SIZE))
-    lmfit <- lm(log(BB_SIZE)[fitind] ~ log(MME_SIZE)[fitind])
-    MME_SIZE_adjust <- coef(lmfit)[1] + coef(lmfit)[2] * log(MME_SIZE)
-    MME_SIZE_adjust <- exp(MME_SIZE_adjust)
-    return(MME_SIZE_adjust)
-}
-
-
 #' @title Estimate capture efficiency for cells
 #'
 #' @description  This function estimates cell specific
@@ -57,43 +22,24 @@ AdjustSIZE_fun <- function(BB_SIZE, MME_MU, MME_SIZE) {
 #' data('EXAMPLE_DATA_list')
 #' BETA_out<-BetaFun(Data=EXAMPLE_DATA_list$inputdata,
 #' MeanBETA=0.06)
-#'
+#' @importFrom Matrix colSums rowMeans t
 #' @importFrom SingleCellExperiment SingleCellExperiment
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' assayNames assays colData
 #' @export
 BetaFun <- function(Data, MeanBETA) {
+##@ #importFrom Matrix colSums rowMeans
+  
+    #Set matrix as object for input data
+    Data<-Check_input(Data)
+    
 
-    if (methods::is(Data, "SummarizedExperiment")
-        | methods::is(Data, "SingleCellExperiment")) {
-        if (
-            is.null(
-                SummarizedExperiment::assayNames(Data)
-            )
-            || SummarizedExperiment::assayNames(Data)[1] !=
-            "Counts") {
-            message("Renaming the
-                    firstelement in
-                    assays(Data) to 'Counts'")
-            SummarizedExperiment::assayNames(Data)[1] <- "Counts"
-
-            if (is.null(colnames(
-                SummarizedExperiment::assays(Data)[["Counts"]]))) {
-                stop("Must supply sample/cell names!")
-            }
-
-        }
-        Data <- SummarizedExperiment::assays(Data)[["Counts"]]
-    }
-
-    if (!(methods::is(Data, "SummarizedExperiment"))
-        & !(methods::is(Data, "SingleCellExperiment"))) {
-        Data <- data.matrix(Data)
-    }
-
-
-    Normcount <- t(t(Data)/colSums(Data)) * mean(colSums(Data))
-    means <- rowMeans(Normcount)
+    xx<-Matrix::colSums(Data)
+    #Normcount <- t_sp(t_sp(Data)/xx) * mean(xx)
+    Normcount <- Matrix::t(Matrix::t(Data)/xx) * mean(xx)
+    
+    
+    means <- Matrix::rowMeans(Normcount)
     lmeans <- log(means)
     med <- apply(log(Normcount + 1), 1, function(x) {
         median(x)
@@ -110,7 +56,7 @@ BetaFun <- function(Data, MeanBETA) {
     Select_ind <- intersect(ind, which(dropout < 0.35))
     Selected_genes <- rownames(Data)[Select_ind]
 
-    temppp <- colSums(Data[Select_ind, ])
+    temppp <- Matrix::colSums(Data[Select_ind, ])
     BETA <- temppp/mean(temppp) * MeanBETA
     if (length(which(BETA >= 1)) > 0) {
         BETA[BETA >= 1] = max(BETA[BETA < 1])
@@ -151,38 +97,17 @@ BetaFun <- function(Data, MeanBETA) {
 #' verbose=TRUE)
 #' @import  fitdistrplus
 #' @import BiocParallel
+#' @importFrom Matrix colSums rowSums rowMeans t
 #' @importFrom SingleCellExperiment SingleCellExperiment
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' assayNames assays colData
 #' @export
 EstPrior <- function(Data,verbose = TRUE) {
 
-    if (methods::is(Data, "SummarizedExperiment")
-        | methods::is(Data, "SingleCellExperiment")) {
-        if (
-            is.null(
-                SummarizedExperiment::assayNames(Data)
-            )
-            || SummarizedExperiment::assayNames(Data)[1] !=
-            "Counts") {
-            message("Renaming the
-                    firstelement in
-                    assays(Data) to 'Counts'")
-            SummarizedExperiment::assayNames(Data)[1] <- "Counts"
 
-            if (is.null(colnames(
-                SummarizedExperiment::assays(Data)[["Counts"]]))) {
-                stop("Must supply sample/cell names!")
-            }
-
-        }
-        Data <- SummarizedExperiment::assays(Data)[["Counts"]]
-    }
-
-    if (!(methods::is(Data, "SummarizedExperiment"))
-        & !(methods::is(Data, "SingleCellExperiment"))) {
-        Data <- data.matrix(Data)
-    }
+    #Set matrix as object for input data
+    Data<-Check_input(Data)
+    
 
 
 
@@ -209,16 +134,36 @@ EstPrior <- function(Data,verbose = TRUE) {
     # size_est <- CoefDat[, 1]
     
     #Vectorization make computation faster
-    n=dim(Data)[2];
-    m = rowMeans(Data)
-    v = (n - 1) / n * apply(Data,1,var);
-    mme_size= m^2/(v - m);
-    mme_size[v<=m] =NaN;
+    # n=dim(Data)[2];
+    # m = Matrix::rowMeans(Data)
+    # #v = (n - 1) / n * apply(Data,1,var);
+    # v = (n - 1) / n * (Matrix::rowSums((Data-m)^2)/(n-1));
+    # mme_size= m^2/(v - m);
+    # mme_size[v<=m] =NaN;
+    # 
+    # M_ave_ori <- m
+    # size_est <- mme_size
+    # 
+    # 
+    # names(M_ave_ori)<-rownames(Data)
+    # names(size_est)<-rownames(Data)
+    # 
+    # if (verbose) {
+    #     message("Priors estimation based on MME method has completed.")
+    # }
+    # 
+    # return(list(MU = M_ave_ori, SIZE = size_est))
     
-    M_ave_ori <- m
-    size_est <- mme_size
+    
+    #Rcpp version
+    rout<-EstPrior_sprcpp(Data=Data)
+    rout[[1]]<-as.vector(rout[[1]])
+    rout[[2]]<-as.vector(rout[[2]])
+    rout[[3]]<-as.vector(rout[[3]])
+    rout[[2]][rout[[3]]<=rout[[1]]] =NaN;
 
-    
+    M_ave_ori<-rout[[1]]
+    size_est<-rout[[2]]
     names(M_ave_ori)<-rownames(Data)
     names(size_est)<-rownames(Data)
 
@@ -288,45 +233,24 @@ EstPrior <- function(Data,verbose = TRUE) {
 #' @import foreach
 #' @importFrom SingleCellExperiment SingleCellExperiment
 #' @import doSNOW
+#' @importFrom Matrix colSums rowSums t
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' assayNames assays colData
 #' @export
 #'
 Prior_fun <- function(
+    ##@ importFrom Matrix colSums
     Data, BETA_vec, parallel = TRUE,
     NCores = 5, FIX_MU = TRUE,GR = FALSE,
     BB_SIZE = TRUE, verbose = TRUE) {
 
-    if (methods::is(Data, "SummarizedExperiment")
-        | methods::is(Data, "SingleCellExperiment")) {
-        if (
-            is.null(
-                SummarizedExperiment::assayNames(Data)
-            )
-            || SummarizedExperiment::assayNames(Data)[1] !=
-            "Counts") {
-            message("Renaming the
-                    firstelement in
-                    assays(Data) to 'Counts'")
-            SummarizedExperiment::assayNames(Data)[1] <- "Counts"
-
-            if (is.null(colnames(
-                SummarizedExperiment::assays(Data)[["Counts"]]))) {
-                stop("Must supply sample/cell names!")
-            }
-
-        }
-        Data <- SummarizedExperiment::assays(Data)[["Counts"]]
-    }
-
-    if (!(methods::is(Data, "SummarizedExperiment"))
-        & !(methods::is(Data, "SingleCellExperiment"))) {
-        Data <- data.matrix(Data)
-    }
+    #Set matrix as object for input data
+    Data<-Check_input(Data)
+    
 
     #normcount_N <- t(t(Data)/colSums(Data)) * mean(colSums(Data)/BETA_vec)
-    normcount_N <- t(t(Data)/BETA_vec)
-    
+    #normcount_N <- t_sp(t_sp(Data)/BETA_vec)
+    normcount_N <- Matrix::t(Matrix::t(Data)/BETA_vec)
     
     
     Priors <- EstPrior(normcount_N, verbose = verbose)
@@ -458,35 +382,20 @@ BB_Fun <- function(
     MU_lower = 0.01, MU_upper = 500, SIZE_lower = 0.01,
     SIZE_upper = 30,parallel = FALSE, NCores = 5,
     FIX_MU = TRUE, GR = FALSE) {
+
+    # if(!is(Data, 'sparseMatrix')){
+    #     if (!(methods::is(Data, "SummarizedExperiment")) &
+    #         !(methods::is(Data, "SingleCellExperiment"))) {
+    #         Data <- as(as.matrix(Data), "dgCMatrix")
+    #     }
+    #     
+    # }
     
-    if (methods::is(Data, "SummarizedExperiment")
-        | methods::is(Data, "SingleCellExperiment")) {
-        if (
-            is.null(
-                SummarizedExperiment::assayNames(Data)
-            )
-            || SummarizedExperiment::assayNames(Data)[1] !=
-            "Counts") {
-            message("Renaming the
-                    firstelement in
-                    assays(Data) to 'Counts'")
-            SummarizedExperiment::assayNames(Data)[1] <- "Counts"
-            
-            if (is.null(colnames(
-                SummarizedExperiment::assays(Data)[["Counts"]]))) {
-                stop("Must supply sample/cell names!")
-            }
-            
-        }
-        Data <- SummarizedExperiment::assays(Data)[["Counts"]]
-    }
-    
-    if (!(methods::is(Data, "SummarizedExperiment"))
-        & !(methods::is(Data, "SingleCellExperiment"))) {
-        Data <- data.matrix(Data)
-    }
-    
-    
+    #matrix object: faster access to the row than dgCMatrix
+    #Set matrix as object for input data
+    Data<-Check_input(Data)
+
+
     Geneind <- NULL
     
     if(!GR){

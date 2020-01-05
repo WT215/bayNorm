@@ -74,3 +74,55 @@
 \item Vectorize computation in EstPrior function.
     }
 }
+
+\section{Version 1.5.3}{
+\itemize{
+\item Add Rcpp EstPrior function.
+    }
+}
+
+\section{Version 1.5.4}{
+\itemize{
+\item Support sparse matrix: dgTMatrix and dgCMatrix.
+    }
+}
+
+\section{Version 1.5.5}{
+\itemize{
+\item Make BB_fun faster: speed up the access of row of dgCMatrix object.
+\item Modify EstPrior, using rowSums from Matrix package to calculated variance. Hence no need for Rcpp EstPrior function.
+    }
+}
+
+\section{Version 1.5.6}{
+\itemize{
+\item as_matrix for transforming sparse matrix to matrix in R efficiently than as.matrix.
+    }
+}
+
+\section{Version 1.5.7}{
+\itemize{
+\item Add useful function file.
+\item Use Rcpp EstPrior function.
+    }
+}
+
+\section{Version 1.5.8}{
+\itemize{
+\item Change back to rowSums instead of using Rcpp EstPrior function.
+    }
+}
+
+\section{Version 1.5.9}{
+\itemize{
+\item Change back to Rcpp EstPrior function (sp_mat version).
+\item Use dgCMatrix instead of matrix in R.
+\item #define ARMA_64BIT_WORD 1 and so on allows for big sparse matrix (learn from the liger R package).
+    }
+}
+
+\section{Version 1.5.10}{
+\itemize{
+\item Update RELEASE_3_10 1.4.2 to 1.4.3.
+    }
+}
