@@ -27,8 +27,8 @@ noisy_gene_detection(
 \item{Data}{A matrix of single-cell expression where rows
 are genes and columns are samples (cells). \code{Data}
 can be of class \code{SummarizedExperiment} (the
-assays slot contains the expression matrix and
-is named "Counts") or just matrix.}
+assays slot contains the expression matrix,
+is named "Counts"), just \code{matrix} or sparse matrix.}
 
 \item{BETA_vec}{A vector of capture efficiencies
 of cells.}

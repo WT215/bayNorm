@@ -18,16 +18,15 @@ bayNorm(
   FIX_MU = TRUE,
   GR = FALSE,
   BB_SIZE = TRUE,
-  verbose = TRUE,
-  out.sparse = FALSE
+  verbose = TRUE
 )
 }
 \arguments{
 \item{Data}{A matrix of single-cell expression where rows
 are genes and columns are samples (cells). \code{Data}
 can be of class \code{SummarizedExperiment} (the
-assays slot contains the expression matrix and
-is named "Counts") or just matrix.}
+assays slot contains the expression matrix,
+is named "Counts"), just \code{matrix} or sparse matrix.}
 
 \item{BETA_vec}{A vector of capture efficiencies
 (probabilities) of cells.
@@ -103,10 +102,6 @@ prior using maximization of marginal likelihood,
 and then use it for adjusting MME estimate of SIZE Default is TRUE.}
 
 \item{verbose}{print out status messages. Default is TRUE.}
-
-\item{out.sparse}{Only valid for mean version: 
-Whether the output is of type dgCMatrix or not. 
-Default is FALSE.}
 }
 \value{
 List containing 3D arrays of normalized

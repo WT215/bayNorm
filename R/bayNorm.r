@@ -8,8 +8,8 @@
 #' @param Data A matrix of single-cell expression where rows
 #' are genes and columns are samples (cells). \code{Data}
 #' can be of class \code{SummarizedExperiment} (the
-#' assays slot contains the expression matrix and
-#' is named "Counts") or just matrix.
+#' assays slot contains the expression matrix,
+#' is named "Counts"), just \code{matrix} or sparse matrix.
 #' @param  BETA_vec A vector of capture efficiencies
 #' (probabilities) of cells.
 #' If it is null, library size (total count) normalized to
@@ -72,9 +72,6 @@
 #' prior using maximization of marginal likelihood,
 #' and then use it for adjusting MME estimate of SIZE Default is TRUE.
 #' @param verbose print out status messages. Default is TRUE.
-#' @param out.sparse Only valid for mean version: 
-#' Whether the output is of type dgCMatrix or not. 
-#' Default is FALSE. 
 #' @return  List containing 3D arrays of normalized
 #' expression (if \code{mode_version}=FALSE) or 2D matrix
 #' of normalized expression (if \code{mode_version}=TRUE
@@ -125,8 +122,7 @@ bayNorm <- function(
     S = 20,
     parallel = TRUE,NCores = 5,
     FIX_MU = TRUE, GR = FALSE,
-    BB_SIZE = TRUE, verbose = TRUE,
-    out.sparse=FALSE) {
+    BB_SIZE = TRUE, verbose = TRUE) {
   
   
     if(mode_version & mean_version){
@@ -138,16 +134,11 @@ bayNorm <- function(
 
 
     if(!mode_version & !mean_version){
-        myFunc <- Main_NB_Bay
+      myFunc <- Main_NB_Bay
     }else if(mode_version & !mean_version){
-        myFunc <- Main_mode_NB_Bay
+      myFunc <- Main_mode_NB_Bay
     }else if(!mode_version & mean_version){
-      if(out.sparse){
-        myFunc <-  Main_mean_NB_spBay
-      }else{
-        myFunc <-  Main_mean_NB_Bay
-      }
-       
+      myFunc <-  Main_mean_NB_Bay
     }
 
 
@@ -372,8 +363,8 @@ bayNorm <- function(
 #' @param Data A matrix of single-cell expression where rows
 #' are genes and columns are samples (cells). \code{Data}
 #' can be of class \code{SummarizedExperiment} (the
-#' assays slot contains the expression matrix and
-#' is named "Counts") or just matrix.
+#' assays slot contains the expression matrix,
+#' is named "Counts"), just \code{matrix} or sparse matrix.
 #' @param  PRIORS A list of estimated prior parameters
 #' obtained from bayNorm.
 #' @param  input_params A list of input parameters
@@ -403,9 +394,6 @@ bayNorm <- function(
 #' calculated based on both MME estimated size and BB
 #' estimated size. If FALSE, use MME estimated SIZE.
 #' @param verbose print out status messages. Default is TRUE.
-#' @param out.sparse Only valid for mean version: 
-#' Whether the output is of type dgCMatrix or not. 
-#' Default is FALSE. 
 #' @return  List containing 3D arrays of normalized
 #' expression (if \code{mode_version}=FALSE) or 2D matrix
 #' of normalized expression (if \code{mode_version}=TRUE
@@ -463,8 +451,7 @@ bayNorm_sup <- function(
     mean_version=FALSE,
     S = 20,
     parallel = TRUE, NCores = 5,
-    BB_SIZE = TRUE, verbose = TRUE,
-    out.sparse=FALSE) {
+    BB_SIZE = TRUE, verbose = TRUE) {
 
     if(mode_version & mean_version){
         stop("Only one of mode_version and mean_version
@@ -478,12 +465,7 @@ bayNorm_sup <- function(
     }else if(mode_version & !mean_version){
       myFunc <- Main_mode_NB_Bay
     }else if(!mode_version & mean_version){
-      if(out.sparse){
-        myFunc <-  Main_mean_NB_spBay
-      }else{
-        myFunc <-  Main_mean_NB_Bay
-      }
-      
+      myFunc <-  Main_mean_NB_Bay
     }
 
 

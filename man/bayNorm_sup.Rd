@@ -14,16 +14,15 @@ bayNorm_sup(
   parallel = TRUE,
   NCores = 5,
   BB_SIZE = TRUE,
-  verbose = TRUE,
-  out.sparse = FALSE
+  verbose = TRUE
 )
 }
 \arguments{
 \item{Data}{A matrix of single-cell expression where rows
 are genes and columns are samples (cells). \code{Data}
 can be of class \code{SummarizedExperiment} (the
-assays slot contains the expression matrix and
-is named "Counts") or just matrix.}
+assays slot contains the expression matrix,
+is named "Counts"), just \code{matrix} or sparse matrix.}
 
 \item{PRIORS}{A list of estimated prior parameters
 obtained from bayNorm.}
@@ -62,10 +61,6 @@ calculated based on both MME estimated size and BB
 estimated size. If FALSE, use MME estimated SIZE.}
 
 \item{verbose}{print out status messages. Default is TRUE.}
-
-\item{out.sparse}{Only valid for mean version: 
-Whether the output is of type dgCMatrix or not. 
-Default is FALSE.}
 }
 \value{
 List containing 3D arrays of normalized

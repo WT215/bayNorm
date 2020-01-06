@@ -133,3 +133,10 @@
 \item Let version of RELEASE_3_10 to be 1.4.11.
     }
 }
+
+\section{Version 1.5.12}{
+\itemize{
+\item Deprecated: Allow sparse matrix as output (valid only for mean version procedure). Since sparse matrix is useful only when the matrix it is sparse.
+\item Calibrate documentations.
+    }
+}
