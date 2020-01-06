@@ -5,16 +5,27 @@
 \title{Estimating size for each gene by
 either 1D or 2D maximization of marginal distribution}
 \usage{
-BB_Fun(Data, BETA_vec, INITIAL_MU_vec, INITIAL_SIZE_vec, MU_lower = 0.01,
-  MU_upper = 500, SIZE_lower = 0.01, SIZE_upper = 30,
-  parallel = FALSE, NCores = 5, FIX_MU = TRUE, GR = FALSE)
+BB_Fun(
+  Data,
+  BETA_vec,
+  INITIAL_MU_vec,
+  INITIAL_SIZE_vec,
+  MU_lower = 0.01,
+  MU_upper = 500,
+  SIZE_lower = 0.01,
+  SIZE_upper = 30,
+  parallel = FALSE,
+  NCores = 5,
+  FIX_MU = TRUE,
+  GR = FALSE
+)
 }
 \arguments{
 \item{Data}{A matrix of single-cell expression where rows
 are genes and columns are samples (cells). \code{Data}
 can be of class \code{SummarizedExperiment} (the
-assays slot contains the expression matrix and
-is named "Counts") or just matrix.}
+assays slot contains the expression matrix,
+is named "Counts"), just \code{matrix} or sparse matrix.}
 
 \item{BETA_vec}{A vector of capture efficiencies
 (probabilities) of cells.}

@@ -10,8 +10,8 @@ BetaFun(Data, MeanBETA)
 \item{Data}{A matrix of single-cell expression where rows
 are genes and columns are samples (cells). \code{Data}
 can be of class \code{SummarizedExperiment} (the
-assays slot contains the expression matrix and
-is named "Counts") or just matrix.}
+assays slot contains the expression matrix,
+is named "Counts"), just \code{matrix} or sparse matrix.}
 
 \item{MeanBETA}{Mean capture efficiency of the scRNAseq data.
 This can be estimated via spike-ins or other methods.}
@@ -33,5 +33,4 @@ drop-out are excluded.
 data('EXAMPLE_DATA_list')
 BETA_out<-BetaFun(Data=EXAMPLE_DATA_list$inputdata,
 MeanBETA=0.06)
-
 }

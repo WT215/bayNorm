@@ -6,17 +6,29 @@
 his produces synthetic control, performs bayNorm on both real
 cell data and synthetic controls and does noisy gene detection.}
 \usage{
-noisy_gene_detection(Data, BETA_vec = NULL, mode_version = FALSE,
-  mean_version = FALSE, S = 20, parallel = TRUE, NCores = 5,
-  FIX_MU = TRUE, GR = FALSE, BB_SIZE = TRUE, verbose = TRUE,
-  plot.out = FALSE, PRIORS = NULL, input_params = NULL)
+noisy_gene_detection(
+  Data,
+  BETA_vec = NULL,
+  mode_version = FALSE,
+  mean_version = FALSE,
+  S = 20,
+  parallel = TRUE,
+  NCores = 5,
+  FIX_MU = TRUE,
+  GR = FALSE,
+  BB_SIZE = TRUE,
+  verbose = TRUE,
+  plot.out = FALSE,
+  PRIORS = NULL,
+  input_params = NULL
+)
 }
 \arguments{
 \item{Data}{A matrix of single-cell expression where rows
 are genes and columns are samples (cells). \code{Data}
 can be of class \code{SummarizedExperiment} (the
-assays slot contains the expression matrix and
-is named "Counts") or just matrix.}
+assays slot contains the expression matrix,
+is named "Counts"), just \code{matrix} or sparse matrix.}
 
 \item{BETA_vec}{A vector of capture efficiencies
 of cells.}

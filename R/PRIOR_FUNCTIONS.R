@@ -9,8 +9,8 @@
 #' @param Data A matrix of single-cell expression where rows
 #' are genes and columns are samples (cells). \code{Data}
 #' can be of class \code{SummarizedExperiment} (the
-#' assays slot contains the expression matrix and
-#' is named "Counts") or just matrix.
+#' assays slot contains the expression matrix,
+#' is named "Counts"), just \code{matrix} or sparse matrix.
 #' @param MeanBETA Mean capture efficiency of the scRNAseq data.
 #'  This can be estimated via spike-ins or other methods.
 #' @return List containing: \code{BETA}: a vector of capture efficiencies,
@@ -78,8 +78,8 @@ BetaFun <- function(Data, MeanBETA) {
 #' @param Data A matrix of single-cell expression where rows
 #' are genes and columns are samples (cells). \code{Data}
 #' can be of class \code{SummarizedExperiment} (the
-#' assays slot contains the expression matrix and
-#' is named "Counts") or just matrix.
+#' assays slot contains the expression matrix,
+#' is named "Counts"), just \code{matrix} or sparse matrix.
 #' @param verbose print out status messages. Default is TRUE.
 #'
 #' @details mu and size are two parameters of the prior that
@@ -183,8 +183,8 @@ EstPrior <- function(Data,verbose = TRUE) {
 #' @param Data A matrix of single-cell expression where rows
 #' are genes and columns are samples (cells). \code{Data}
 #' can be of class \code{SummarizedExperiment} (the
-#' assays slot contains the expression matrix and
-#' is named "Counts") or just matrix.
+#' assays slot contains the expression matrix,
+#' is named "Counts"), just \code{matrix} or sparse matrix.
 #' @param  BETA_vec A vector of capture efficiencies of cells.
 #' @param  parallel If TRUE, 5 cores will be used for
 #' parallelization. Default is TRUE.
@@ -322,8 +322,8 @@ This part may be time-consuming.")
 #' @param Data A matrix of single-cell expression where rows
 #' are genes and columns are samples (cells). \code{Data}
 #' can be of class \code{SummarizedExperiment} (the
-#' assays slot contains the expression matrix and
-#' is named "Counts") or just matrix.
+#' assays slot contains the expression matrix,
+#' is named "Counts"), just \code{matrix} or sparse matrix.
 #' @param  BETA_vec A vector of capture efficiencies
 #' (probabilities) of cells.
 #' @param  INITIAL_MU_vec Mean expression of genes,

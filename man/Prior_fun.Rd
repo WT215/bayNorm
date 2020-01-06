@@ -5,15 +5,23 @@
 \title{A wrapper function of \code{EstPrior}
 and \code{AdjustSIZE_fun}}
 \usage{
-Prior_fun(Data, BETA_vec, parallel = TRUE, NCores = 5, FIX_MU = TRUE,
-  GR = FALSE, BB_SIZE = TRUE, verbose = TRUE)
+Prior_fun(
+  Data,
+  BETA_vec,
+  parallel = TRUE,
+  NCores = 5,
+  FIX_MU = TRUE,
+  GR = FALSE,
+  BB_SIZE = TRUE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{Data}{A matrix of single-cell expression where rows
 are genes and columns are samples (cells). \code{Data}
 can be of class \code{SummarizedExperiment} (the
-assays slot contains the expression matrix and
-is named "Counts") or just matrix.}
+assays slot contains the expression matrix,
+is named "Counts"), just \code{matrix} or sparse matrix.}
 
 \item{BETA_vec}{A vector of capture efficiencies of cells.}
 
