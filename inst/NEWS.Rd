@@ -140,3 +140,9 @@
 \item Calibrate documentations.
     }
 }
+
+\section{Version 1.5.13}{
+\itemize{
+\item Activate "Allow sparse matrix as output (valid only for mean version procedure)". Hence you can work on dgCMatrix throughout the process. Input which is not of type dgCMatrix will be converted to dgCMatrix at first.
+    }
+}
