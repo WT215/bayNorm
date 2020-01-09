@@ -488,7 +488,13 @@ bayNorm_sup <- function(
 
     Conditions=input_params$Conditions
     UMI_sffl=input_params$UMI_sffl
-    BETA_vec=PRIORS$BETA_vec
+    
+    
+    if(is.null(Conditions)){
+      BETA_vec=PRIORS$BETA_vec
+    } else{
+      BETA_vec=do.call(c,lapply(PRIORS,function(x){x$BETA_vec}))
+    }
 
     if(!input_params$BB_SIZE & BB_SIZE){
         stop("Previous priors does not contain Adjusted MME size.

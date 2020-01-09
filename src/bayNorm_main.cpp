@@ -1517,24 +1517,29 @@ IntegerMatrix asMatrix(NumericVector rp,
 
 // [[Rcpp::export]]
 arma::sp_mat Main_mean_NB_spBay(arma::sp_mat Data,
-                              NumericVector BETA_vec,
-                              NumericVector size,
-                              Nullable<NumericVector> mu,
-                              int S,int thres)
+                                      NumericVector BETA_vec,
+                                      NumericVector size,
+                                      Nullable<NumericVector> mu,
+                                      int S,int thres)
 {
   
   
   
   //arma::mat M = Rcpp::as<arma::mat>(Data);
   //arma::mat M(Data);
-  arma::sp_mat M=Data;
+  
   
   arma::vec Beta = Rcpp::as<arma::vec>(BETA_vec);
   arma::vec M_ave;
-  arma::mat M_t;
+  //arma::mat M_t;
   
-  int nrow=M.n_rows;
-  int ncol=M.n_cols;
+  int nrow=Data.n_rows;
+  int ncol=Data.n_cols;
+  
+  //arma::sp_mat M=Data;
+  //arma::mat M=zeros(nrow,ncol);
+  
+  
   int i;
   int j;
   
@@ -1543,7 +1548,7 @@ arma::sp_mat Main_mean_NB_spBay(arma::sp_mat Data,
   
   double tempmu;
   
-  arma::sp_mat Final_mat(nrow, ncol);
+  arma::mat Final_mat(nrow, ncol);
   
   
   if (mu.isNotNull())
@@ -1563,12 +1568,12 @@ arma::sp_mat Main_mean_NB_spBay(arma::sp_mat Data,
       
       p.increment();
       
-      if(M(j,i)==NA_INTEGER) {
+      if(Data(j,i)==NA_INTEGER) {
         Final_mat(j,i)=NA_INTEGER;
       }
       
       else{
-        tempmu=(M(j,i)+size(j))*(M_ave(j)-M_ave(j)*Beta(i))/(size(j)+M_ave(j)*Beta(i))+M(j,i);
+        tempmu=(Data(j,i)+size(j))*(M_ave(j)-M_ave(j)*Beta(i))/(size(j)+M_ave(j)*Beta(i))+Data(j,i);
         
         Final_mat(j,i)=tempmu;
         
@@ -1590,5 +1595,9 @@ arma::sp_mat Main_mean_NB_spBay(arma::sp_mat Data,
   //Rcpp::rownames(Final_mat2) = Rcpp::rownames(Data);
   //Rcpp::colnames(Final_mat2) = Rcpp::colnames(Data);
   
-  return Final_mat;
+  arma::sp_mat Final_mat2(Final_mat);
+  
+  return Final_mat2;
 }
+
+
