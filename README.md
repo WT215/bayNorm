@@ -114,14 +114,14 @@ bay_out<-bayNorm(EXAMPLE_DATA_list$inputdata,mean_version = TRUE)
 x.seurat <- CreateSeuratObject(counts =bay_out$Bay_out,assay = 'bayNorm')
 # x.seurat <- NormalizeData(x.seurat)
 x.seurat <- ScaleData(x.seurat)
-x.seurat <- FindVariableFeatures(x.seurat, do.plot = FALSE)
+x.seurat <- FindVariableFeatures(x.seurat)
 #Specifying: assay='bayNorm'
-x.seurat <- RunPCA(x.seurat, pc.genes = x.seurat@var.genes,
-                   pcs.compute = 50, do.print = FALSE,assay='bayNorm')
+x.seurat <- RunPCA(x.seurat, features = x.seurat@assays$bayNorm@var.features,
+                   pcs.compute = 20,assay='bayNorm')
 
-x.seurat <- RunUMAP(x.seurat, dims = 1:10,assay='bayNorm')
+x.seurat <- RunUMAP(x.seurat, dims = 1:20,assay='bayNorm')
 #x.seurat <- JackStraw(x.seurat, prop.freq = 0.06)
-x.seurat <- FindNeighbors(x.seurat, dims = 1:10)
+x.seurat <- FindNeighbors(x.seurat, dims = 1:20)
 x.seurat <- FindClusters(x.seurat, resolution = 0.5)
 head(Idents(x.seurat), 5)
 #It is a toy example. Here only one cluster was found
